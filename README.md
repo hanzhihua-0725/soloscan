@@ -96,13 +96,11 @@
 
 比较运算符 ::= "=" | "!=" | "<" | ">" | "<=" | ">="
 
-逻辑运算符 ::= "AND" | "OR" | "NOT"
+逻辑运算符 ::= "&&" | "||" | "!"
 
-MetricFunction ::= SUM | SUMX | MAX | MAXX | MIN | MINX | AVG | AVGX | COUNT | COUNTBLANK
+聚合函数 ::= SUM | SUMX | MAX | MAXX | MIN | MINX | AVG | AVGX | COUNT | COUNTBLANK
 
-MetricExpression ::= MetricFunction(字段)
-
-GroupByField ::= 字段 ("," 字段)*
+聚合表达式 ::= 聚合函数(字段, 过滤条件)
 
 FilterCondition ::= ComparisonCondition | LogicalCondition
 
@@ -110,13 +108,15 @@ ComparisonCondition ::= 字段 比较运算符 值
 
 LogicalCondition ::= FilterCondition 逻辑运算符 FilterCondition
 
-MetricCalculation ::= "calc:" MetricExpression (算数运算符 MetricExpression)*
+计算部分 ::= "calc:" MetricExpression (算数运算符 MetricExpression)*
 
-GroupByOperation ::= "grouping:" GroupByField
+分组部分 ::= 字段 ("," 字段)*
 
-FilterOperation ::= "aggInner:" FilterCondition
+过滤部分 ::= LogicalCondition
 
-DSL ::= MetricCalculation ";" GroupByOperation? ";" FilterOperation?
+计算单元 ::= "{" 计算部分 "," 分组部分? "," 过滤部分? "}"
+
+solo表达式 ::= MetricUnit (union MetricUnit)*
 
 ### 运行时
 | 类型   | 例子                               | 运行时           |
