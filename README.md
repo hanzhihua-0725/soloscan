@@ -88,6 +88,23 @@
 * Slide
   * 语法 Slide(指标结果,windowSize)
 
+## 开发使用
+* maven依赖
+```xml
+<dependency>
+            <groupId>io.github.hanzhihua-0725</groupId>
+            <artifactId>soloscan</artifactId>
+            <version>0.1.1</version>
+        </dependency>
+```
+* 代码使用
+```java
+DataSet dataSet = new ListDataSet<>(list);
+        SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
+        Map<String,String> expressions = new HashMap<>();
+        expressions.put("abc","{sum(col1),,}");
+        System.out.println(executorExt.execute(expressions,dataSet));
+```
 
 ## 系统设计
 
@@ -100,25 +117,26 @@
 
 聚合函数 ::= SUM | SUMX | MAX | MAXX | MIN | MINX | AVG | AVGX | COUNT | COUNTBLANK
 
-聚合表达式 ::= 聚合函数(字段, 过滤条件)
-
-FilterCondition ::= ComparisonCondition | LogicalCondition
-
 ComparisonCondition ::= 字段 比较运算符 值
 
-LogicalCondition ::= FilterCondition 逻辑运算符 FilterCondition
+过滤部分 ::= ComparisonCondition (逻辑运算符 ComparisonCondition)*
 
-计算部分 ::= "calc:" MetricExpression (算数运算符 MetricExpression)*
+聚合表达式 ::= 聚合函数(字段, 过滤部分)
+
+计算部分 ::=  聚合表达式 (算数运算符 聚合表达式)*
 
 分组部分 ::= 字段 ("," 字段)*
 
-过滤部分 ::= LogicalCondition
-
 计算单元 ::= "{" 计算部分 "," 分组部分? "," 过滤部分? "}"
 
-solo表达式 ::= MetricUnit (union MetricUnit)*
+solo表达式 ::= 计算单元 (union 计算单元)*
+
+### 编译时
+语法分析出来的token，转成逆波兰表达式，然后通过asm生成类和实例。
 
 ### 运行时
+语法分析出来的token会被转换成对应的SObject对象，然后通过SObject中的方法进行运算。
+
 | 类型   | 例子                               | 运行时           |
 |------|----------------------------------|---------------|
 | 字符   | "xyz",'xyz'                      | SString       |
@@ -127,3 +145,9 @@ solo表达式 ::= MetricUnit (union MetricUnit)*
 | 操作符  | +,-,*,/,%,&&,\|\|,>,>=,=,<=,<,in | 对应SObject中的方法 |
 | 函数   | xyz()                            | SFunction     |
 | 聚合函数 | count()、average()                | SFunction     |
+| 计算单元 | {计算部分,分组部分,过滤部分}          | SMetric       |
+
+### 运行流程
+* 通过对DataSet进行迭代，计算出所有的聚合函数的数据
+* 然后在计算出计算单元的计算结果
+* 最后计算出solo表达式的计算结果
