@@ -102,7 +102,10 @@
 DataSet dataSet = new ListDataSet<>(list);
         SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
         Map<String,String> expressions = new HashMap<>();
-        expressions.put("abc","{sum(col1),,}");
+        expressions.put("row1","{sum(col1),,}");
+        expressions.put("row2","{count(col1),,}");
+        ...
+        expressions.put("rown","{count(col1),,}");
         System.out.println(executorExt.execute(expressions,dataSet));
 ```
 
