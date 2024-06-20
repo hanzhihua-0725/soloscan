@@ -13,17 +13,13 @@
 ### 表达式一些例子
 * {count(SCCC),SCCC,SCCC in [5,11,9999]}
 * {count(QD2f2_1 in [4,5])/count(QA1_2=1),week,week in range(513,520,1)}
-* {slide(count(QD2f2_1 in [4,5]),4)/slide(count(QA1_2=1),4),week,week in range(513,520,1)}
+* slide({count(QD2f2_1 in [4,5])/count(QA1_2=1),week,week in range(500,520,1)},4)
 * {count(SCCC),SCCC,SCCC=5} union { count(SCCC),SCCC,SCCC=11 } union { count(SCCC),SCCC,SCCC=9 }
-
-### 运行原理
-指标表达式采用编译执行方式，使用asm生成jvm字节码，加载并生成相关的类和实例，然后执行。
-![run_principle.png](run_principle.png)
 
 ## 系统功能
 
-### 表达式设计
-
+### 表达式说明
+* 包括指标表达式，指标单元，指标计算，分组，过滤等几部分。
 * 指标表达式：指标单元 union 指标单元。
 * 指标单元：{指标计算,分组,过滤} or {指标计算,分组,过滤;指标计算,分组,过滤}
   * 例子：{SUM(销售金额),销售日期,销售日期 >= '2022-01-01' AND 销售日期 <= '2022-12-31'}
@@ -110,6 +106,10 @@ DataSet dataSet = new ListDataSet<>(list);
 ```
 
 ## 系统设计
+
+### 运行原理
+指标表达式采用编译执行方式，使用asm生成jvm字节码，加载并生成相关的类和实例，然后执行。
+![run_principle.png](run_principle.png)
 
 ### 表达式文法
 算数运算符 ::= "+" | "-" | "*" | "/"
