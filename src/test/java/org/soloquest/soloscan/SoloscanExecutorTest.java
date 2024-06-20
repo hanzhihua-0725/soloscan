@@ -19,6 +19,7 @@ import org.soloquest.soloscan.utils.MetricUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 
 @Slf4j
@@ -491,6 +492,42 @@ public class SoloscanExecutorTest {
         map.put("row2", "{count(SCCC),SCCC,}");
         Map<String, Object> result2 = extInstance.executeWithGlobalFilter(map,"RQ=3","", new ListDataSet<>(data));
         Assert.assertEquals(result1,result2);
+
+    }
+
+    @Test
+    public void testDatasetWithVarietyType() {
+
+        List<Map> list = new ArrayList<>();
+        Map p = new HashMap<>();
+        p.put("a", false);
+        p.put("b", 1);
+        list.add(p);
+        p = new HashMap();
+        p.put("col1", 10);
+        p.put("groupkey", "a");
+        list.add(p);
+        p = new HashMap();
+        p.put("col1", 2);
+        p.put("groupkey", "b");
+        list.add(p);
+        p = new HashMap();
+        p.put("col1", 3);
+        p.put("groupkey", "b");
+        list.add(p);
+        DataSet dataSet = new ListDataSet<>(list);
+        SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
+        Map<String,String> expressionMap = new HashMap<>();
+        expressionMap.put("row1","{sum(col1),,groupkey='a'}");
+        expressionMap.put("row2","{sum(col1),,groupkey='b'}");
+        expressionMap.put("row3","{sum(b),,a=false}");
+        expressionMap.put("row4","{sum(b),,a=true}");
+        Object result = executorExt.execute(expressionMap,dataSet);
+        Assert.assertTrue(result instanceof ConcurrentHashMap);
+        Assert.assertEquals(((Map)result).get("row1"),10l);
+        Assert.assertEquals(((Map)result).get("row2"),5l);
+        Assert.assertEquals(((Map)result).get("row3"),1l);
+        Assert.assertEquals(((Map)result).get("row4"),0l);
 
     }
 

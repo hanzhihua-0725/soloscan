@@ -5,6 +5,7 @@ import org.soloquest.soloscan.utils.Env;
 import org.soloquest.soloscan.utils.TypeUtils;
 
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class SObject<T> {
 
@@ -58,12 +59,16 @@ public abstract class SObject<T> {
     public int innerCompare(SObject other, Map<String, Object> env) {
         Object thisValue = getValue(env);
         Object otherValue = other.getValue(env);
-        if (thisValue == otherValue) {
+        if (Objects.equals(thisValue, otherValue)) {
             return 0;
         } else if (thisValue == null) {
             return -1;
         } else if (otherValue == null) {
             return 1;
+        } else if(thisValue instanceof String){
+            return ((String) thisValue).compareTo((String) otherValue);
+        }else if(thisValue instanceof Boolean){
+            return ((Boolean) thisValue).compareTo((Boolean) otherValue);
         }
         return Numbers.compare((Number) thisValue, (Number) otherValue);
     }

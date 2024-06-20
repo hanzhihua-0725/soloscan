@@ -94,7 +94,7 @@
 <dependency>
             <groupId>io.github.hanzhihua-0725</groupId>
             <artifactId>soloscan</artifactId>
-            <version>0.1.1</version>
+            <version>0.1.2</version>
         </dependency>
 ```
 * 代码使用
@@ -148,6 +148,7 @@ solo表达式 ::= 计算单元 (union 计算单元)*
 | 计算单元 | {计算部分,分组部分,过滤部分}          | SMetric       |
 
 ### 运行流程
+* DataSet 是soloscan输入数据集对象，数据可以理解为list<Map<String,Object>>，支持jdbc resultset的适配
 * 通过对DataSet进行迭代，计算出所有的聚合函数的数据
 * 然后在计算出计算单元的计算结果
 * 最后计算出solo表达式的计算结果
