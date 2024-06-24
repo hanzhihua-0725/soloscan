@@ -15,7 +15,5 @@ public interface MetricUnitExpression extends Expression{
         return true;
     }
 
-    boolean consumeRow(Row row);
-
     String getPlaceHolder();
 }

@@ -163,11 +163,8 @@ solo表达式 ::= 计算单元 (union 计算单元)*
 | 变量   | xyz,TRUE                         | SVariable     |
 | 操作符  | +,-,*,/,%,&&,\|\|,>,>=,=,<=,<,in | 对应SObject中的方法 |
 | 函数   | xyz()                            | SFunction     |
-| 聚合函数 | count()、average()                | SFunction     |
+| 聚合函数 | count()                | AggFunction     |
 | 计算单元 | {计算部分,分组部分,过滤部分}          | SMetric       |
 
 ### 运行流程
-* DataSet 是soloscan输入数据集对象，数据可以理解为list<Map<String,Object>>，支持jdbc resultset的适配
-* 通过对DataSet进行迭代，计算出所有的聚合函数的数据
-* 然后在计算出计算单元的计算结果
-* 最后计算出solo表达式的计算结果
+![data_flow.png](data_flow.png)
