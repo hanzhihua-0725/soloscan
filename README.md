@@ -89,7 +89,7 @@
 
 ### 项目例子
 ![demo.png](demo.png)
-本例子使用excel作为dataset，第一行为列名，后面每一行为数据。
+本例子使用excel作为dataset，第一行为列名，后面每一行为数据，列名大小写不敏感。
 * 计算整个数据集的行数：{count()}。
 * 计算SCCC不为空的行数：{count(SCCC)}。
 * 计算SCCC不等于1的行数：{count(SCCC!=1)}
@@ -106,7 +106,7 @@
 <dependency>
             <groupId>io.github.hanzhihua-0725</groupId>
             <artifactId>soloscan</artifactId>
-            <version>0.1.2</version>
+            <version>0.1.4</version>
         </dependency>
 ```
 * 代码使用
