@@ -15,6 +15,7 @@ import org.soloquest.soloscan.utils.MatrixUtils;
 import org.soloquest.soloscan.utils.MiscUtils;
 import org.soloquest.soloscan.utils.Preconditions;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,7 +178,8 @@ public class SoloscanExecutor {
                 }
                 resultMap.put(compiledExpressionMap.keySet().iterator().next(), object);
             } else {
-                resultMap = new ConcurrentHashMap<>(compiledExpressionMap.size());
+//                resultMap = new ConcurrentHashMap<>(compiledExpressionMap.size());
+                resultMap = Collections.synchronizedMap(new HashMap<>(compiledExpressionMap.size()));
                 forkJoinPool = new ForkJoinPool(compiledExpressionMap.size());
                 List<Future<Object>> futureList = forkJoinPool.invokeAll(compiledExpressionMap.entrySet().stream().map(entry -> {
                             return new Callable<Object>() {

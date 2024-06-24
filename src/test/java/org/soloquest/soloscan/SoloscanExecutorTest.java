@@ -523,7 +523,7 @@ public class SoloscanExecutorTest {
         expressionMap.put("row3","{sum(b),,a=false}");
         expressionMap.put("row4","{sum(b),,a=true}");
         Object result = executorExt.execute(expressionMap,dataSet);
-        Assert.assertTrue(result instanceof ConcurrentHashMap);
+        Assert.assertTrue(result instanceof Map);
         Assert.assertEquals(((Map)result).get("row1"),10l);
         Assert.assertEquals(((Map)result).get("row2"),5l);
         Assert.assertEquals(((Map)result).get("row3"),1l);
@@ -531,4 +531,12 @@ public class SoloscanExecutorTest {
 
     }
 
+    @Test
+    public void testExecuteHasNoData() {
+        SoloscanExecutorExt instance = SoloscanExecutorExt.INSTANCE;
+        Map<String, String> map = new HashMap<>();
+        map.put("row1", "{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}");
+        map.put("row2", "{count(S1XX =10)/count(SCCC),;count(S1XX!=null),}");
+        instance.executeWithGlobalFilter(map,"s1=123","s1=123", new ListDataSet<>(data));
+    }
 }

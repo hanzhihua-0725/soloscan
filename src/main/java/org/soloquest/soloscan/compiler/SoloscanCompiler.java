@@ -27,7 +27,7 @@ public class SoloscanCompiler {
     private final SoloscanExecutor instance;
     private final SoloscanClassloader classLoader;
     private final Map<String, String> expressionStringMap = new HashMap<>();
-    private SoloscanCache<AggFunctionText,AggInner> aggUnitCache = new SoloscanCache<>(false, (text) -> {
+    private SoloscanCache<AggFunctionText,AggInner> aggUnitCache = new SoloscanCache<>(true, (text) -> {
         return genAggInner(text);
     });
 
