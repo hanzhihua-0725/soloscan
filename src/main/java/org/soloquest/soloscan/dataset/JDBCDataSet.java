@@ -38,7 +38,7 @@ public class JDBCDataSet implements DataSet {
         Map<String, Object> row = new HashMap<String, Object>(columns);
         for (int i = 1; i <= columns; ++i) {
             try {
-                row.put(rsmd.getColumnName(i), rs.getObject(i));
+                row.put(rsmd.getColumnName(i).toLowerCase(), rs.getObject(i));
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

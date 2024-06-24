@@ -29,7 +29,7 @@ public class AggFunctionText {
 
     public AggFunctionText(String name) {
         this.name = name;
-        this.placeHolder = "PH_AGG_" + (char) INIT_PLACEHOLDER.getAndIncrement();
+        this.placeHolder = ("PH_AGG_" + (char) INIT_PLACEHOLDER.getAndIncrement()).toLowerCase();
     }
 
 

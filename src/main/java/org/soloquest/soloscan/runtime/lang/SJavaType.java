@@ -1,11 +1,13 @@
 package org.soloquest.soloscan.runtime.lang;
 
+import lombok.extern.slf4j.Slf4j;
 import org.soloquest.soloscan.compiler.lexer.SymbolTable;
 import org.soloquest.soloscan.runtime.function.IntRange;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class SJavaType extends SObject<Object> {
 
     protected String name;
@@ -38,7 +40,11 @@ public class SJavaType extends SObject<Object> {
 
     @Override
     public Object getValue(final Map<String, Object> env) {
-        return env.get(name);
+        Object value =  env.get(name);
+        if(value == null){
+            log.warn("env name:{} value is null",name);
+        }
+        return value;
     }
 
 

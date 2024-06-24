@@ -47,12 +47,8 @@ public class VariableToken extends AbstractToken<Object> {
         }
     }
 
-    public void setLexeme(final String lexeme) {
-        this.lexeme = lexeme;
-    }
-
     public VariableToken(final String name, final int lineNo, final int startIndex) {
-        super(name, lineNo, startIndex);
+        super(name.toLowerCase(), lineNo, startIndex);
     }
 
 

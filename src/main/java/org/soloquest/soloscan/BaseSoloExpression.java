@@ -5,6 +5,8 @@ import org.soloquest.soloscan.compiler.lexer.SymbolTable;
 import org.soloquest.soloscan.dataset.Row;
 import org.soloquest.soloscan.utils.Env;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,9 +46,9 @@ public abstract class BaseSoloExpression implements Expression {
     public Object execute(Map<String, Object> map) {
         log.info("{} start to execute,map:{}", this, map);
         if (map == null) {
-            map = new ConcurrentHashMap<>();
+            map = Collections.synchronizedMap(new HashMap<>());
         }else{
-            map = new ConcurrentHashMap<>(map);
+            map = Collections.synchronizedMap(map);
         }
         Env env = new Env(this.instance, this, map);
         metricUnitExpressions.stream().forEach(metricUnitExpression -> {

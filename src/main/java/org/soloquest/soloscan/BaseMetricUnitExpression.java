@@ -40,7 +40,7 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
         this.symbolTable = symbolTable;
         this.instance = instance;
         this.expressionString = expressionString;
-        this.placeHolder = "PH_MU_" + (char) INIT_PLACEHOLDER.getAndIncrement();
+        this.placeHolder = ("PH_MU_" + (char) INIT_PLACEHOLDER.getAndIncrement()).toLowerCase();
     }
 
     public String getPlaceHolder(){

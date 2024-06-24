@@ -6,7 +6,9 @@ import org.soloquest.soloscan.SoloscanOptions;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -107,6 +109,18 @@ public class MiscUtils {
                 expressionMap.put(k,sb.toString());
             }
         });
+    }
+
+    public static Map<String, Object> toLowerKey(Map<String, Object> map) {
+        if(map == null){
+            return new HashMap<>();
+        }
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        Set<String> sets = map.keySet();
+        for (String key : sets) {
+            resultMap.put(key.toLowerCase(), map.get(key));
+        }
+        return resultMap;
     }
 
 }
