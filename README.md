@@ -104,21 +104,21 @@
 * maven依赖
 ```xml
 <dependency>
-            <groupId>io.github.hanzhihua-0725</groupId>
-            <artifactId>soloscan</artifactId>
-            <version>0.1.5</version>
-        </dependency>
+  <groupId>io.github.hanzhihua-0725</groupId>
+  <artifactId>soloscan</artifactId>
+  <version>0.1.5</version>
+</dependency>
 ```
 * 代码使用
 ```java
 DataSet dataSet = new ListDataSet<>(list);
-        SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
-        Map<String,String> expressions = new HashMap<>();
-        expressions.put("row1","{sum(col1),,}");
-        expressions.put("row2","{count(col1),,}");
-        ...
-        expressions.put("rown","{count(col1),,}");
-        System.out.println(executorExt.execute(expressions,dataSet));
+SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
+Map<String,String> expressions = new HashMap<>();
+expressions.put("row1","{sum(col1),,}");
+expressions.put("row2","{count(col1),,}");
+...
+expressions.put("rown","{count(col1),,}");
+System.out.println(executorExt.execute(expressions,dataSet));
 ```
 
 ## 系统设计
