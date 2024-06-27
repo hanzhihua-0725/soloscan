@@ -41,7 +41,6 @@ public class Main {
         list.add(p);
         DataSet dataSet = new ListDataSet<>(list);
         SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS.key(), true);
-        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS_ROOT_PATH.key(), "/Users/hanzhihua/git91/soloscan/soloscan/tmp");
         SoloscanExecutorExt instance = SoloscanExecutorExt.INSTANCE;
         instance.addAggFunction("ds", DoubleSum::new);
         List<String> expressions = new ArrayList<>();
