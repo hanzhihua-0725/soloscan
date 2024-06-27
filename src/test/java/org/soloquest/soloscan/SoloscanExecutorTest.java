@@ -570,8 +570,6 @@ public class SoloscanExecutorTest {
     }
     @Test
     public void testExecuteWithCase() {
-        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS.key(), true);
-        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS_ROOT_PATH.key(), "/Users/hanzhihua/gitgh/soloscan/tmp");
         SoloscanOptions.set(SoloscanOptions.COLUMN_CASE_INSENSITIVE.key(), true);
 
         List<Map> list = new ArrayList<>();
