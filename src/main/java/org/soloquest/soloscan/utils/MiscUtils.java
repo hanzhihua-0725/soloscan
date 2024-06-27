@@ -7,9 +7,11 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class MiscUtils {
@@ -121,6 +123,21 @@ public class MiscUtils {
             resultMap.put(key.toLowerCase(), map.get(key));
         }
         return resultMap;
+    }
+
+    public static Set<String> findMissingElementsCaseSensitive(List<String> list1, List<String> list2) {
+        return list2.stream()
+                .filter(element -> !list1.contains(element))
+                .collect(Collectors.toSet());
+    }
+
+    public static Set<String> findMissingElementsCaseInsensitive(List<String> list1, List<String> list2) {
+        List<String> lowerCaseList1 = list1.stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
+        return list2.stream()
+                .filter(element -> !lowerCaseList1.contains(element.toLowerCase()))
+                .collect(Collectors.toSet());
     }
 
 }

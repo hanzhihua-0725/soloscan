@@ -1,7 +1,9 @@
 package org.soloquest.soloscan;
 
 import lombok.extern.slf4j.Slf4j;
+import org.soloquest.soloscan.compiler.SololscanValidator;
 import org.soloquest.soloscan.compiler.SoloscanCompiler;
+import org.soloquest.soloscan.compiler.ValidatorResult;
 import org.soloquest.soloscan.compiler.codegen.SoloscanClassloader;
 import org.soloquest.soloscan.compiler.lexer.SymbolTable;
 import org.soloquest.soloscan.compiler.parser.AggFunctionText;
@@ -28,8 +30,11 @@ import java.util.stream.Collectors;
 public class SoloscanExecutor {
 
     public static final SoloscanExecutor INSTANCE = new SoloscanExecutor();
+
     private SoloscanClassloader classLoader = new SoloscanClassloader(SoloscanExecutor.class.getClassLoader());
     private final Map<String, SFunction> funcMap = new HashMap<>();
+
+    private final SololscanValidator validator = new SololscanValidator();
 
     private final ConcurrentHashMap<String, Function<AggFunctionText, ? extends AggFunction>> aggFunctionMap =
             new ConcurrentHashMap<>();
@@ -234,6 +239,11 @@ public class SoloscanExecutor {
         Preconditions.checkNotNull(compiledExpressionMap);
         log.info("compile expression, expression:{},cost: {}.ms", compiledExpressionMap, (System.currentTimeMillis() - start));
         return compiledExpressionMap;
+    }
+
+
+    public ValidatorResult validate(final String expressionString, List<String> columnList) {
+        return validator.validate(expressionString,columnList);
     }
 
 

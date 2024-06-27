@@ -3,6 +3,7 @@ package org.soloquest.soloscan.compiler.parser;
 import org.soloquest.soloscan.AggFunctionUnit;
 import org.soloquest.soloscan.MetricUnitExpression;
 import org.soloquest.soloscan.SoloscanExecutor;
+import org.soloquest.soloscan.compiler.SoloscanCompileInterface;
 import org.soloquest.soloscan.compiler.SoloscanCompiler;
 import org.soloquest.soloscan.compiler.codegen.AbstractCodeGenerator;
 import org.soloquest.soloscan.compiler.codegen.CodeGenerator;
@@ -23,7 +24,7 @@ public class SoloscanParser<T> implements Parser {
     private final SoloscanLexer lexer;
     private final CodeGenerator<T> codeGenerator;
 
-    private SoloscanCompiler compiler;
+    private SoloscanCompileInterface compiler;
     private Token<?> lookhead;
 
     private final ArrayDeque<Token<?>> prevTokens = new ArrayDeque<>();
@@ -34,7 +35,7 @@ public class SoloscanParser<T> implements Parser {
 
     private String globalFilter;
 
-    public SoloscanParser(final SoloscanCompiler compiler,final SoloscanExecutor instance, final SoloscanLexer lexer,
+    public SoloscanParser(final SoloscanCompileInterface compiler,final SoloscanExecutor instance, final SoloscanLexer lexer,
                           final CodeGenerator codeGenerator) {
         this.compiler = compiler;
         this.instance = instance;
@@ -413,7 +414,7 @@ public class SoloscanParser<T> implements Parser {
     private void method(final Token<?> methodName) {
         if (instance.isAggFunction(methodName.getLexeme())) {
             AggFunctionText functionText = aggFunction(methodName);
-            AggFunctionUnit aggFunctionUnit = compiler.compileAggFunctionUnit(functionText);
+            compiler.compileAggFunctionUnit(functionText);
             VariableToken variableToken = new VariableToken(functionText.getPlaceHolder(), methodName.getLineNo(), methodName.getStartIndex());
             variableToken.withMeta("IS_METRIC", true);
             codeGenerator.onConstant(variableToken);

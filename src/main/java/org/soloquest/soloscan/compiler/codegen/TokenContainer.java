@@ -1,10 +1,12 @@
 package org.soloquest.soloscan.compiler.codegen;
 
 import lombok.Getter;
+import org.soloquest.soloscan.SoloscanOptions;
 import org.soloquest.soloscan.compiler.lexer.SymbolTable;
 import org.soloquest.soloscan.compiler.lexer.token.DelegateToken;
 import org.soloquest.soloscan.compiler.lexer.token.Token;
 import org.soloquest.soloscan.compiler.lexer.token.VariableToken;
+import org.soloquest.soloscan.utils.MiscUtils;
 import org.soloquest.soloscan.utils.ParserUtils;
 
 import java.util.ArrayList;
@@ -47,6 +49,9 @@ public class TokenContainer {
                     return;
                 }
                 String varName = token.getLexeme();
+                if (SoloscanOptions.getOption(SoloscanOptions.COLUMN_CASE_INSENSITIVE)) {
+                    varName = varName.toLowerCase();
+                }
                 if (ParserUtils.isMetricToken(token)) {
                     metricsVariables.add(varName);
                 } else {

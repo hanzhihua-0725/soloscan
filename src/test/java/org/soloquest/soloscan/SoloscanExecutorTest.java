@@ -9,6 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.soloquest.soloscan.compiler.ValidatorResult;
 import org.soloquest.soloscan.dataset.DataSet;
 import org.soloquest.soloscan.dataset.ListDataSet;
 import org.soloquest.soloscan.exception.ExpressionCompileException;
@@ -19,7 +20,6 @@ import org.soloquest.soloscan.utils.MetricUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 
 @Slf4j
@@ -541,40 +541,83 @@ public class SoloscanExecutorTest {
     }
 
     @Test
-    public void testDatasetWithoutCase() {
+    public void testValidate() {
+        SoloscanExecutorExt instance = SoloscanExecutorExt.INSTANCE;
+        ValidatorResult rs = null;
+        rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList("S1XX","SCCC"));
+        Assert.assertTrue(rs.isValid());
+
+        rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList());
+        Assert.assertTrue(!rs.isValid());
+        Assert.assertTrue(rs.getErrorMessage().contains("S1XX"));
+        Assert.assertTrue(rs.getErrorMessage().contains("SCCC"));
+
+        rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList("SCCC"));
+        Assert.assertTrue(!rs.isValid());
+        Assert.assertTrue(rs.getErrorMessage().contains("S1XX"));
+        Assert.assertTrue(!rs.getErrorMessage().contains("SCCC"));
+
+        rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList("sccc","s1xx"));
+        Assert.assertTrue(!rs.isValid());
+        Assert.assertTrue(rs.getErrorMessage().contains("S1XX"));
+        Assert.assertTrue(rs.getErrorMessage().contains("SCCC"));
+
+        SoloscanOptions.set(SoloscanOptions.COLUMN_CASE_INSENSITIVE.key(), true);
+        rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList("sccc","s1xx"));
+        Assert.assertTrue(rs.isValid());
+
+
+    }
+    @Test
+    public void testExecuteWithCase() {
         SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS.key(), true);
         SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS_ROOT_PATH.key(), "/Users/hanzhihua/gitgh/soloscan/tmp");
+        SoloscanOptions.set(SoloscanOptions.COLUMN_CASE_INSENSITIVE.key(), true);
 
         List<Map> list = new ArrayList<>();
         Map p = new HashMap<>();
-//        p.put("a", false);
-//        p.put("b", 1);
-//        list.add(p);
-        p = new HashMap();
-        p.put("col1", 10);
-        p.put("groupkey", "a");
+        p.put("a", false);
+        p.put("b", 1);
         list.add(p);
-//        p = new HashMap();
-//        p.put("col1", 2);
-//        p.put("groupkey", "b");
-//        list.add(p);
-//        p = new HashMap();
-//        p.put("col1", 3);
-//        p.put("groupkey", "b");
-//        list.add(p);
+        p = new HashMap();
+        p.put("cOl1", 10);
+        p.put("grOupkey", "a");
+        list.add(p);
+        p = new HashMap();
+        p.put("col1", 2);
+        p.put("groupkey", "b");
+        list.add(p);
+        p = new HashMap();
+        p.put("Col1", 3);
+        p.put("groupkey", "b");
+        list.add(p);
         DataSet dataSet = new ListDataSet<>(list);
         SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
         Map<String,String> expressionMap = new HashMap<>();
         expressionMap.put("row1","{sum(col1),,groupkey='a'}");
-//        expressionMap.put("row2","{sum(col1),,gRoupkey='b'}");
-//        expressionMap.put("row3","{sum(B),,a=false}");
-//        expressionMap.put("row4","{sum(b),,a=true}");
+        expressionMap.put("row2","{sum(col1),,gRoupkey='b'}");
+        expressionMap.put("row3","{sum(B),,a=false}");
+        expressionMap.put("row4","{sum(b),,a=true}");
         Object result = executorExt.execute(expressionMap,dataSet);
         Assert.assertTrue(result instanceof Map);
         Assert.assertEquals(((Map)result).get("row1"),10l);
-//        Assert.assertEquals(((Map)result).get("row2"),5l);
-//        Assert.assertEquals(((Map)result).get("row3"),1l);
-//        Assert.assertEquals(((Map)result).get("row4"),0l);
+        Assert.assertEquals(((Map)result).get("row2"),5l);
+        Assert.assertEquals(((Map)result).get("row3"),1l);
+        Assert.assertEquals(((Map)result).get("row4"),0l);
 
+        SoloscanOptions.set(SoloscanOptions.COLUMN_CASE_INSENSITIVE.key(), false);
+        dataSet = new ListDataSet<>(list);
+        executorExt = SoloscanExecutorExt.INSTANCE;
+        expressionMap = new HashMap<>();
+        expressionMap.put("row1","{sum(col1),,groupkey='a'}");
+        expressionMap.put("row2","{sum(col1),,gRoupkey='b'}");
+        expressionMap.put("row3","{sum(B),,a=false}");
+        expressionMap.put("row4","{sum(b),,a=true}");
+        result = executorExt.execute(expressionMap,dataSet);
+        Assert.assertTrue(result instanceof Map);
+        Assert.assertEquals(((Map)result).get("row1"),0l);
+        Assert.assertEquals(((Map)result).get("row2"),0l);
+        Assert.assertEquals(((Map)result).get("row3"),0l);
+        Assert.assertEquals(((Map)result).get("row4"),0l);
     }
 }

@@ -1,5 +1,7 @@
 package org.soloquest.soloscan.dataset;
 
+import org.soloquest.soloscan.SoloscanOptions;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +32,7 @@ public class ListDataSet<T extends Map> implements DataSet {
         Row row = new MapRow(object);
         if (calcColumnMap.size() > 0) {
             calcColumnMap.entrySet().stream().forEach(e -> {
-                row.putValue(e.getKey().toLowerCase(), e.getValue().apply(row));
+                row.putValue(e.getKey(), e.getValue().apply(row));
             });
         }
         return row;
@@ -38,7 +40,11 @@ public class ListDataSet<T extends Map> implements DataSet {
 
     @Override
     public boolean addCalcColumn(String columnName, Function<Row, Object> function) {
-        return calcColumnMap.putIfAbsent(columnName.toLowerCase(), function) == null;
+        if (SoloscanOptions.getOption(SoloscanOptions.COLUMN_CASE_INSENSITIVE)) {
+            return calcColumnMap.putIfAbsent(columnName.toLowerCase(), function) == null;
+        }else{
+            return calcColumnMap.putIfAbsent(columnName, function) == null;
+        }
     }
 
 

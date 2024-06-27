@@ -19,6 +19,13 @@ public class SoloscanOptions {
                     .withDescription(
                             "use concurrent process agg");
 
+    public static final ConfigOption<Boolean> COLUMN_CASE_INSENSITIVE =
+            ConfigOptions.key("column.case.insensitive")
+                    .booleanType()
+                    .defaultValue(false)
+                    .withDescription(
+                            "column case insensitive,default value is false");
+
     public static final ConfigOption<Boolean> GENERATE_CLASS =
             ConfigOptions.key("generate.class")
                     .booleanType()

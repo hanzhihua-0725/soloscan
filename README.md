@@ -83,7 +83,6 @@
 * In
     * 语法： column in [1,2,3]
     * 说明：返回column是否在列表中
-    * 
 * Slide
   * 语法 Slide(指标结果,windowSize)
 
@@ -106,7 +105,7 @@
 <dependency>
             <groupId>io.github.hanzhihua-0725</groupId>
             <artifactId>soloscan</artifactId>
-            <version>0.1.4</version>
+            <version>0.1.5</version>
         </dependency>
 ```
 * 代码使用

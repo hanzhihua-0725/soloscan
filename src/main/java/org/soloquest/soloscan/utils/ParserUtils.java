@@ -43,4 +43,14 @@ public class ParserUtils {
         return t instanceof VariableToken && t.getMeta("IS_METRIC") instanceof Boolean && ((Boolean) t.getMeta("IS_METRIC")).booleanValue();
     }
 
+    public static final boolean isVariableToken(Token token) {
+        if (token instanceof VariableToken){
+            String name = token.getLexeme();
+            if(!name.startsWith("ph_agg")){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

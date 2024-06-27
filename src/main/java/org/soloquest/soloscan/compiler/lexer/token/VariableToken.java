@@ -48,7 +48,7 @@ public class VariableToken extends AbstractToken<Object> {
     }
 
     public VariableToken(final String name, final int lineNo, final int startIndex) {
-        super(name.toLowerCase(), lineNo, startIndex);
+        super(name, lineNo, startIndex);
     }
 
 

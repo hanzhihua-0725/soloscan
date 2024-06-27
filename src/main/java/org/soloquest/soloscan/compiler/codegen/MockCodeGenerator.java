@@ -1,9 +1,21 @@
 package org.soloquest.soloscan.compiler.codegen;
 
+import lombok.Getter;
+import org.soloquest.soloscan.SoloscanOptions;
+import org.soloquest.soloscan.compiler.lexer.SymbolTable;
+import org.soloquest.soloscan.compiler.lexer.token.DelegateToken;
 import org.soloquest.soloscan.compiler.lexer.token.Token;
+import org.soloquest.soloscan.compiler.lexer.token.VariableToken;
 import org.soloquest.soloscan.compiler.parser.Parser;
+import org.soloquest.soloscan.utils.ParserUtils;
 
-public class MockCodeGenerator implements CodeGenerator{
+import java.util.ArrayList;
+import java.util.List;
+
+public class MockCodeGenerator extends AbstractCodeGenerator{
+
+    @Getter
+    private List<String> variables = new ArrayList<>();
     @Override
     public void setParser(Parser parser) {
 
@@ -45,8 +57,11 @@ public class MockCodeGenerator implements CodeGenerator{
     }
 
     @Override
-    public void onConstant(Token lookhead) {
-
+    public void onConstant(Token token) {
+        if(ParserUtils.isVariableToken(token)){
+            String varName = token.getLexeme();
+            variables.add(varName);
+        }
     }
 
     @Override

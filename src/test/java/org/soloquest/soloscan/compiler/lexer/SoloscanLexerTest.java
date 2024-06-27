@@ -11,7 +11,7 @@ public class SoloscanLexerTest {
 
     @Test
     public void testNumberScan() {
-        SoloscanLexer lexer = new SoloscanLexer(null, "11+2N+3M");
+        SoloscanLexer lexer = new SoloscanLexer( "11+2N+3M");
         Token token = lexer.scan();
         Assert.assertEquals(11l, token.getJavaValue(null));
         token = lexer.scan();

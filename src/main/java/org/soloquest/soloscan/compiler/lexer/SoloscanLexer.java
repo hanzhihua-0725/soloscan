@@ -1,6 +1,7 @@
 package org.soloquest.soloscan.compiler.lexer;
 
 import org.soloquest.soloscan.SoloscanExecutor;
+import org.soloquest.soloscan.SoloscanOptions;
 import org.soloquest.soloscan.compiler.lexer.token.*;
 import org.soloquest.soloscan.exception.ExpressionCompileException;
 
@@ -18,16 +19,14 @@ public class SoloscanLexer {
     private int lineNo;
     private final SymbolTable symbolTable;
     private LinkedList<Token<?>> tokenBuffer = new LinkedList<>();
-    private final SoloscanExecutor instance;
     private String expression;
 
 
-    public SoloscanLexer(final SoloscanExecutor instance, final String expression) {
+    public SoloscanLexer(final String expression) {
         this.iterator = new StringCharacterIterator(expression);
         this.expression = expression;
         this.symbolTable = new SymbolTable();
         this.peek = this.iterator.current();
-        this.instance = instance;
         this.lineNo = 1;
     }
 
@@ -140,6 +139,9 @@ public class SoloscanLexer {
                 nextChar();
             } while (Character.isJavaIdentifierPart(this.peek) || this.peek == '.');
             String lexeme = sb.toString();
+            if (SoloscanOptions.getOption(SoloscanOptions.COLUMN_CASE_INSENSITIVE)) {
+                lexeme = lexeme.toLowerCase();
+            }
             VariableToken variableToken = new VariableToken(lexeme, this.lineNo, startIndex);
             return this.symbolTable.reserve(variableToken);
         }
