@@ -61,7 +61,7 @@ public class SoloscanCompiler implements SoloscanCompileInterface{
     public Expression compile(String expressionString) {
         Preconditions.checkNotNullOrEmpty(expressionString, "Blank expression");
         SoloscanLexer lexer = new SoloscanLexer(expressionString);
-        SoloExpressionRealCodeGenerator<BaseSoloExpression> realCodeGenerator = new SoloExpressionRealCodeGenerator(instance, classLoader, Expression.class);
+        SoloExpressionRealCodeGenerator realCodeGenerator = new SoloExpressionRealCodeGenerator(instance, classLoader, BaseSoloExpression.class);
         CodeGeneratorProxy codeGenerator = new CodeGeneratorProxy(instance, classLoader, realCodeGenerator);
         SoloscanParser<BaseSoloExpression> parser = new SoloscanParser(this,instance, lexer, codeGenerator);
         codeGenerator.setParser(parser);
@@ -81,7 +81,7 @@ public class SoloscanCompiler implements SoloscanCompileInterface{
         Preconditions.checkNotNullOrEmpty(expressionString, "Blank expression");
 
         SoloscanLexer lexer = new SoloscanLexer( expressionString);
-        MetricUnitRealCodeGenerator<BaseMetricUnitExpression> realCodeGenerator = new MetricUnitRealCodeGenerator(instance, classLoader, Expression.class);
+        MetricUnitRealCodeGenerator realCodeGenerator = new MetricUnitRealCodeGenerator(instance, classLoader, BaseMetricUnitExpression.class);
         CodeGeneratorProxy codeGenerator = new CodeGeneratorProxy(instance, classLoader, realCodeGenerator);
         SoloscanParser<BaseMetricUnitExpression> parser = new SoloscanParser(this,instance, lexer, codeGenerator);
         if(index == 1 && !MiscUtils.isBlank(filterPart1)) {
@@ -130,7 +130,7 @@ public class SoloscanCompiler implements SoloscanCompileInterface{
         if (!MiscUtils.isBlank(innerString)) {
 
                     SoloscanLexer lexer = new SoloscanLexer(innerString);
-                AggInnerRealCodeGenerator<AggInner> realCodeGenerator = new AggInnerRealCodeGenerator(instance, classLoader, AggInner.class);
+                AggInnerRealCodeGenerator realCodeGenerator = new AggInnerRealCodeGenerator(instance, classLoader, AggInner.class);
         CodeGeneratorProxy codeGenerator = new CodeGeneratorProxy(instance, classLoader, realCodeGenerator);
         SoloscanParser<AggInner> parser = new SoloscanParser(this,instance, lexer, codeGenerator);
         codeGenerator.setParser(parser);

@@ -1,5 +1,6 @@
 package org.soloquest.soloscan.compiler.codegen;
 
+import org.soloquest.soloscan.BaseSoloExpression;
 import org.soloquest.soloscan.Expression;
 import org.soloquest.soloscan.SoloscanExecutor;
 import org.soloquest.soloscan.SoloscanOptions;
@@ -16,11 +17,11 @@ import java.util.Map;
 
 import static org.soloquest.soloscan.compiler.asm.Opcodes.*;
 
-public class SoloExpressionRealCodeGenerator<T> extends AbstractRealCodeGenerator<T> implements CodeConstants {
+public class SoloExpressionRealCodeGenerator extends AbstractRealCodeGenerator<BaseSoloExpression> implements CodeConstants {
 
 
     public SoloExpressionRealCodeGenerator(final SoloscanExecutor instance,
-                                       final SoloscanClassloader classLoader, final Class<T> type) {
+                                       final SoloscanClassloader classLoader, final Class<BaseSoloExpression> type) {
         super(instance, classLoader, type);
         this.className = "So_" + System.currentTimeMillis() + "_" + CLASS_COUNTER.getAndIncrement();
         this.classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
@@ -29,7 +30,7 @@ public class SoloExpressionRealCodeGenerator<T> extends AbstractRealCodeGenerato
     }
 
     @Override
-    public T getResult() {
+    public BaseSoloExpression getResult() {
         initConstants();
         initVariables();
         initMetricVariables();
@@ -51,9 +52,9 @@ public class SoloExpressionRealCodeGenerator<T> extends AbstractRealCodeGenerato
                     ClassDefiner.defineClass(this.className, type, bytes, this.classLoader);
             Constructor<?> constructor =
                     defineClass.getConstructor(SoloscanExecutor.class, SymbolTable.class, String.class);
-            Expression exp = (Expression) constructor.newInstance(this.instance
+            BaseSoloExpression exp = (BaseSoloExpression) constructor.newInstance(this.instance
                     , this.symbolTable, this.parser.getLexer().getExpression());
-            return (T) exp;
+            return  exp;
         } catch (ExpressionRuntimeException e) {
             throw e;
         } catch (Throwable e) {

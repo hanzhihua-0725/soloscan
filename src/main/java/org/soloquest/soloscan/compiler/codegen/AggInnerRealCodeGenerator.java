@@ -20,9 +20,9 @@ import java.util.Map;
 
 import static org.soloquest.soloscan.compiler.asm.Opcodes.*;
 
-public class AggInnerRealCodeGenerator<T> extends AbstractRealCodeGenerator<T> implements CodeConstants {
+public class AggInnerRealCodeGenerator extends AbstractRealCodeGenerator<AggInner> implements CodeConstants {
 
-    public AggInnerRealCodeGenerator(final SoloscanExecutor instance, final SoloscanClassloader classLoader, final Class<T> type) {
+    public AggInnerRealCodeGenerator(final SoloscanExecutor instance, final SoloscanClassloader classLoader, final Class<AggInner> type) {
         super(instance, classLoader, type);
         this.className = "So_AggInner_" + System.currentTimeMillis() + "_" + CLASS_COUNTER.getAndIncrement();
         this.classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
@@ -32,7 +32,7 @@ public class AggInnerRealCodeGenerator<T> extends AbstractRealCodeGenerator<T> i
     }
 
     @Override
-    public T getResult() {
+    public AggInner getResult() {
         initConstants();
         initVariables();
         initMethods();
@@ -55,7 +55,7 @@ public class AggInnerRealCodeGenerator<T> extends AbstractRealCodeGenerator<T> i
                     defineClass.getConstructor(SoloscanExecutor.class, SymbolTable.class, String.class);
             AggInner aggInner = (AggInner) constructor.newInstance(this.instance
                     , this.symbolTable, this.parser.getLexer().getExpression());
-            return (T) aggInner;
+            return aggInner;
         } catch (ExpressionExecuteException e) {
             throw e;
         } catch (Throwable e) {

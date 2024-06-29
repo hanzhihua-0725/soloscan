@@ -3,6 +3,7 @@ package org.soloquest.soloscan.compiler.codegen;
 
 import lombok.extern.slf4j.Slf4j;
 import org.soloquest.soloscan.BaseMetricUnitExpression;
+import org.soloquest.soloscan.MetricUnitExpression;
 import org.soloquest.soloscan.SoloscanExecutor;
 import org.soloquest.soloscan.SoloscanOptions;
 import org.soloquest.soloscan.compiler.asm.ClassWriter;
@@ -23,11 +24,11 @@ import java.util.Map;
 import static org.soloquest.soloscan.compiler.asm.Opcodes.*;
 
 @Slf4j
-public class MetricUnitRealCodeGenerator<T> extends AbstractRealCodeGenerator<T> implements CodeConstants {
+public class MetricUnitRealCodeGenerator extends AbstractRealCodeGenerator<BaseMetricUnitExpression> implements CodeConstants {
 
 
     public MetricUnitRealCodeGenerator(final SoloscanExecutor instance,
-                                       final SoloscanClassloader classLoader, final Class<T> type) {
+                                       final SoloscanClassloader classLoader, final Class<BaseMetricUnitExpression> type) {
         super(instance, classLoader, type);
         this.className = "So_Mu_" + System.currentTimeMillis() + "_" + CLASS_COUNTER.getAndIncrement();
         this.classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
@@ -38,7 +39,7 @@ public class MetricUnitRealCodeGenerator<T> extends AbstractRealCodeGenerator<T>
     }
 
     @Override
-    public T getResult() {
+    public BaseMetricUnitExpression getResult() {
         initConstants();
         initVariables();
         initMetricVariables();
@@ -66,7 +67,7 @@ public class MetricUnitRealCodeGenerator<T> extends AbstractRealCodeGenerator<T>
                     defineClass.getConstructor(SoloscanExecutor.class, SymbolTable.class, String.class);
             BaseMetricUnitExpression exp = (BaseMetricUnitExpression) constructor.newInstance(this.instance
                     , this.symbolTable, this.parser.getLexer().getExpression());
-            return (T) exp;
+            return exp;
         } catch (ExpressionExecuteException e) {
             throw e;
         } catch (Throwable e) {
