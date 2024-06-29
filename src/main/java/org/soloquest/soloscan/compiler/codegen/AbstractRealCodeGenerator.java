@@ -106,7 +106,7 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
     }
 
     public void initVariables() {
-        if (innerVars.isEmpty()) {
+        if (variables.isEmpty()) {
             return;
         }
         this.innerVars = new HashMap<>(this.variables.size());
@@ -120,7 +120,7 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
     }
 
     public void initMetricVariables() {
-        if (innerMetricVars.isEmpty()) {
+        if (metricVariables.isEmpty()) {
             return;
         }
         this.innerMetricVars = new HashMap<>(this.metricVariables.size());
@@ -134,7 +134,7 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
     }
 
     public void initMethods() {
-        if (innerMethodMap.isEmpty()) {
+        if (methodTokens.isEmpty()) {
             return;
         }
         this.innerMethodMap = new HashMap<>(methodTokens.size());
