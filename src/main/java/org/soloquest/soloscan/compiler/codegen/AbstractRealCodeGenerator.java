@@ -106,6 +106,9 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
     }
 
     public void initVariables() {
+        if (innerVars.isEmpty()) {
+            return;
+        }
         this.innerVars = new HashMap<>(this.variables.size());
         for (String outterVarName : this.variables) {
             String innerVarName = getInnerName(outterVarName);
@@ -117,6 +120,9 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
     }
 
     public void initMetricVariables() {
+        if (innerMetricVars.isEmpty()) {
+            return;
+        }
         this.innerMetricVars = new HashMap<>(this.metricVariables.size());
         for (String outterVarName : this.metricVariables) {
             String innerVarName = getInnerName(outterVarName);
@@ -128,6 +134,9 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
     }
 
     public void initMethods() {
+        if (innerMethodMap.isEmpty()) {
+            return;
+        }
         this.innerMethodMap = new HashMap<>(methodTokens.size());
         for (String outterMethodName : methodTokens) {
             String innerMethodName = getInnerName(outterMethodName);
