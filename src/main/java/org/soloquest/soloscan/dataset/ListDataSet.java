@@ -42,7 +42,7 @@ public class ListDataSet<T extends Map> implements DataSet {
     public boolean addCalcColumn(String columnName, Function<Row, Object> function) {
         if (SoloscanOptions.getOption(SoloscanOptions.COLUMN_CASE_INSENSITIVE)) {
             return calcColumnMap.putIfAbsent(columnName.toLowerCase(), function) == null;
-        }else{
+        } else {
             return calcColumnMap.putIfAbsent(columnName, function) == null;
         }
     }

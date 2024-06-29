@@ -12,7 +12,7 @@ public class MapRow implements Row {
     public MapRow(Map<String, Object> map) {
         if (SoloscanOptions.getOption(SoloscanOptions.COLUMN_CASE_INSENSITIVE)) {
             this.map = MiscUtils.toLowerKey(map);
-        }else{
+        } else {
             this.map = map;
         }
 

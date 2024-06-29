@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class SoloscanExecutorExt extends SoloscanExecutor{
+public class SoloscanExecutorExt extends SoloscanExecutor {
 
     public static final SoloscanExecutorExt INSTANCE = new SoloscanExecutorExt();
-//    public static final String META_KEY = ".meta";
+    //    public static final String META_KEY = ".meta";
     public static final String FILTER_PART1_KEY = ".part1key";
     public static final String FILTER_PART2_KEY = ".part2key";
 
@@ -42,10 +42,10 @@ public class SoloscanExecutorExt extends SoloscanExecutor{
         return MiscUtils.forciblyCast(MatrixUtils.clcalculateMatrix(result, rows, columns));
     }
 
-    public Map<String, Object> executeWithGlobalFilter(final Map<String, String> expressionMap,String filterPart1,String filterPart2,final DataSet dataSet) {
-        Map<String,Object> env = new HashMap<>();
-        env.put(FILTER_PART1_KEY,filterPart1);
-        env.put(FILTER_PART2_KEY,filterPart2);
+    public Map<String, Object> executeWithGlobalFilter(final Map<String, String> expressionMap, String filterPart1, String filterPart2, final DataSet dataSet) {
+        Map<String, Object> env = new HashMap<>();
+        env.put(FILTER_PART1_KEY, filterPart1);
+        env.put(FILTER_PART2_KEY, filterPart2);
         return execute(expressionMap, env, dataSet);
     }
 }

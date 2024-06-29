@@ -1,6 +1,5 @@
 package org.soloquest.soloscan.examples;
 
-import org.soloquest.soloscan.SoloscanExecutor;
 import org.soloquest.soloscan.SoloscanExecutorExt;
 import org.soloquest.soloscan.SoloscanOptions;
 import org.soloquest.soloscan.compiler.parser.AggFunctionText;

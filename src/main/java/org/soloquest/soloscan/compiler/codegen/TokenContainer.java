@@ -6,7 +6,6 @@ import org.soloquest.soloscan.compiler.lexer.SymbolTable;
 import org.soloquest.soloscan.compiler.lexer.token.DelegateToken;
 import org.soloquest.soloscan.compiler.lexer.token.Token;
 import org.soloquest.soloscan.compiler.lexer.token.VariableToken;
-import org.soloquest.soloscan.utils.MiscUtils;
 import org.soloquest.soloscan.utils.ParserUtils;
 
 import java.util.ArrayList;

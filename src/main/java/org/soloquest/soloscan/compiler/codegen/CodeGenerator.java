@@ -3,7 +3,7 @@ package org.soloquest.soloscan.compiler.codegen;
 import org.soloquest.soloscan.compiler.lexer.token.Token;
 import org.soloquest.soloscan.compiler.parser.Parser;
 
-public interface CodeGenerator<T> {
+public interface CodeGenerator {
 
     void setParser(Parser parser);
 
@@ -58,7 +58,7 @@ public interface CodeGenerator<T> {
 
     void onNeg(Token<?> lookhead);
 
-    T getResult();
+    Object getResult();
 
     void onConstant(Token<?> lookhead);
 

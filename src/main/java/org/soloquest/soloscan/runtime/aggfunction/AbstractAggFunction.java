@@ -19,7 +19,7 @@ public abstract class AbstractAggFunction implements AggFunction {
     }
 
     @Override
-    public AggInner getFilter(){
+    public AggInner getFilter() {
         return this.aggInner;
     }
 

@@ -34,7 +34,7 @@ public class MatrixUtils {
         return true;
     }
 
-    public static Map<String,Number> clcalculateMatrix(Map<String, Number> data,int rows, int columns){
+    public static Map<String, Number> clcalculateMatrix(Map<String, Number> data, int rows, int columns) {
 
         double[][] matrix = new double[rows][columns];
         for (Map.Entry<String, Number> entry : data.entrySet()) {

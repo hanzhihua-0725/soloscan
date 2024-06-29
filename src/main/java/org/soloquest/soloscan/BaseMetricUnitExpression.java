@@ -19,6 +19,7 @@ import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
 @Slf4j
 public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
 
@@ -35,15 +36,15 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
 
 
     public BaseMetricUnitExpression(final SoloscanExecutor instance,
-                              final SymbolTable symbolTable,
-                              String expressionString) {
+                                    final SymbolTable symbolTable,
+                                    String expressionString) {
         this.symbolTable = symbolTable;
         this.instance = instance;
         this.expressionString = expressionString;
         this.placeHolder = ("PH_MU_" + (char) INIT_PLACEHOLDER.getAndIncrement()).toLowerCase();
     }
 
-    public String getPlaceHolder(){
+    public String getPlaceHolder() {
         return placeHolder;
     }
 
@@ -62,7 +63,7 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
         int filterNum = 0;
         while (true) {
             Row row = queue.poll(3, TimeUnit.SECONDS);
-            Preconditions.checkNotNull(row,"has already consumed "+rowNum+" records!");
+            Preconditions.checkNotNull(row, "has already consumed " + rowNum + " records!");
             if (row == TerminalRow.INSTANCE) {
                 log.info("{} has already processed {} records and filter {} records", this, rowNum, filterNum);
                 break;
@@ -78,7 +79,7 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
             for (AggFunction aggrFunction : aggFunctionList) {
                 aggrFunction.process(rowEnv);
             }
-            if(rowNum % 100 == 0){
+            if (rowNum % 100 == 0) {
                 Thread.yield();
             }
         }
@@ -135,15 +136,16 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
     }
 
     public abstract Object execute0(Env env);
+
     public Object execute(Map<String, Object> map) {
         log.info("{} start to execute,map:{}", this, map);
         if (map == null) {
             map = new HashMap<>();
         }
         Env env;
-        if(map instanceof Env){
+        if (map instanceof Env) {
             env = (Env) map;
-        }else{
+        } else {
             env = new Env(null, this, map);
         }
         try {

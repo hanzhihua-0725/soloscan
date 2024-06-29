@@ -1,6 +1,5 @@
 package org.soloquest.soloscan.compiler.lexer;
 
-import org.soloquest.soloscan.SoloscanExecutor;
 import org.soloquest.soloscan.SoloscanOptions;
 import org.soloquest.soloscan.compiler.lexer.token.*;
 import org.soloquest.soloscan.exception.ExpressionCompileException;
@@ -30,7 +29,7 @@ public class SoloscanLexer {
         this.lineNo = 1;
     }
 
-    public void appendString(String string){
+    public void appendString(String string) {
         int pos = this.iterator.getIndex();
         this.expression = this.expression + string;
         this.iterator = new StringCharacterIterator(this.expression);
@@ -79,7 +78,7 @@ public class SoloscanLexer {
         return false;
     }
 
-    static final char[] VALID_CHAR = {'=', '>', '<', '+', '-', '*', '/', '%', '!', '&', '|', '(', ')', '[', ']', ',', ';','{','}'};
+    static final char[] VALID_CHAR = {'=', '>', '<', '+', '-', '*', '/', '%', '!', '&', '|', '(', ')', '[', ']', ',', ';', '{', '}'};
 
 
     public static boolean isValidChar(final char ch) {

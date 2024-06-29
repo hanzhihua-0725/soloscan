@@ -32,6 +32,11 @@ public class AggInnerRealCodeGenerator extends AbstractRealCodeGenerator<AggInne
     }
 
     @Override
+    protected void setMainTokenContainer() {
+        this.tokenContainer = this.filterTokenContainer;
+    }
+
+    @Override
     public AggInner getResult() {
         initConstants();
         initVariables();

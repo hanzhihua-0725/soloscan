@@ -1,13 +1,10 @@
 package org.soloquest.soloscan.compiler.parser;
 
-import org.soloquest.soloscan.AggFunctionUnit;
 import org.soloquest.soloscan.MetricUnitExpression;
 import org.soloquest.soloscan.SoloscanExecutor;
 import org.soloquest.soloscan.compiler.SoloscanCompileInterface;
-import org.soloquest.soloscan.compiler.SoloscanCompiler;
 import org.soloquest.soloscan.compiler.codegen.AbstractCodeGenerator;
 import org.soloquest.soloscan.compiler.codegen.CodeGenerator;
-import org.soloquest.soloscan.compiler.codegen.CodeGeneratorProxy;
 import org.soloquest.soloscan.compiler.lexer.SoloscanLexer;
 import org.soloquest.soloscan.compiler.lexer.SymbolTable;
 import org.soloquest.soloscan.compiler.lexer.token.CharToken;
@@ -18,14 +15,14 @@ import org.soloquest.soloscan.utils.MiscUtils;
 
 import java.util.ArrayDeque;
 
-public class SoloscanParser<T> implements Parser {
+public class AbstractParser implements Parser {
 
-    private final SoloscanExecutor instance;
-    private final SoloscanLexer lexer;
-    private final CodeGenerator<T> codeGenerator;
+    protected final SoloscanExecutor instance;
+    protected final SoloscanLexer lexer;
+    protected final CodeGenerator codeGenerator;
 
-    private SoloscanCompileInterface compiler;
-    private Token<?> lookhead;
+    protected SoloscanCompileInterface compiler;
+    protected Token<?> lookhead;
 
     private final ArrayDeque<Token<?>> prevTokens = new ArrayDeque<>();
 
@@ -33,9 +30,9 @@ public class SoloscanParser<T> implements Parser {
         this.globalFilter = globalFilter;
     }
 
-    private String globalFilter;
+    protected String globalFilter;
 
-    public SoloscanParser(final SoloscanCompileInterface compiler,final SoloscanExecutor instance, final SoloscanLexer lexer,
+    public AbstractParser(final SoloscanCompileInterface compiler, final SoloscanExecutor instance, final SoloscanLexer lexer,
                           final CodeGenerator codeGenerator) {
         this.compiler = compiler;
         this.instance = instance;
@@ -48,82 +45,25 @@ public class SoloscanParser<T> implements Parser {
         }
     }
 
-    public void  parseEntry() {
+    public void parseEntry() {
         parseLogicalOr();
     }
 
-    public T parseSoloExpression() {
-        parseEntry();
-        if(this.lookhead != null){
-            reportCompileError(this.lookhead+" was not consumed");
-        }
-        return codeGenerator.getResult();
-    }
 
-    public T parseMetricUnitExpression() {
-        parseMetricPart();
-        if (expectChar(',')) {
-            move(true);
-            if (lookhead != null && !expectChar(',') && !expectChar(';')) {
-                parseGroupingPart();
-            }
-        }
-        if (expectChar(',')) {
-            move(true);
-            if (lookhead != null && !expectChar(',') && !expectChar(';')) {
-                parseFitlerPart();
-            }
-        }
-        if(!MiscUtils.isBlank(globalFilter)){
-            lexer.appendString(globalFilter);
-            globalFilter = null;
-            this.lookhead = this.lexer.scan();
-            parseFitlerPart();
-        }
-
-        if (lookhead == null) {
-            return (T) codeGenerator.getResult();
-        }
-        move(true);
-        return (T) codeGenerator.getResult();
-    }
-
-    public T parseAggFunctionInner() {
-        parseFitlerPart();
-        if (this.lookhead != null) {
-            reportCompileError("parserFilteWithOneArg unexpected " + this.lookhead);
-        }
-        return (T) codeGenerator.getResult();
-    }
-
-    public T parseXAggFunctionInner() {
-        parseMetricPart();
-        if (expectChar(',')) {
-            move(true);
-            parseFitlerPart();
-        } else {
-            reportCompileError("parseFilterWithTwoArg expect ','");
-        }
-        if (this.lookhead != null) {
-            reportCompileError("twoArgTernary unexpected " + this.lookhead);
-        }
-        return (T) codeGenerator.getResult();
-    }
-
-    private void parseMetricPart() {
+    protected void parseMetricPart() {
         parseEntry();
     }
 
-    private void parseFitlerPart() {
+    protected void parseFitlerPart() {
         ((AbstractCodeGenerator) this.codeGenerator).switchFilterTokenContainer();
-        if(!MiscUtils.isBlank(globalFilter)){
-            lexer.appendString(" && "+ globalFilter);
+        if (!MiscUtils.isBlank(globalFilter)) {
+            lexer.appendString(" && " + globalFilter);
             globalFilter = null;
         }
         parseEntry();
     }
 
-    private void parseGroupingPart() {
+    protected void parseGroupingPart() {
         ((AbstractCodeGenerator) this.codeGenerator).switchGroupingPart();
         if (this.lookhead.getType() == Token.TokenType.Variable && this.lookhead.getLexeme().equalsIgnoreCase("grouping")) {
             move(true);
@@ -317,7 +257,7 @@ public class SoloscanParser<T> implements Parser {
             return;
         }
 
-        if(expectChar('{')){
+        if (expectChar('{')) {
             int startIndex = this.lexer.getCurrentIndex();
             boolean hasDefaultOperation = false;
             int index = 0;
@@ -329,11 +269,11 @@ public class SoloscanParser<T> implements Parser {
                 if (expectChar('}')) {
                     index++;
                     String metricUnitString = lexer.getExpression().substring(startIndex, this.lexer.getCurrentIndex() - 1);
-                    MetricUnitExpression metricUnitExpression = (MetricUnitExpression)compiler.compileMetricUnit(metricUnitString,index);
+                    MetricUnitExpression metricUnitExpression = (MetricUnitExpression) compiler.compileMetricUnit(metricUnitString, index);
                     VariableToken variableToken = new VariableToken(metricUnitExpression.getPlaceHolder(), lookhead.getLineNo(), lookhead.getStartIndex());
                     variableToken.withMeta("IS_METRIC", true);
                     codeGenerator.onConstant(variableToken);
-                    if(hasDefaultOperation){
+                    if (hasDefaultOperation) {
                         codeGenerator.onDefaultOperation(this.lookhead);
                     }
                     move(true);
@@ -341,11 +281,11 @@ public class SoloscanParser<T> implements Parser {
                 } else if (expectChar(';')) {
                     index++;
                     String metricUnitString = lexer.getExpression().substring(startIndex, this.lexer.getCurrentIndex() - 1);
-                    MetricUnitExpression metricUnitExpression = (MetricUnitExpression)compiler.compileMetricUnit(metricUnitString,index);
+                    MetricUnitExpression metricUnitExpression = (MetricUnitExpression) compiler.compileMetricUnit(metricUnitString, index);
                     VariableToken variableToken = new VariableToken(metricUnitExpression.getPlaceHolder(), lookhead.getLineNo(), lookhead.getStartIndex());
                     variableToken.withMeta("IS_METRIC", true);
                     codeGenerator.onConstant(variableToken);
-                    if(hasDefaultOperation){
+                    if (hasDefaultOperation) {
                         codeGenerator.onDefaultOperation(this.lookhead);
                     }
                     hasDefaultOperation = true;
@@ -381,7 +321,7 @@ public class SoloscanParser<T> implements Parser {
                     parseEntry();
                     codeGenerator.onIn(this.lookhead);
                 }
-            }  else {
+            } else {
                 codeGenerator.onConstant(prev);
             }
         } else {
@@ -452,7 +392,7 @@ public class SoloscanParser<T> implements Parser {
         while (true) {
             this.lookhead = this.lexer.scan();
             if (this.lookhead == null) {
-                reportCompileError(" AggFunction ["+name + "] expression is incomplete, and it expect ')' ");
+                reportCompileError(" AggFunction [" + name + "] expression is incomplete, and it expect ')' ");
             }
             if (expectChar('(')) {
                 parenCount++;
@@ -468,7 +408,7 @@ public class SoloscanParser<T> implements Parser {
         return aggFunctionText;
     }
 
-    private boolean expectChar(final char ch) {
+    protected boolean expectChar(final char ch) {
         if (this.lookhead == null) {
             return false;
         }
@@ -481,7 +421,6 @@ public class SoloscanParser<T> implements Parser {
         }
         return this.lookhead.getType() == Token.TokenType.Variable && op.equalsIgnoreCase(this.lookhead.getLexeme());
     }
-
 
 
     public void move(final boolean analyse) {
@@ -504,7 +443,7 @@ public class SoloscanParser<T> implements Parser {
             index = this.lookhead.getStartIndex();
         }
 
-        String errorMessage = String.format("Error:%s , compile [%s] , at %d, token %s",this.lexer.getExpression(), message,index, this.lookhead);
+        String errorMessage = String.format("Error:%s , compile [%s] , at %d, token %s", this.lexer.getExpression(), message, index, this.lookhead);
 
         throw new ExpressionCompileException(errorMessage);
     }

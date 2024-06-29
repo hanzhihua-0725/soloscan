@@ -65,9 +65,9 @@ public abstract class SObject<T> {
             return -1;
         } else if (otherValue == null) {
             return 1;
-        } else if(thisValue instanceof String){
+        } else if (thisValue instanceof String) {
             return ((String) thisValue).compareTo((String) otherValue);
-        }else if(thisValue instanceof Boolean){
+        } else if (thisValue instanceof Boolean) {
             return ((Boolean) thisValue).compareTo((Boolean) otherValue);
         }
         return Numbers.compare((Number) thisValue, (Number) otherValue);

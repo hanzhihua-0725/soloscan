@@ -69,22 +69,22 @@ public class SoloscanOptions {
 
     public static void set(String key, Object value) {
         configuration.set(key, value);
-        if(SILENCE_MODE.key().equals(key)){
+        if (SILENCE_MODE.key().equals(key)) {
             LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
             ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.soloquest.soloscan");
-            if(Boolean.parseBoolean(value.toString())){
+            if (Boolean.parseBoolean(value.toString())) {
                 logger.setLevel(ch.qos.logback.classic.Level.ERROR);
-            }else{
+            } else {
                 logger.setLevel(INIT_LEVEL);
             }
         }
     }
 
-    static{
+    static {
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.soloquest.soloscan");
         INIT_LEVEL = logger.getLevel();
-        if(SILENCE_MODE.defaultValue()){
+        if (SILENCE_MODE.defaultValue()) {
             logger.setLevel(Level.ERROR);
         }
     }

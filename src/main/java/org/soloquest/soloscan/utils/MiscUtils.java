@@ -90,31 +90,32 @@ public class MiscUtils {
     }
 
     public final static Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
-    public static void applyPlaceHolder(Map<String,String> expressionMap, Map<String,String> placeHolderMap){
-        if(placeHolderMap == null || placeHolderMap.size() == 0){
-            return ;
+
+    public static void applyPlaceHolder(Map<String, String> expressionMap, Map<String, String> placeHolderMap) {
+        if (placeHolderMap == null || placeHolderMap.size() == 0) {
+            return;
         }
-        expressionMap.forEach((k,v)->{
-            if(v != null && v.contains("{{") && v.contains("}}")){
+        expressionMap.forEach((k, v) -> {
+            if (v != null && v.contains("{{") && v.contains("}}")) {
                 StringBuffer sb = new StringBuffer();
                 java.util.regex.Matcher matcher = pattern.matcher(v);
                 while (matcher.find()) {
                     String placeHolder = matcher.group(1);
                     String value = placeHolderMap.get(placeHolder);
-                    if(value != null){
+                    if (value != null) {
                         matcher.appendReplacement(sb, value);
-                    }else{
-                        log.warn("placeHolderMap not contains key:{}",placeHolder);
+                    } else {
+                        log.warn("placeHolderMap not contains key:{}", placeHolder);
                     }
                 }
                 matcher.appendTail(sb);
-                expressionMap.put(k,sb.toString());
+                expressionMap.put(k, sb.toString());
             }
         });
     }
 
     public static Map<String, Object> toLowerKey(Map<String, Object> map) {
-        if(map == null){
+        if (map == null) {
             return new HashMap<>();
         }
         Map<String, Object> resultMap = new HashMap<String, Object>();

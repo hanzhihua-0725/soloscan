@@ -45,9 +45,9 @@ public enum OperatorType {
 
     IN("in", 2),
 
-    UNION("union",2),
+    UNION("union", 2),
 
-    DEFAULTOPERATION("default_operation",2);
+    DEFAULTOPERATION("default_operation", 2);
 
     public final String token;
 

@@ -20,7 +20,7 @@ public class RuntimeUtils {
 
     }
 
-    public static final SFunction getFunction(String functionName){
+    public static final SFunction getFunction(String functionName) {
         return SoloscanExecutor.INSTANCE.getFunction(functionName);
     }
 

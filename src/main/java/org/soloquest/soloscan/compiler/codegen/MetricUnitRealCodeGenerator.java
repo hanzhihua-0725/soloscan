@@ -3,7 +3,6 @@ package org.soloquest.soloscan.compiler.codegen;
 
 import lombok.extern.slf4j.Slf4j;
 import org.soloquest.soloscan.BaseMetricUnitExpression;
-import org.soloquest.soloscan.MetricUnitExpression;
 import org.soloquest.soloscan.SoloscanExecutor;
 import org.soloquest.soloscan.SoloscanOptions;
 import org.soloquest.soloscan.compiler.asm.ClassWriter;
@@ -36,6 +35,11 @@ public class MetricUnitRealCodeGenerator extends AbstractRealCodeGenerator<BaseM
                 this.className, null, MU_SUPER_CLASSNAME, null);
 
 
+    }
+
+    @Override
+    protected void setMainTokenContainer() {
+        this.tokenContainer = this.merticsTokenContainer;
     }
 
     @Override

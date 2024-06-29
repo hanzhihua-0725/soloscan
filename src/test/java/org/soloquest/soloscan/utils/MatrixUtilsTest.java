@@ -21,7 +21,7 @@ public class MatrixUtilsTest {
         boolean result = MatrixUtils.isValidKey(key);
         Assert.assertFalse("Key should be invalid", result);
     }
-    
+
     @Test
     public void testIsComplete2DArrayTrue() {
         Map<String, String> expressions = new HashMap<>();
@@ -32,7 +32,7 @@ public class MatrixUtilsTest {
         boolean result = MatrixUtils.isComplete2DArray(expressions, 2, 2);
         Assert.assertTrue("Matrix should be complete", result);
     }
-    
+
     @Test
     public void testIsComplete2DArrayFalseDueToInvalidKey() {
         Map<String, String> expressions = new HashMap<>();
@@ -40,7 +40,7 @@ public class MatrixUtilsTest {
         boolean result = MatrixUtils.isComplete2DArray(expressions, 1, 1);
         Assert.assertFalse("Matrix should not be considered complete due to invalid key", result);
     }
-    
+
     @Test
     public void testIsComplete2DArrayFalseDueToOutOfBounds() {
         Map<String, String> expressions = new HashMap<>();
@@ -49,7 +49,7 @@ public class MatrixUtilsTest {
         boolean result = MatrixUtils.isComplete2DArray(expressions, 1, 1);
         Assert.assertFalse("Matrix should not be considered complete due to out-of-bounds key", result);
     }
-    
+
     @Test
     public void testIsComplete2DArrayFalseDueToMissingElement() {
         Map<String, String> expressions = new HashMap<>();
@@ -65,9 +65,9 @@ public class MatrixUtilsTest {
         data.put("0_1", 20);
         data.put("1_0", 30);
         data.put("1_1", 40);
-        
+
         Map<String, Number> resultMap = MatrixUtils.clcalculateMatrix(data, 2, 2);
-        
+
         // Assuming the calculation is correct and results in a map with normalized values
         // This is a placeholder check as the actual normalization logic depends on the implementation details
         Assert.assertFalse("Result map should not be empty", resultMap.isEmpty());

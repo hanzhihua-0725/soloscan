@@ -1,6 +1,5 @@
 package org.soloquest.soloscan.compiler;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

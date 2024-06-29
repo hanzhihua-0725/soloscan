@@ -1,7 +1,6 @@
 package org.soloquest.soloscan.compiler.codegen;
 
 import org.soloquest.soloscan.BaseSoloExpression;
-import org.soloquest.soloscan.Expression;
 import org.soloquest.soloscan.SoloscanExecutor;
 import org.soloquest.soloscan.SoloscanOptions;
 import org.soloquest.soloscan.compiler.asm.ClassWriter;
@@ -21,12 +20,17 @@ public class SoloExpressionRealCodeGenerator extends AbstractRealCodeGenerator<B
 
 
     public SoloExpressionRealCodeGenerator(final SoloscanExecutor instance,
-                                       final SoloscanClassloader classLoader, final Class<BaseSoloExpression> type) {
+                                           final SoloscanClassloader classLoader, final Class<BaseSoloExpression> type) {
         super(instance, classLoader, type);
         this.className = "So_" + System.currentTimeMillis() + "_" + CLASS_COUNTER.getAndIncrement();
         this.classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         this.classWriter.visit(Opcodes.V1_7, ACC_PUBLIC + ACC_SUPER,
                 this.className, null, SUPER_CLASSNAME, null);
+    }
+
+    @Override
+    protected void setMainTokenContainer() {
+        this.tokenContainer = this.merticsTokenContainer;
     }
 
     @Override
@@ -54,7 +58,7 @@ public class SoloExpressionRealCodeGenerator extends AbstractRealCodeGenerator<B
                     defineClass.getConstructor(SoloscanExecutor.class, SymbolTable.class, String.class);
             BaseSoloExpression exp = (BaseSoloExpression) constructor.newInstance(this.instance
                     , this.symbolTable, this.parser.getLexer().getExpression());
-            return  exp;
+            return exp;
         } catch (ExpressionRuntimeException e) {
             throw e;
         } catch (Throwable e) {

@@ -29,20 +29,20 @@ public class SoloscanExecutorTest {
 
     @BeforeClass
     public static synchronized void beforeClass() throws IOException {
-        if(data != null){
-            return ;
+        if (data != null) {
+            return;
         }
         data = new ArrayList<>();
         long start = System.currentTimeMillis();
         InputStream stream = SoloscanExecutorTest.class.getClassLoader().getResourceAsStream("data.xlsx");
         XSSFWorkbook workbook = new XSSFWorkbook(stream);
 
-        log.warn("read execl:{}.ms",(System.currentTimeMillis()-start));
+        log.warn("read execl:{}.ms", (System.currentTimeMillis() - start));
 
         start = System.currentTimeMillis();
         Sheet sheet = workbook.getSheetAt(0);
         int rowNums = sheet.getPhysicalNumberOfRows();
-        log.warn("rowNums:{}",rowNums);
+        log.warn("rowNums:{}", rowNums);
 
         start = System.currentTimeMillis();
         Row row = sheet.getRow(0);
@@ -51,33 +51,33 @@ public class SoloscanExecutorTest {
             cell.setCellType(CellType.STRING);
             key.add(cell.getStringCellValue());
         }
-        for(int i=1;i<rowNums;i++){
+        for (int i = 1; i < rowNums; i++) {
             row = sheet.getRow(i);
-            if(row!=null){
-                Map<String,Object> map = new HashMap<>();
+            if (row != null) {
+                Map<String, Object> map = new HashMap<>();
                 int count = 0;
-                for(int col = 0;col< key.size();col++){
+                for (int col = 0; col < key.size(); col++) {
                     Cell cell = row.getCell(col);
-                    if(cell != null){
+                    if (cell != null) {
                         cell.setCellType(CellType.STRING);
                         String value = cell.getStringCellValue();
-                        if(value!=null && !value.equals("")){
+                        if (value != null && !value.equals("")) {
                             int intValue = Integer.parseInt(value);
-                            map.put(key.get(count),intValue);
+                            map.put(key.get(count), intValue);
                         }
-                    }else{
-                        map.put(key.get(count),null);
+                    } else {
+                        map.put(key.get(count), null);
                     }
                     count++;
                 }
 
-                if(count!= key.size()){
-                    throw new RuntimeException("rowNums:"+i+"count:"+count+",key size:"+key.size());
+                if (count != key.size()) {
+                    throw new RuntimeException("rowNums:" + i + "count:" + count + ",key size:" + key.size());
                 }
                 data.add(map);
             }
         }
-        log.warn("generate map:"+(System.currentTimeMillis()-start)+".ms");
+        log.warn("generate map:" + (System.currentTimeMillis() - start) + ".ms");
         SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS.key(), true);
     }
 
@@ -91,7 +91,7 @@ public class SoloscanExecutorTest {
         list.add("{count(SCCC),grouping(SCCC),SCCC=20}");
         list.add("{count(SCCC!=20)/count()}");
         list.add("{count(SCCC),SCCC,SCCC=5||SCCC=11||SCCC=20}");
-        log.warn("result:{}",instance.executeList(list, new ListDataSet<>(data)));
+        log.warn("result:{}", instance.executeList(list, new ListDataSet<>(data)));
 
     }
 
@@ -119,8 +119,8 @@ public class SoloscanExecutorTest {
         Assert.assertEquals(result.get("row1").getClass(), Long.class);
         Assert.assertEquals(result.get("row2").getClass(), Long.class);
         Assert.assertEquals(result.get("row3").getClass(), Long.class);
-        Assert.assertTrue(Numbers.equiv(result.get("row1"),result.get("row3")));
-        Assert.assertTrue(Numbers.gt(result.get("row1"),result.get("row2")));
+        Assert.assertTrue(Numbers.equiv(result.get("row1"), result.get("row3")));
+        Assert.assertTrue(Numbers.gt(result.get("row1"), result.get("row2")));
 
 
         map.put("row1", "{count(SCCC in [5,19,20])} ");
@@ -131,8 +131,8 @@ public class SoloscanExecutorTest {
         Assert.assertEquals(result.get("row1").getClass(), Long.class);
         Assert.assertEquals(result.get("row2").getClass(), Long.class);
         Assert.assertEquals(result.get("row3").getClass(), Long.class);
-        Assert.assertTrue(Numbers.gt(result.get("row1"),result.get("row2")));
-        Assert.assertTrue(Numbers.gt(result.get("row2"),result.get("row3")));
+        Assert.assertTrue(Numbers.gt(result.get("row1"), result.get("row2")));
+        Assert.assertTrue(Numbers.gt(result.get("row2"), result.get("row3")));
 
 
         map.put("row1", "{countblank(SCCC)} ");
@@ -140,11 +140,11 @@ public class SoloscanExecutorTest {
         result = instance.execute(map, new ListDataSet<>(data));
         Assert.assertEquals(result.get("row1").getClass(), Long.class);
         Assert.assertEquals(result.get("row2").getClass(), Long.class);
-        Assert.assertTrue(Numbers.equiv(result.get("row1"),result.get("row2")));
+        Assert.assertTrue(Numbers.equiv(result.get("row1"), result.get("row2")));
     }
 
     @Test
-    public void testSumAndSumx(){
+    public void testSumAndSumx() {
 
         SoloscanExecutor instance = SoloscanExecutor.INSTANCE;
         Object object = instance.execute("{count(SCCC)}", new ListDataSet<>(data));
@@ -214,9 +214,9 @@ public class SoloscanExecutorTest {
         SoloscanExecutor instance = SoloscanExecutor.INSTANCE;
         Object object1 = instance.execute("{average(SCCC)}", new ListDataSet<>(data));
         Assert.assertTrue(object1 instanceof Double);
-        Object object2 = instance.execute("{averageX(SCCC,SCCC>"+((Double)object1).doubleValue()+")}", new ListDataSet<>(data));
+        Object object2 = instance.execute("{averageX(SCCC,SCCC>" + ((Double) object1).doubleValue() + ")}", new ListDataSet<>(data));
         Assert.assertTrue(object2 instanceof Double);
-        if(Numbers.gt(object1,0)) {
+        if (Numbers.gt(object1, 0)) {
             Assert.assertTrue(((Double) object2).doubleValue() > ((Double) object1).doubleValue());
         }
     }
@@ -252,7 +252,7 @@ public class SoloscanExecutorTest {
     public void testMultiExpression() {
         SoloscanExecutor instance = SoloscanExecutor.INSTANCE;
         Map<String, String> map = new HashMap<>();
-        Map<String, Object> result=null;
+        Map<String, Object> result = null;
         map.put("row1", "{count(SCCC),SCCC,SCCC=5||SCCC=11||SCCC=20}");
         map.put("row2", "{count(SCCC),SCCC,SCCC=5;count(SCCC),SCCC,SCCC=5} union {count(SCCC),SCCC,SCCC=11;count(SCCC),SCCC,SCCC=5} union {count(SCCC),SCCC,SCCC=20}");
         result = instance.execute(map, new ListDataSet<>(data));
@@ -300,7 +300,7 @@ public class SoloscanExecutorTest {
         SoloscanExecutor instance = SoloscanExecutor.INSTANCE;
         Map<String, String> map = new HashMap<>();
         Map<String, Object> result;
-        Object row1,row2;
+        Object row1, row2;
         map.put("row1", "{count(SCCC),SCCC,SCCC=5||SCCC=11}");
         map.put("row2", "{count(SCCC),SCCC,SCCC in [5,11]}");
         result = instance.execute(map, new ListDataSet<>(data));
@@ -309,7 +309,7 @@ public class SoloscanExecutorTest {
         row2 = result.get("row2");
         Assert.assertEquals(row1.getClass(), HashMap.class);
         Assert.assertEquals(row2.getClass(), HashMap.class);
-        Assert.assertEquals(row1,row2);
+        Assert.assertEquals(row1, row2);
 
         map.put("row1", "{count(SCCC=5||SCCC=11),SCCC}");
         map.put("row2", "{count(),SCCC,SCCC in [5,11]}");
@@ -319,7 +319,7 @@ public class SoloscanExecutorTest {
         row2 = result.get("row2");
         Assert.assertEquals(row1.getClass(), HashMap.class);
         Assert.assertEquals(row2.getClass(), HashMap.class);
-        assertEqualsAfterRemoveZero(row1,row2);
+        assertEqualsAfterRemoveZero(row1, row2);
 
         map.put("row1", "{count(SCCC in [5,11]),SCCC}");
         map.put("row2", "{count(),SCCC,SCCC in [5,11]}");
@@ -329,7 +329,7 @@ public class SoloscanExecutorTest {
         row2 = result.get("row2");
         Assert.assertEquals(row1.getClass(), HashMap.class);
         Assert.assertEquals(row2.getClass(), HashMap.class);
-        assertEqualsAfterRemoveZero(row1,row2);
+        assertEqualsAfterRemoveZero(row1, row2);
 
     }
 
@@ -396,13 +396,13 @@ public class SoloscanExecutorTest {
         } catch (ExpressionExecuteException eee) {
         }
 
-        try{
-            Map<String,String> map = new HashMap<>();
+        try {
+            Map<String, String> map = new HashMap<>();
             map.put("row1", "{count(QA2_8 =1)/count(QA2_8 in [0,1]),no_existed_group;count(QA2_8!=null),no_existed_group}");
             map.put("row2", "{count(QA2_8 =1)/count(QA2_8 in [0,1]),no_existed_group,;count(QA2_8!=null),no_existed_group,}");
             instance.execute(map, new ListDataSet<>(data));
             Assert.fail();
-        }catch (ExpressionExecuteException eee){
+        } catch (ExpressionExecuteException eee) {
 
         }
     }
@@ -422,52 +422,52 @@ public class SoloscanExecutorTest {
         map.put("row3", "{count({{key1}}),SCCC,SCCC=5} union {count(SCCC),SCCC,SCCC=11} union {count(SCCC),SCCC,SCCC=9} ");
         map.put("row4", "{count({{key1}}),SCCC,SCCC in [{{key2}}]}");
         Map<String, String> replaceHoldMap = new HashMap<>();
-        replaceHoldMap.put("key1","SCCC");
-        replaceHoldMap.put("key2","5,11,9");
+        replaceHoldMap.put("key1", "SCCC");
+        replaceHoldMap.put("key2", "5,11,9");
 
-        result = instance.executeWithPlaceHold(map,replaceHoldMap, new ListDataSet<>(data));
+        result = instance.executeWithPlaceHold(map, replaceHoldMap, new ListDataSet<>(data));
         Object row3 = result.get("row3");
         Object row4 = result.get("row4");
 
-        Assert.assertEquals(row1,row3);
-        Assert.assertEquals(row2,row4);
+        Assert.assertEquals(row1, row3);
+        Assert.assertEquals(row2, row4);
     }
 
 
     @Test
     public void testExecuteWithExecuteTimeout() {
-        SoloscanOptions.set(SoloscanOptions.EXECUTE_TIMEOUT_MS.key(),10);
+        SoloscanOptions.set(SoloscanOptions.EXECUTE_TIMEOUT_MS.key(), 10);
         SoloscanExecutor instance = SoloscanExecutor.INSTANCE;
         Map<String, String> map = new HashMap<>();
         Map<String, Object> result;
         int count = 10;
-        for(int i=0;i<count;i++)
-        map.put("row"+i, "{count(SCCC),SCCC,SCCC=5} union {count(SCCC),SCCC,SCCC=11} union {count(SCCC),SCCC,SCCC=9 }");
-        try{
+        for (int i = 0; i < count; i++)
+            map.put("row" + i, "{count(SCCC),SCCC,SCCC=5} union {count(SCCC),SCCC,SCCC=11} union {count(SCCC),SCCC,SCCC=9 }");
+        try {
             result = instance.execute(map, new ListDataSet<>(data));
             Assert.fail();
-        }catch (Exception e){
+        } catch (Exception e) {
             Assert.assertTrue(e instanceof ExpressionExecuteException);
             Assert.assertTrue(e.getCause() instanceof TimeoutException);
         }
 
-        SoloscanOptions.set(SoloscanOptions.EXECUTE_TIMEOUT_MS.key(),0);
+        SoloscanOptions.set(SoloscanOptions.EXECUTE_TIMEOUT_MS.key(), 0);
         result = instance.execute(map, new ListDataSet<>(data));
-        Assert.assertEquals(result.size(),count);
+        Assert.assertEquals(result.size(), count);
     }
 
-    private void assertEqualsAfterRemoveZero(Object inAggFilterPart,Object inFilterPart){
-        if(inAggFilterPart instanceof HashMap){
-            HashMap<String,Number> aggFilterPart = (HashMap<String,Number>)inAggFilterPart;
+    private void assertEqualsAfterRemoveZero(Object inAggFilterPart, Object inFilterPart) {
+        if (inAggFilterPart instanceof HashMap) {
+            HashMap<String, Number> aggFilterPart = (HashMap<String, Number>) inAggFilterPart;
             Iterator<String> iterator = aggFilterPart.keySet().iterator();
-            while(iterator.hasNext()){
+            while (iterator.hasNext()) {
                 String key = iterator.next();
-                if(Numbers.equiv(aggFilterPart.get(key),0)){
+                if (Numbers.equiv(aggFilterPart.get(key), 0)) {
                     iterator.remove();
                 }
             }
         }
-        Assert.assertEquals(inAggFilterPart,inFilterPart);
+        Assert.assertEquals(inAggFilterPart, inFilterPart);
     }
 
     @Test
@@ -476,10 +476,10 @@ public class SoloscanExecutorTest {
         SoloscanExecutor instance = SoloscanExecutor.INSTANCE;
         Map<String, String> map = new HashMap<>();
         Map<String, Object> result1;
-        Object row1,row2;
+        Object row1, row2;
         map.put("row1", "{count(SCCC),SCCC,S1XX=5 && RQ=3}");
         map.put("row2", "{count(SCCC),SCCC, RQ=3 }");
-        result1= instance.execute(map, new ListDataSet<>(data));
+        result1 = instance.execute(map, new ListDataSet<>(data));
         Assert.assertEquals(result1.size(), 2);
         row1 = result1.get("row1");
         row2 = result1.get("row2");
@@ -490,8 +490,8 @@ public class SoloscanExecutorTest {
 
         map.put("row1", "{count(SCCC),SCCC,S1XX=5}");
         map.put("row2", "{count(SCCC),SCCC,}");
-        Map<String, Object> result2 = extInstance.executeWithGlobalFilter(map,"RQ=3","", new ListDataSet<>(data));
-        Assert.assertEquals(result1,result2);
+        Map<String, Object> result2 = extInstance.executeWithGlobalFilter(map, "RQ=3", "", new ListDataSet<>(data));
+        Assert.assertEquals(result1, result2);
 
     }
 
@@ -517,17 +517,17 @@ public class SoloscanExecutorTest {
         list.add(p);
         DataSet dataSet = new ListDataSet<>(list);
         SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
-        Map<String,String> expressionMap = new HashMap<>();
-        expressionMap.put("row1","{sum(col1),,groupkey='a'}");
-        expressionMap.put("row2","{sum(col1),,groupkey='b'}");
-        expressionMap.put("row3","{sum(b),,a=false}");
-        expressionMap.put("row4","{sum(b),,a=true}");
-        Object result = executorExt.execute(expressionMap,dataSet);
+        Map<String, String> expressionMap = new HashMap<>();
+        expressionMap.put("row1", "{sum(col1),,groupkey='a'}");
+        expressionMap.put("row2", "{sum(col1),,groupkey='b'}");
+        expressionMap.put("row3", "{sum(b),,a=false}");
+        expressionMap.put("row4", "{sum(b),,a=true}");
+        Object result = executorExt.execute(expressionMap, dataSet);
         Assert.assertTrue(result instanceof Map);
-        Assert.assertEquals(((Map)result).get("row1"),10l);
-        Assert.assertEquals(((Map)result).get("row2"),5l);
-        Assert.assertEquals(((Map)result).get("row3"),1l);
-        Assert.assertEquals(((Map)result).get("row4"),0l);
+        Assert.assertEquals(((Map) result).get("row1"), 10l);
+        Assert.assertEquals(((Map) result).get("row2"), 5l);
+        Assert.assertEquals(((Map) result).get("row3"), 1l);
+        Assert.assertEquals(((Map) result).get("row4"), 0l);
 
     }
 
@@ -537,14 +537,14 @@ public class SoloscanExecutorTest {
         Map<String, String> map = new HashMap<>();
         map.put("row1", "{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}");
         map.put("row2", "{count(S1XX =10)/count(SCCC),;count(S1XX!=null),}");
-        instance.executeWithGlobalFilter(map,"s1=123","s1=123", new ListDataSet<>(data));
+        instance.executeWithGlobalFilter(map, "s1=123", "s1=123", new ListDataSet<>(data));
     }
 
     @Test
     public void testValidate() {
         SoloscanExecutorExt instance = SoloscanExecutorExt.INSTANCE;
         ValidatorResult rs = null;
-        rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList("S1XX","SCCC"));
+        rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList("S1XX", "SCCC"));
         Assert.assertTrue(rs.isValid());
 
         rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList());
@@ -557,18 +557,19 @@ public class SoloscanExecutorTest {
         Assert.assertTrue(rs.getErrorMessage().contains("S1XX"));
         Assert.assertTrue(!rs.getErrorMessage().contains("SCCC"));
 
-        rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList("sccc","s1xx"));
+        rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList("sccc", "s1xx"));
         Assert.assertTrue(!rs.isValid());
         Assert.assertTrue(rs.getErrorMessage().contains("S1XX"));
         Assert.assertTrue(rs.getErrorMessage().contains("SCCC"));
 
         boolean isCaseSensitive = SoloscanOptions.getOption(SoloscanOptions.COLUMN_CASE_INSENSITIVE);
         SoloscanOptions.set(SoloscanOptions.COLUMN_CASE_INSENSITIVE.key(), true);
-        rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList("sccc","s1xx"));
+        rs = instance.validate("{count(S1XX =1)/count(SCCC),;count(S1XX!=null),}", Arrays.asList("sccc", "s1xx"));
         Assert.assertTrue(rs.isValid());
-        SoloscanOptions.set(SoloscanOptions.COLUMN_CASE_INSENSITIVE.key(),isCaseSensitive);
+        SoloscanOptions.set(SoloscanOptions.COLUMN_CASE_INSENSITIVE.key(), isCaseSensitive);
 
     }
+
     @Test
     public void testExecuteWithCase() {
         List<Map> list = new ArrayList<>();
@@ -590,29 +591,29 @@ public class SoloscanExecutorTest {
         list.add(p);
         DataSet dataSet = new ListDataSet<>(list);
         SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
-        Map<String,String> expressionMap = null;
+        Map<String, String> expressionMap = null;
         Object result = null;
         expressionMap = new HashMap<>();
-        expressionMap.put("row1","{sum(col1),,groupkey='a'}");
-        expressionMap.put("row2","{sum(col1),,gRoupkey='b'}");
-        expressionMap.put("row3","{sum(B),,a=false}");
-        expressionMap.put("row4","{sum(b),,a=true}");
-        result = executorExt.execute(expressionMap,dataSet);
+        expressionMap.put("row1", "{sum(col1),,groupkey='a'}");
+        expressionMap.put("row2", "{sum(col1),,gRoupkey='b'}");
+        expressionMap.put("row3", "{sum(B),,a=false}");
+        expressionMap.put("row4", "{sum(b),,a=true}");
+        result = executorExt.execute(expressionMap, dataSet);
         Assert.assertTrue(result instanceof Map);
-        Assert.assertEquals(((Map)result).get("row1"),0l);
-        Assert.assertEquals(((Map)result).get("row2"),0l);
-        Assert.assertEquals(((Map)result).get("row3"),0l);
-        Assert.assertEquals(((Map)result).get("row4"),0l);
+        Assert.assertEquals(((Map) result).get("row1"), 0l);
+        Assert.assertEquals(((Map) result).get("row2"), 0l);
+        Assert.assertEquals(((Map) result).get("row3"), 0l);
+        Assert.assertEquals(((Map) result).get("row4"), 0l);
 
 
         SoloscanOptions.set(SoloscanOptions.COLUMN_CASE_INSENSITIVE.key(), true);
 
         dataSet = new ListDataSet<>(list);
-        result = executorExt.execute(expressionMap,dataSet);
+        result = executorExt.execute(expressionMap, dataSet);
         Assert.assertTrue(result instanceof Map);
-        Assert.assertEquals(((Map)result).get("row1"),10l);
-        Assert.assertEquals(((Map)result).get("row2"),5l);
-        Assert.assertEquals(((Map)result).get("row3"),1l);
-        Assert.assertEquals(((Map)result).get("row4"),0l);
-}
+        Assert.assertEquals(((Map) result).get("row1"), 10l);
+        Assert.assertEquals(((Map) result).get("row2"), 5l);
+        Assert.assertEquals(((Map) result).get("row3"), 1l);
+        Assert.assertEquals(((Map) result).get("row4"), 0l);
+    }
 }

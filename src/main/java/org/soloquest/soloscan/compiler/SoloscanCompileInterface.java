@@ -6,9 +6,9 @@ import org.soloquest.soloscan.compiler.parser.AggFunctionText;
 
 public interface SoloscanCompileInterface {
 
-    Expression compile(String expressionString) ;
+    Expression compile(String expressionString);
 
-    Expression compileMetricUnit(String expressionString,int index);
+    Expression compileMetricUnit(String expressionString, int index);
 
     AggFunctionUnit compileAggFunctionUnit(AggFunctionText aggFunctionText);
 }

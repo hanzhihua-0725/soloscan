@@ -68,17 +68,19 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
         this.type = type;
     }
 
-    protected void setTokens(TokenContainer merticsTokenContainer, TokenContainer groupingTokenContainer, TokenContainer filterTokenContainer, TokenContainer mainContainer) {
+    protected void setTokens(TokenContainer merticsTokenContainer, TokenContainer groupingTokenContainer, TokenContainer filterTokenContainer) {
         this.merticsTokenContainer = merticsTokenContainer;
         this.groupingTokenContainer = groupingTokenContainer;
         this.filterTokenContainer = filterTokenContainer;
-        this.tokenContainer = mainContainer;
+        setMainTokenContainer();
         this.tokenList = tokenContainer.getTokenList();
         this.variables = tokenContainer.getVariables();
         this.metricVariables = tokenContainer.getMetricsVariables();
         this.methodTokens = tokenContainer.getMethodTokens();
         this.constants = tokenContainer.getConstants();
     }
+
+    protected abstract void setMainTokenContainer();
 
     protected void setParser(Parser parser) {
         this.parser = parser;
@@ -215,7 +217,7 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
                             onJoinLeft(realToken);
                             break;
                         case Method_Name:
-                            onMethodName(realToken,isLoad);
+                            onMethodName(realToken, isLoad);
                             break;
                         case Method_Param:
                             onMethodParameter(realToken);
@@ -557,16 +559,16 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
         visitBinOperator(lookhead, OperatorType.DEFAULTOPERATION, "defaultOperation");
     }
 
-    public void onMethodName(final Token<?> lookhead,boolean isLoad) {
+    public void onMethodName(final Token<?> lookhead, boolean isLoad) {
         String outtterMethodName = lookhead.getLexeme();
-        if(isLoad) {
+        if (isLoad) {
             String innerMethodName = this.innerMethodMap.get(outtterMethodName);
             Preconditions.checkNotNull(innerMethodName, outtterMethodName + " is not init");
             if (innerMethodName != null) {
                 loadFunction(outtterMethodName, innerMethodName);
             }
-        }else{
-            if(this instanceof MetricUnitRealCodeGenerator) {
+        } else {
+            if (this instanceof MetricUnitRealCodeGenerator) {
 //                mv.visitVarInsn(ALOAD, 0);
 //                mv.visitFieldInsn(GETFIELD, Type.getInternalName(BaseExpression.class), "instance",
 //                        EXECUTOR_DESC);
@@ -577,9 +579,8 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
 //                        GET_FUNCTION_DESC);
                 this.mv.visitLdcInsn(outtterMethodName);
                 this.mv.visitMethodInsn(INVOKESTATIC, RU_OWNER, "getFunction",
-                        "(Ljava/lang/String;)"+ Type.getDescriptor(SFunction.class));
+                        "(Ljava/lang/String;)" + Type.getDescriptor(SFunction.class));
             }
-
 
 
 //            mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(ListFunction.class));

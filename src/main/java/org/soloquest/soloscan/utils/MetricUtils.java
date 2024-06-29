@@ -64,13 +64,13 @@ public class MetricUtils {
             for (String key : map1.keySet()) {
                 Number value1 = map1.get(key);
                 Number value2 = map2.get(key);
-                ((HashMap) result).put(key, Numbers.multiply(value1,value2));
+                ((HashMap) result).put(key, Numbers.multiply(value1, value2));
             }
 
         } else if (metrics1 instanceof Number) {
             Number value1 = (Number) metrics1;
             Number value2 = (Number) metrics2;
-            result = Numbers.multiply(value1,value2);
+            result = Numbers.multiply(value1, value2);
         }
         logMetric(metrics1, metrics2, result, "*");
         return result;
@@ -117,7 +117,7 @@ public class MetricUtils {
             HashMap<String, Number> map1 = (HashMap) value1;
             HashMap<String, Number> map2 = (HashMap) value2;
             map1.forEach((k, v) -> {
-                if (Numbers.equiv(map1.get(k),0)) {
+                if (Numbers.equiv(map1.get(k), 0)) {
                     if (map2.get(k).longValue() > 0) {
                         map1.put(k, 0L);
                     } else {
@@ -168,9 +168,9 @@ public class MetricUtils {
     }
 
 
-    public static Map<String, Number> slideAgg(Map<String, Number> data,int windowSize) {
+    public static Map<String, Number> slideAgg(Map<String, Number> data, int windowSize) {
         Map<String, Number> result = new HashMap<>();
-        if(data==null || data.size() == 0){
+        if (data == null || data.size() == 0) {
             return result;
         }
 
@@ -193,9 +193,9 @@ public class MetricUtils {
                 }
                 nextWeek++;
             }
-            if(count == windowSize){
-                result.put(currentWeek+"", sum);
-            }else{
+            if (count == windowSize) {
+                result.put(currentWeek + "", sum);
+            } else {
                 break;
             }
         }

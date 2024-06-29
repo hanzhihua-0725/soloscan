@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Slf4j
@@ -47,18 +46,18 @@ public abstract class BaseSoloExpression implements Expression {
         log.info("{} start to execute,map:{}", this, map);
         if (map == null) {
             map = Collections.synchronizedMap(new HashMap<>());
-        }else{
+        } else {
             map = Collections.synchronizedMap(map);
         }
         Env env = new Env(this.instance, this, map);
         metricUnitExpressions.stream().forEach(metricUnitExpression -> {
-                    metricUnitExpression.execute(env);
+            metricUnitExpression.execute(env);
         });
         return execute0(env);
     }
 
     public boolean consumeRow(Row row) {
-        for(MetricUnitExpression metricUnitExpression : metricUnitExpressions){
+        for (MetricUnitExpression metricUnitExpression : metricUnitExpressions) {
             metricUnitExpression.consumeRow(row);
         }
         return true;

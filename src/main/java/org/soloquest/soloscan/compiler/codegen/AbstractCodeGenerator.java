@@ -6,7 +6,7 @@ import org.soloquest.soloscan.compiler.lexer.token.OperatorType;
 import org.soloquest.soloscan.compiler.lexer.token.Token;
 import org.soloquest.soloscan.utils.Preconditions;
 
-public abstract class AbstractCodeGenerator<T> implements CodeGenerator<T>, CodeConstants {
+public abstract class AbstractCodeGenerator implements CodeGenerator, CodeConstants {
 
     protected TokenContainer merticsTokenContainer = new TokenContainer();
     protected TokenContainer groupingTokenContainer = new TokenContainer();
@@ -177,12 +177,12 @@ public abstract class AbstractCodeGenerator<T> implements CodeGenerator<T>, Code
     }
 
     @Override
-    public void onDefaultOperation(Token<?> lookhead){
+    public void onDefaultOperation(Token<?> lookhead) {
         this.tokenContainer.add(new OperatorToken(lookhead, OperatorType.DEFAULTOPERATION));
     }
 
     @Override
-    public void onUnion(Token<?> lookhead){
+    public void onUnion(Token<?> lookhead) {
         this.tokenContainer.add(new OperatorToken(lookhead, OperatorType.UNION));
     }
 

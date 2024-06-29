@@ -32,7 +32,7 @@ class DataProvider implements Runnable {
             for (Expression expression : expressions) {
                 expression.consumeRow(row);
             }
-            if(rowNum % 10000 == 0){
+            if (rowNum % 10000 == 0) {
                 Thread.yield();
             }
         }
@@ -40,9 +40,9 @@ class DataProvider implements Runnable {
             expression.consumeRow(TerminalRow.INSTANCE);
         }
         long cost = System.currentTimeMillis() - start;
-        if(cost > 3000){
+        if (cost > 3000) {
             log.error("Slow feed,data provider feed {} record, cost : {} ms", rowNum, cost);
-        }else if(cost > 1000){
+        } else if (cost > 1000) {
             log.warn("Slow feed, data provider feed {} record, cost : {} ms", rowNum, cost);
         }
     }

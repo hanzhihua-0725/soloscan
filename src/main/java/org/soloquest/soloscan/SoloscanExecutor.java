@@ -11,10 +11,11 @@ import org.soloquest.soloscan.dataset.DataSet;
 import org.soloquest.soloscan.exception.ExpressionExecuteException;
 import org.soloquest.soloscan.exception.ExpressionRuntimeException;
 import org.soloquest.soloscan.runtime.aggfunction.*;
-import org.soloquest.soloscan.runtime.function.*;
+import org.soloquest.soloscan.runtime.function.ListFunction;
+import org.soloquest.soloscan.runtime.function.PercentFunction;
+import org.soloquest.soloscan.runtime.function.RangeFunction;
+import org.soloquest.soloscan.runtime.function.SlideFunction;
 import org.soloquest.soloscan.runtime.lang.SFunction;
-import org.soloquest.soloscan.utils.MatrixUtils;
-import org.soloquest.soloscan.utils.MiscUtils;
 import org.soloquest.soloscan.utils.Preconditions;
 
 import java.util.Collections;
@@ -22,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -130,7 +130,7 @@ public class SoloscanExecutor {
             long start = System.currentTimeMillis();
             Map<String, String> expressionStringMap = new HashMap();
             expressionStringMap.put("row1", expression);
-            Map<String, Expression> compiledExpressionMap = getExpression(expressionStringMap,env);
+            Map<String, Expression> compiledExpressionMap = getExpression(expressionStringMap, env);
             Preconditions.checkArgument(dataSet != DataSet.EMPTY, "empty dataset");
             if (dataSet != DataSet.EMPTY)
                 DataProvider.work(dataSet, compiledExpressionMap.values().toArray(new Expression[0]));
@@ -154,17 +154,17 @@ public class SoloscanExecutor {
         long timeLeft = -1;
         ExecutorService singleThreadExecutor = null;
         ForkJoinPool forkJoinPool = null;
-        if(executeTimeoutMs > 0){
+        if (executeTimeoutMs > 0) {
             endTime = System.currentTimeMillis() + executeTimeoutMs;
             timeLeft = executeTimeoutMs;
         }
         try {
-            Map<String, Expression> compiledExpressionMap = getExpression(expressionStringMap,env);
+            Map<String, Expression> compiledExpressionMap = getExpression(expressionStringMap, env);
             Preconditions.checkArgument(expressionStringMap.size() == compiledExpressionMap.size(), "");
             if (dataSet != DataSet.EMPTY)
                 DataProvider.work(dataSet, compiledExpressionMap.values().toArray(new Expression[0]));
             log.info("expressionStringMap:{},compile expression:{},size:{}", expressionStringMap, compiledExpressionMap, compiledExpressionMap.size());
-            if(executeTimeoutMs > 0){
+            if (executeTimeoutMs > 0) {
                 timeLeft = endTime - System.currentTimeMillis();
                 if (timeLeft <= 0) {
                     throw new TimeoutException("Execute timeout on compile time");
@@ -174,11 +174,11 @@ public class SoloscanExecutor {
             if (compiledExpressionMap.size() == 1) {
                 resultMap = new HashMap<>();
                 Object object = null;
-                if(timeLeft > 0){
+                if (timeLeft > 0) {
                     singleThreadExecutor = Executors.newSingleThreadExecutor();
-                    Future<Object> future =singleThreadExecutor.submit(()->compiledExpressionMap.values().iterator().next().execute(env));
+                    Future<Object> future = singleThreadExecutor.submit(() -> compiledExpressionMap.values().iterator().next().execute(env));
                     object = future.get(timeLeft, TimeUnit.MILLISECONDS);
-                }else{
+                } else {
                     object = compiledExpressionMap.values().iterator().next().execute(env);
                 }
                 resultMap.put(compiledExpressionMap.keySet().iterator().next(), object);
@@ -196,19 +196,19 @@ public class SoloscanExecutor {
                         }
                 ).collect(Collectors.toList()));
 
-                if(executeTimeoutMs == 0){
-                    for(Future future:futureList){
+                if (executeTimeoutMs == 0) {
+                    for (Future future : futureList) {
                         future.get();
                     }
-                }else{
+                } else {
                     int index = 0;
-                    for(Future future:futureList){
+                    for (Future future : futureList) {
                         timeLeft = endTime - System.currentTimeMillis();
                         if (timeLeft <= 0) {
-                            throw new TimeoutException("Execute timeout,size:"+futureList.size()+", and timeout on index:"+index);
+                            throw new TimeoutException("Execute timeout,size:" + futureList.size() + ", and timeout on index:" + index);
                         }
                         future.get(timeLeft, TimeUnit.MILLISECONDS);
-                        index ++;
+                        index++;
                     }
                 }
             }
@@ -222,19 +222,19 @@ public class SoloscanExecutor {
                 }
             }
             throw new ExpressionExecuteException(e);
-        }finally {
-            if(singleThreadExecutor != null){
+        } finally {
+            if (singleThreadExecutor != null) {
                 singleThreadExecutor.shutdown();
             }
-            if (forkJoinPool != null){
+            if (forkJoinPool != null) {
                 forkJoinPool.shutdown();
             }
         }
     }
 
-    private Map<String, Expression> getExpression(final Map<String, String> expressionStringMap,final Map<String, Object> env) {
+    private Map<String, Expression> getExpression(final Map<String, String> expressionStringMap, final Map<String, Object> env) {
         long start = System.currentTimeMillis();
-        SoloscanCompiler soloscanCompiler = new SoloscanCompiler(SoloscanExecutor.this, this.classLoader, expressionStringMap,env);
+        SoloscanCompiler soloscanCompiler = new SoloscanCompiler(SoloscanExecutor.this, this.classLoader, expressionStringMap, env);
         Map<String, Expression> compiledExpressionMap = soloscanCompiler.compile();
         Preconditions.checkNotNull(compiledExpressionMap);
         log.info("compile expression, expression:{},cost: {}.ms", compiledExpressionMap, (System.currentTimeMillis() - start));
@@ -243,11 +243,8 @@ public class SoloscanExecutor {
 
 
     public ValidatorResult validate(final String expressionString, List<String> columnList) {
-        return validator.validate(expressionString,columnList);
+        return validator.validate(expressionString, columnList);
     }
-
-
-
 
 
 }
