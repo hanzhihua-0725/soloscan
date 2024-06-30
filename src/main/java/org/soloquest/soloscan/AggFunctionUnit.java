@@ -15,12 +15,6 @@ public class AggFunctionUnit {
     private AggFunctionText aggFunctionText;
     private AggInner aggInner = AlwaysTrueAggInner.INSTANCE;
 
-    public AggFunction genAggFunction() {
-        AggFunction aggFunction = aggFunctionGenerator.apply(aggFunctionText);
-        aggFunction.setFilter(aggInner);
-        return aggFunction;
-    }
-
     public static AggFunctionUnit newAggFunctionUnit(AggFunctionText aggFunctionText, Function<AggFunctionText, ? extends AggFunction> function, AggInner aggInner) {
         AggFunctionUnit aggFunctionUnit = new AggFunctionUnit();
         aggFunctionUnit.setAggFunctionText(aggFunctionText);
@@ -29,6 +23,12 @@ public class AggFunctionUnit {
             aggFunctionUnit.setAggInner(aggInner);
         }
         return aggFunctionUnit;
+    }
+
+    public AggFunction genAggFunction() {
+        AggFunction aggFunction = aggFunctionGenerator.apply(aggFunctionText);
+        aggFunction.setFilter(aggInner);
+        return aggFunction;
     }
 
 }

@@ -32,11 +32,14 @@ public class VariableToken extends AbstractToken<Object> {
     };
 
 
+    public VariableToken(final String name, final int lineNo, final int startIndex) {
+        super(name, lineNo, startIndex);
+    }
+
     @Override
     public TokenType getType() {
         return TokenType.Variable;
     }
-
 
     @Override
     public Object getJavaValue(final Map<String, Object> env) {
@@ -46,11 +49,6 @@ public class VariableToken extends AbstractToken<Object> {
             return null;
         }
     }
-
-    public VariableToken(final String name, final int lineNo, final int startIndex) {
-        super(name, lineNo, startIndex);
-    }
-
 
     @Override
     public String toString() {

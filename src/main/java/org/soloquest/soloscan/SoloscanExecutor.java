@@ -30,22 +30,18 @@ import java.util.stream.Collectors;
 public class SoloscanExecutor {
 
     public static final SoloscanExecutor INSTANCE = new SoloscanExecutor();
-
-    private SoloscanClassloader classLoader = new SoloscanClassloader(SoloscanExecutor.class.getClassLoader());
     private final Map<String, SFunction> funcMap = new HashMap<>();
-
     private final SololscanValidator validator = new SololscanValidator();
-
     private final ConcurrentHashMap<String, Function<AggFunctionText, ? extends AggFunction>> aggFunctionMap =
             new ConcurrentHashMap<>();
-
-    public void aliasFunction(final String name, final String aliasName) {
-        this.addFunction(aliasName, getFunction(name));
-    }
-
+    private SoloscanClassloader classLoader = new SoloscanClassloader(SoloscanExecutor.class.getClassLoader());
 
     public SoloscanExecutor() {
         loadSystemFunctions();
+    }
+
+    public void aliasFunction(final String name, final String aliasName) {
+        this.addFunction(aliasName, getFunction(name));
     }
 
     public void loadSystemFunctions() {

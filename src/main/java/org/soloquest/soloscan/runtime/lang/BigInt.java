@@ -5,12 +5,31 @@ import java.math.BigInteger;
 
 public class BigInt extends Number {
 
+    final public static BigInt ZERO = new BigInt(0, null);
+    final public static BigInt ONE = new BigInt(1, null);
     final public long lpart;
     final public BigInteger bipart;
 
-    final public static BigInt ZERO = new BigInt(0, null);
-    final public static BigInt ONE = new BigInt(1, null);
 
+    private BigInt(long lpart, BigInteger bipart) {
+        this.lpart = lpart;
+        this.bipart = bipart;
+    }
+
+    public static BigInt fromBigInteger(BigInteger val) {
+        if (val.bitLength() < 64)
+            return new BigInt(val.longValue(), null);
+        else
+            return new BigInt(0, val);
+    }
+
+    public static BigInt fromLong(long val) {
+        return new BigInt(val, null);
+    }
+
+    public static BigInt valueOf(long val) {
+        return new BigInt(val, null);
+    }
 
     //must follow Long
     public int hashCode() {
@@ -31,22 +50,6 @@ public class BigInt extends Number {
         return false;
     }
 
-    private BigInt(long lpart, BigInteger bipart) {
-        this.lpart = lpart;
-        this.bipart = bipart;
-    }
-
-    public static BigInt fromBigInteger(BigInteger val) {
-        if (val.bitLength() < 64)
-            return new BigInt(val.longValue(), null);
-        else
-            return new BigInt(0, val);
-    }
-
-    public static BigInt fromLong(long val) {
-        return new BigInt(val, null);
-    }
-
     public BigInteger toBigInteger() {
         if (bipart == null)
             return BigInteger.valueOf(lpart);
@@ -54,14 +57,14 @@ public class BigInt extends Number {
             return bipart;
     }
 
+///// java.lang.Number:
+
     public BigDecimal toBigDecimal() {
         if (bipart == null)
             return BigDecimal.valueOf(lpart);
         else
             return new BigDecimal(bipart);
     }
-
-///// java.lang.Number:
 
     public int intValue() {
         if (bipart == null)
@@ -103,10 +106,6 @@ public class BigInt extends Number {
             return (short) lpart;
         else
             return bipart.shortValue();
-    }
-
-    public static BigInt valueOf(long val) {
-        return new BigInt(val, null);
     }
 
     public String toString() {

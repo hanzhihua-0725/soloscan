@@ -16,13 +16,6 @@ public abstract class SNumber extends SObject<Number> {
         this.number = number;
     }
 
-
-    @Override
-    public Number getValue(final Map<String, Object> env) {
-        return this.number;
-    }
-
-
     public static SNumber valueOf(final Object value) {
         if (TypeUtils.isLong(value)) {
             return SLong.valueOf(((Number) value).longValue());
@@ -38,6 +31,10 @@ public abstract class SNumber extends SObject<Number> {
 
     }
 
+    @Override
+    public Number getValue(final Map<String, Object> env) {
+        return this.number;
+    }
 
     public double doubleValue() {
         return this.number.doubleValue();

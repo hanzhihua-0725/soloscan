@@ -4,18 +4,24 @@ import java.util.Map;
 
 public class SBoolean extends SObject<Boolean> {
 
+    public static final SBoolean TRUE = new SBoolean(Boolean.TRUE);
+    public static final SBoolean FALSE = new SBoolean(Boolean.FALSE);
     Boolean value;
 
-    public static final SBoolean TRUE = new SBoolean(Boolean.TRUE);
 
-    public static final SBoolean FALSE = new SBoolean(Boolean.FALSE);
+    private SBoolean(final Boolean value) {
+        super();
+        this.value = value;
+    }
 
+    public static SBoolean valueOf(final boolean b) {
+        return b ? SBoolean.TRUE : SBoolean.FALSE;
+    }
 
     @Override
     public SObject not(final Map<String, Object> env) {
         return this.value.booleanValue() ? FALSE : TRUE;
     }
-
 
     @Override
     public SObject add(final SObject other, final Map<String, Object> env) {
@@ -26,29 +32,15 @@ public class SBoolean extends SObject<Boolean> {
 
     }
 
-
     @Override
     public SObjectType getSObjectType() {
         return SObjectType.Boolean;
     }
 
-
     @Override
     public final Boolean getValue(final Map<String, Object> env) {
         return this.value;
     }
-
-
-    private SBoolean(final Boolean value) {
-        super();
-        this.value = value;
-    }
-
-
-    public static SBoolean valueOf(final boolean b) {
-        return b ? SBoolean.TRUE : SBoolean.FALSE;
-    }
-
 
     @Override
     public int innerCompare(final SObject other, final Map<String, Object> env) {

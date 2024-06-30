@@ -5,114 +5,11 @@ import java.math.BigInteger;
 
 public class Numbers {
 
-    static interface Ops {
-        Ops combine(Ops y);
-
-        Ops opsWith(LongOps x);
-
-        Ops opsWith(DoubleOps x);
-
-        Ops opsWith(BigIntOps x);
-
-        Ops opsWith(BigDecimalOps x);
-
-        Ops opsWith(RatioOps x);
-
-        public boolean isZero(Number x);
-
-        public boolean isPos(Number x);
-
-        public boolean isNeg(Number x);
-
-        public Number add(Number x, Number y);
-
-        public Number addP(Number x, Number y);
-
-        public Number unchecked_add(Number x, Number y);
-
-        public Number multiply(Number x, Number y);
-
-        public Number multiplyP(Number x, Number y);
-
-        public Number unchecked_multiply(Number x, Number y);
-
-        public Number divide(Number x, Number y);
-
-        public Number quotient(Number x, Number y);
-
-        public Number remainder(Number x, Number y);
-
-        public boolean equiv(Number x, Number y);
-
-        public boolean lt(Number x, Number y);
-
-        public boolean lte(Number x, Number y);
-
-        public boolean gte(Number x, Number y);
-
-        public Number negate(Number x);
-
-        public Number negateP(Number x);
-
-        public Number unchecked_negate(Number x);
-
-        public Number inc(Number x);
-
-        public Number incP(Number x);
-
-        public Number unchecked_inc(Number x);
-
-        public Number dec(Number x);
-
-        public Number decP(Number x);
-
-        public Number unchecked_dec(Number x);
-
-        public Number abs(Number x);
-    }
-
-    static abstract class OpsP implements Ops {
-        public Number addP(Number x, Number y) {
-            return add(x, y);
-        }
-
-        public Number unchecked_add(Number x, Number y) {
-            return add(x, y);
-        }
-
-        public Number multiplyP(Number x, Number y) {
-            return multiply(x, y);
-        }
-
-        public Number unchecked_multiply(Number x, Number y) {
-            return multiply(x, y);
-        }
-
-        public Number negateP(Number x) {
-            return negate(x);
-        }
-
-        public Number unchecked_negate(Number x) {
-            return negate(x);
-        }
-
-        public Number incP(Number x) {
-            return inc(x);
-        }
-
-        public Number unchecked_inc(Number x) {
-            return inc(x);
-        }
-
-        public Number decP(Number x) {
-            return dec(x);
-        }
-
-        public Number unchecked_dec(Number x) {
-            return dec(x);
-        }
-
-    }
+    static final LongOps LONG_OPS = new LongOps();
+    static final DoubleOps DOUBLE_OPS = new DoubleOps();
+    static final RatioOps RATIO_OPS = new RatioOps();
+    static final BigIntOps BIGINT_OPS = new BigIntOps();
+    static final BigDecimalOps BIGDECIMAL_OPS = new BigDecimalOps();
 
     static public boolean isZero(Object x) {
         return ops(x).isZero((Number) x);
@@ -360,623 +257,6 @@ public class Numbers {
                 (d.signum() < 0 ? d.negate() : d));
     }
 
-    final static class LongOps implements Ops {
-        public Ops combine(Ops y) {
-            return y.opsWith(this);
-        }
-
-        final public Ops opsWith(LongOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(DoubleOps x) {
-            return DOUBLE_OPS;
-        }
-
-        final public Ops opsWith(RatioOps x) {
-            return RATIO_OPS;
-        }
-
-        final public Ops opsWith(BigIntOps x) {
-            return BIGINT_OPS;
-        }
-
-        final public Ops opsWith(BigDecimalOps x) {
-            return BIGDECIMAL_OPS;
-        }
-
-        public boolean isZero(Number x) {
-            return x.longValue() == 0;
-        }
-
-        public boolean isPos(Number x) {
-            return x.longValue() > 0;
-        }
-
-        public boolean isNeg(Number x) {
-            return x.longValue() < 0;
-        }
-
-        final public Number add(Number x, Number y) {
-            return num(Numbers.add(x.longValue(), y.longValue()));
-        }
-
-        final public Number addP(Number x, Number y) {
-            long lx = x.longValue(), ly = y.longValue();
-            long ret = lx + ly;
-            if ((ret ^ lx) < 0 && (ret ^ ly) < 0)
-                return BIGINT_OPS.add(x, y);
-            return num(ret);
-        }
-
-        final public Number unchecked_add(Number x, Number y) {
-            return num(Numbers.unchecked_add(x.longValue(), y.longValue()));
-        }
-
-        final public Number multiply(Number x, Number y) {
-            return num(Numbers.multiply(x.longValue(), y.longValue()));
-        }
-
-        final public Number multiplyP(Number x, Number y) {
-            long lx = x.longValue(), ly = y.longValue();
-            if (lx == Long.MIN_VALUE && ly < 0)
-                return BIGINT_OPS.multiply(x, y);
-            long ret = lx * ly;
-            if (ly != 0 && ret / ly != lx)
-                return BIGINT_OPS.multiply(x, y);
-            return num(ret);
-        }
-
-        final public Number unchecked_multiply(Number x, Number y) {
-            return num(Numbers.unchecked_multiply(x.longValue(), y.longValue()));
-        }
-
-        static long gcd(long u, long v) {
-            while (v != 0) {
-                long r = u % v;
-                u = v;
-                v = r;
-            }
-            return u;
-        }
-
-        public Number divide(Number x, Number y) {
-            long n = x.longValue();
-            long val = y.longValue();
-            long gcd = gcd(n, val);
-            if (gcd == 0)
-                return num(0);
-
-            n = n / gcd;
-            long d = val / gcd;
-            if (d == 1)
-                return num(n);
-            if (d < 0) {
-                n = -n;
-                d = -d;
-            }
-            return new Ratio(BigInteger.valueOf(n), BigInteger.valueOf(d));
-        }
-
-        public Number quotient(Number x, Number y) {
-            return num(x.longValue() / y.longValue());
-        }
-
-        public Number remainder(Number x, Number y) {
-            return num(x.longValue() % y.longValue());
-        }
-
-        public boolean equiv(Number x, Number y) {
-            return x.longValue() == y.longValue();
-        }
-
-        public boolean lt(Number x, Number y) {
-            return x.longValue() < y.longValue();
-        }
-
-        public boolean lte(Number x, Number y) {
-            return x.longValue() <= y.longValue();
-        }
-
-        public boolean gte(Number x, Number y) {
-            return x.longValue() >= y.longValue();
-        }
-
-        //public Number subtract(Number x, Number y);
-        final public Number negate(Number x) {
-            long val = x.longValue();
-            return num(Numbers.minus(val));
-        }
-
-        final public Number negateP(Number x) {
-            long val = x.longValue();
-            if (val > Long.MIN_VALUE)
-                return num(-val);
-            return BigInt.fromBigInteger(BigInteger.valueOf(val).negate());
-        }
-
-        final public Number unchecked_negate(Number x) {
-            long val = x.longValue();
-            return num(Numbers.unchecked_minus(val));
-        }
-
-        public Number inc(Number x) {
-            long val = x.longValue();
-            return num(Numbers.inc(val));
-        }
-
-        public Number incP(Number x) {
-            long val = x.longValue();
-            if (val < Long.MAX_VALUE)
-                return num(val + 1);
-            return BIGINT_OPS.inc(x);
-        }
-
-        public Number unchecked_inc(Number x) {
-            long val = x.longValue();
-            return num(Numbers.unchecked_inc(val));
-        }
-
-        public Number dec(Number x) {
-            long val = x.longValue();
-            return num(Numbers.dec(val));
-        }
-
-        public Number decP(Number x) {
-            long val = x.longValue();
-            if (val > Long.MIN_VALUE)
-                return num(val - 1);
-            return BIGINT_OPS.dec(x);
-        }
-
-        public Number unchecked_dec(Number x) {
-            long val = x.longValue();
-            return num(Numbers.unchecked_dec(val));
-        }
-
-        public Number abs(Number x) {
-            return num(Math.abs(x.longValue()));
-        }
-    }
-
-    final static class DoubleOps extends OpsP {
-        public Ops combine(Ops y) {
-            return y.opsWith(this);
-        }
-
-        final public Ops opsWith(LongOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(DoubleOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(RatioOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(BigIntOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(BigDecimalOps x) {
-            return this;
-        }
-
-        public boolean isZero(Number x) {
-            return x.doubleValue() == 0;
-        }
-
-        public boolean isPos(Number x) {
-            return x.doubleValue() > 0;
-        }
-
-        public boolean isNeg(Number x) {
-            return x.doubleValue() < 0;
-        }
-
-        final public Number add(Number x, Number y) {
-            return Double.valueOf(x.doubleValue() + y.doubleValue());
-        }
-
-        final public Number multiply(Number x, Number y) {
-            return Double.valueOf(x.doubleValue() * y.doubleValue());
-        }
-
-        public Number divide(Number x, Number y) {
-            return Double.valueOf(x.doubleValue() / y.doubleValue());
-        }
-
-        public Number quotient(Number x, Number y) {
-            return Numbers.quotient(x.doubleValue(), y.doubleValue());
-        }
-
-        public Number remainder(Number x, Number y) {
-            return Numbers.remainder(x.doubleValue(), y.doubleValue());
-        }
-
-        public boolean equiv(Number x, Number y) {
-            return x.doubleValue() == y.doubleValue();
-        }
-
-        public boolean lt(Number x, Number y) {
-            return x.doubleValue() < y.doubleValue();
-        }
-
-        public boolean lte(Number x, Number y) {
-            return x.doubleValue() <= y.doubleValue();
-        }
-
-        public boolean gte(Number x, Number y) {
-            return x.doubleValue() >= y.doubleValue();
-        }
-
-        //public Number subtract(Number x, Number y);
-        final public Number negate(Number x) {
-            return Double.valueOf(-x.doubleValue());
-        }
-
-        public Number inc(Number x) {
-            return Double.valueOf(x.doubleValue() + 1);
-        }
-
-        public Number dec(Number x) {
-            return Double.valueOf(x.doubleValue() - 1);
-        }
-
-        public Number abs(Number x) {
-            return num(Math.abs(x.doubleValue()));
-        }
-    }
-
-    final static class RatioOps extends OpsP {
-        public Ops combine(Ops y) {
-            return y.opsWith((RatioOps) this);
-//            return this;
-        }
-
-        final public Ops opsWith(LongOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(DoubleOps x) {
-            return DOUBLE_OPS;
-        }
-
-        final public Ops opsWith(RatioOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(BigIntOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(BigDecimalOps x) {
-            return BIGDECIMAL_OPS;
-        }
-
-        public boolean isZero(Number x) {
-            Ratio r = (Ratio) x;
-            return r.numerator.signum() == 0;
-        }
-
-        public boolean isPos(Number x) {
-            Ratio r = (Ratio) x;
-            return r.numerator.signum() > 0;
-        }
-
-        public boolean isNeg(Number x) {
-            Ratio r = (Ratio) x;
-            return r.numerator.signum() < 0;
-        }
-
-        static Number normalizeRet(Number ret, Number x, Number y) {
-//		if(ret instanceof BigInteger && !(x instanceof BigInteger || y instanceof BigInteger))
-//			{
-//			return reduceBigInt((BigInteger) ret);
-//			}
-            return ret;
-        }
-
-        final public Number add(Number x, Number y) {
-            Ratio rx = toRatio(x);
-            Ratio ry = toRatio(y);
-            Number ret = divide(ry.numerator.multiply(rx.denominator)
-                            .add(rx.numerator.multiply(ry.denominator))
-                    , ry.denominator.multiply(rx.denominator));
-            return normalizeRet(ret, x, y);
-        }
-
-        final public Number multiply(Number x, Number y) {
-            Ratio rx = toRatio(x);
-            Ratio ry = toRatio(y);
-            Number ret = Numbers.divide(ry.numerator.multiply(rx.numerator)
-                    , ry.denominator.multiply(rx.denominator));
-            return normalizeRet(ret, x, y);
-        }
-
-        public Number divide(Number x, Number y) {
-            Ratio rx = toRatio(x);
-            Ratio ry = toRatio(y);
-            Number ret = Numbers.divide(ry.denominator.multiply(rx.numerator)
-                    , ry.numerator.multiply(rx.denominator));
-            return normalizeRet(ret, x, y);
-        }
-
-        public Number quotient(Number x, Number y) {
-            Ratio rx = toRatio(x);
-            Ratio ry = toRatio(y);
-            BigInteger q = rx.numerator.multiply(ry.denominator).divide(
-                    rx.denominator.multiply(ry.numerator));
-            return normalizeRet(BigInt.fromBigInteger(q), x, y);
-        }
-
-        public Number remainder(Number x, Number y) {
-            Ratio rx = toRatio(x);
-            Ratio ry = toRatio(y);
-            BigInteger q = rx.numerator.multiply(ry.denominator).divide(
-                    rx.denominator.multiply(ry.numerator));
-            Number ret = Numbers.minus(x, Numbers.multiply(q, y));
-            return normalizeRet(ret, x, y);
-        }
-
-        public boolean equiv(Number x, Number y) {
-            Ratio rx = toRatio(x);
-            Ratio ry = toRatio(y);
-            return rx.numerator.equals(ry.numerator)
-                    && rx.denominator.equals(ry.denominator);
-        }
-
-        public boolean lt(Number x, Number y) {
-            Ratio rx = toRatio(x);
-            Ratio ry = toRatio(y);
-            return Numbers.lt(rx.numerator.multiply(ry.denominator), ry.numerator.multiply(rx.denominator));
-        }
-
-        public boolean lte(Number x, Number y) {
-            Ratio rx = toRatio(x);
-            Ratio ry = toRatio(y);
-            return Numbers.lte(rx.numerator.multiply(ry.denominator), ry.numerator.multiply(rx.denominator));
-        }
-
-        public boolean gte(Number x, Number y) {
-            Ratio rx = toRatio(x);
-            Ratio ry = toRatio(y);
-            return Numbers.gte(rx.numerator.multiply(ry.denominator), ry.numerator.multiply(rx.denominator));
-        }
-
-        //public Number subtract(Number x, Number y);
-        final public Number negate(Number x) {
-            Ratio r = (Ratio) x;
-            return new Ratio(r.numerator.negate(), r.denominator);
-        }
-
-        public Number inc(Number x) {
-            return Numbers.add(x, 1);
-        }
-
-        public Number dec(Number x) {
-            return Numbers.add(x, -1);
-        }
-
-        public Number abs(Number x) {
-            Ratio r = (Ratio) x;
-            return new Ratio(r.numerator.abs(), r.denominator);
-        }
-
-    }
-
-    final static class BigIntOps extends OpsP {
-        public Ops combine(Ops y) {
-            return y.opsWith(this);
-        }
-
-        final public Ops opsWith(LongOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(DoubleOps x) {
-            return DOUBLE_OPS;
-        }
-
-        final public Ops opsWith(RatioOps x) {
-            return RATIO_OPS;
-        }
-
-        final public Ops opsWith(BigIntOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(BigDecimalOps x) {
-            return BIGDECIMAL_OPS;
-        }
-
-        public boolean isZero(Number x) {
-            BigInt bx = toBigInt(x);
-            if (bx.bipart == null)
-                return bx.lpart == 0;
-            return bx.bipart.signum() == 0;
-        }
-
-        public boolean isPos(Number x) {
-            BigInt bx = toBigInt(x);
-            if (bx.bipart == null)
-                return bx.lpart > 0;
-            return bx.bipart.signum() > 0;
-        }
-
-        public boolean isNeg(Number x) {
-            BigInt bx = toBigInt(x);
-            if (bx.bipart == null)
-                return bx.lpart < 0;
-            return bx.bipart.signum() < 0;
-        }
-
-        final public Number add(Number x, Number y) {
-            return toBigInt(x).add(toBigInt(y));
-        }
-
-        final public Number multiply(Number x, Number y) {
-            return toBigInt(x).multiply(toBigInt(y));
-        }
-
-        public Number divide(Number x, Number y) {
-            return Numbers.divide(toBigInteger(x), toBigInteger(y));
-        }
-
-        public Number quotient(Number x, Number y) {
-            return toBigInt(x).quotient(toBigInt(y));
-        }
-
-        public Number remainder(Number x, Number y) {
-            return toBigInt(x).remainder(toBigInt(y));
-        }
-
-        public boolean equiv(Number x, Number y) {
-            return toBigInt(x).equals(toBigInt(y));
-        }
-
-        public boolean lt(Number x, Number y) {
-            return toBigInt(x).lt(toBigInt(y));
-        }
-
-        public boolean lte(Number x, Number y) {
-            return toBigInteger(x).compareTo(toBigInteger(y)) <= 0;
-        }
-
-        public boolean gte(Number x, Number y) {
-            return toBigInteger(x).compareTo(toBigInteger(y)) >= 0;
-        }
-
-        //public Number subtract(Number x, Number y);
-        final public Number negate(Number x) {
-            return BigInt.fromBigInteger(toBigInteger(x).negate());
-        }
-
-        public Number inc(Number x) {
-            BigInteger bx = toBigInteger(x);
-            return BigInt.fromBigInteger(bx.add(BigInteger.ONE));
-        }
-
-        public Number dec(Number x) {
-            BigInteger bx = toBigInteger(x);
-            return BigInt.fromBigInteger(bx.subtract(BigInteger.ONE));
-        }
-
-        public Number abs(Number x) {
-            return BigInt.fromBigInteger(toBigInteger(x).abs());
-        }
-    }
-
-
-    final static class BigDecimalOps extends OpsP {
-        public Ops combine(Ops y) {
-            return y.opsWith(this);
-        }
-
-        final public Ops opsWith(LongOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(DoubleOps x) {
-            return DOUBLE_OPS;
-        }
-
-        final public Ops opsWith(RatioOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(BigIntOps x) {
-            return this;
-        }
-
-        final public Ops opsWith(BigDecimalOps x) {
-            return this;
-        }
-
-        public boolean isZero(Number x) {
-            BigDecimal bx = (BigDecimal) x;
-            return bx.signum() == 0;
-        }
-
-        public boolean isPos(Number x) {
-            BigDecimal bx = (BigDecimal) x;
-            return bx.signum() > 0;
-        }
-
-        public boolean isNeg(Number x) {
-            BigDecimal bx = (BigDecimal) x;
-            return bx.signum() < 0;
-        }
-
-        final public Number add(Number x, Number y) {
-            return toBigDecimal(x).add(toBigDecimal(y));
-        }
-
-        final public Number multiply(Number x, Number y) {
-            return toBigDecimal(x).multiply(toBigDecimal(y));
-        }
-
-        public Number divide(Number x, Number y) {
-            return toBigDecimal(x).multiply(toBigDecimal(y));
-        }
-
-        public Number quotient(Number x, Number y) {
-            return toBigDecimal(x).divideToIntegralValue(toBigDecimal(y));
-        }
-
-        public Number remainder(Number x, Number y) {
-            return toBigDecimal(x).remainder(toBigDecimal(y));
-        }
-
-        public boolean equiv(Number x, Number y) {
-            return toBigDecimal(x).compareTo(toBigDecimal(y)) == 0;
-        }
-
-        public boolean lt(Number x, Number y) {
-            return toBigDecimal(x).compareTo(toBigDecimal(y)) < 0;
-        }
-
-        public boolean lte(Number x, Number y) {
-            return toBigDecimal(x).compareTo(toBigDecimal(y)) <= 0;
-        }
-
-        public boolean gte(Number x, Number y) {
-            return toBigDecimal(x).compareTo(toBigDecimal(y)) >= 0;
-        }
-
-        //public Number subtract(Number x, Number y);
-        final public Number negate(Number x) {
-            return ((BigDecimal) x).negate();
-        }
-
-        public Number inc(Number x) {
-            BigDecimal bx = (BigDecimal) x;
-            return bx.add(BigDecimal.ONE);
-        }
-
-        public Number dec(Number x) {
-            BigDecimal bx = (BigDecimal) x;
-            return bx.subtract(BigDecimal.ONE);
-        }
-
-        public Number abs(Number x) {
-            BigDecimal bx = (BigDecimal) x;
-            return ((BigDecimal) x).abs();
-        }
-    }
-
-    static final LongOps LONG_OPS = new LongOps();
-    static final DoubleOps DOUBLE_OPS = new DoubleOps();
-    static final RatioOps RATIO_OPS = new RatioOps();
-    static final BigIntOps BIGINT_OPS = new BigIntOps();
-    static final BigDecimalOps BIGDECIMAL_OPS = new BigDecimalOps();
-
-    static public enum Category {INTEGER, FLOATING, DECIMAL, RATIO}
-
-    ;
-
     static Ops ops(Object x) {
         Class xc = x.getClass();
 
@@ -1057,6 +337,8 @@ public class Numbers {
     static public float[] floats(Object array) {
         return (float[]) array;
     }
+
+    ;
 
     @WarnBoxedMath(false)
     static public double[] doubles(Object array) {
@@ -1173,10 +455,6 @@ public class Numbers {
         throw new ArithmeticException("integer overflow");
     }
 
-//static public Number num(int x){
-//	return Integer.valueOf(x);
-//}
-
     static public int unchecked_int_add(int x, int y) {
         return x + y;
     }
@@ -1201,17 +479,6 @@ public class Numbers {
         return x * y;
     }
 
-//static public int add(int x, int y){
-//	int ret = x + y;
-//	if ((ret ^ x) < 0 && (ret ^ y) < 0)
-//		return throwIntOverflow();
-//	return ret;
-//}
-
-//static public int not(int x){
-//	return ~x;
-//}
-
     static public long not(Object x) {
         return not(bitOpsCast(x));
     }
@@ -1219,8 +486,9 @@ public class Numbers {
     static public long not(long x) {
         return ~x;
     }
-//static public int and(int x, int y){
-//	return x & y;
+
+//static public Number num(int x){
+//	return Integer.valueOf(x);
 //}
 
     static public long and(Object x, Object y) {
@@ -1239,10 +507,6 @@ public class Numbers {
         return x & y;
     }
 
-//static public int or(int x, int y){
-//	return x | y;
-//}
-
     static public long or(Object x, Object y) {
         return or(bitOpsCast(x), bitOpsCast(y));
     }
@@ -1251,6 +515,17 @@ public class Numbers {
         return or(bitOpsCast(x), y);
     }
 
+//static public int add(int x, int y){
+//	int ret = x + y;
+//	if ((ret ^ x) < 0 && (ret ^ y) < 0)
+//		return throwIntOverflow();
+//	return ret;
+//}
+
+//static public int not(int x){
+//	return ~x;
+//}
+
     static public long or(long x, Object y) {
         return or(x, bitOpsCast(y));
     }
@@ -1258,9 +533,8 @@ public class Numbers {
     static public long or(long x, long y) {
         return x | y;
     }
-
-//static public int xor(int x, int y){
-//	return x ^ y;
+//static public int and(int x, int y){
+//	return x & y;
 //}
 
     static public long xor(Object x, Object y) {
@@ -1279,6 +553,10 @@ public class Numbers {
         return x ^ y;
     }
 
+//static public int or(int x, int y){
+//	return x | y;
+//}
+
     static public long andNot(Object x, Object y) {
         return andNot(bitOpsCast(x), bitOpsCast(y));
     }
@@ -1294,6 +572,10 @@ public class Numbers {
     static public long andNot(long x, long y) {
         return x & ~y;
     }
+
+//static public int xor(int x, int y){
+//	return x ^ y;
+//}
 
     static public long clearBit(Object x, Object y) {
         return clearBit(bitOpsCast(x), bitOpsCast(y));
@@ -1359,6 +641,38 @@ public class Numbers {
         return (x & (1L << n)) != 0;
     }
 
+    static public int unchecked_int_divide(int x, int y) {
+        return x / y;
+    }
+
+    static public int unchecked_int_remainder(int x, int y) {
+        return x % y;
+    }
+
+    static public Number num(long x) {
+        return Long.valueOf(x);
+    }
+
+    static public long unchecked_add(long x, long y) {
+        return x + y;
+    }
+
+    static public long unchecked_minus(long x, long y) {
+        return x - y;
+    }
+
+    static public long unchecked_multiply(long x, long y) {
+        return x * y;
+    }
+
+    static public long unchecked_minus(long x) {
+        return -x;
+    }
+
+    static public long unchecked_inc(long x) {
+        return x + 1;
+    }
+
 //static public int minus(int x, int y){
 //	int ret = x - y;
 //	if (((ret ^ x) < 0 && (ret ^ ~y) < 0))
@@ -1391,12 +705,12 @@ public class Numbers {
 //	return ret;
 //}
 
-    static public int unchecked_int_divide(int x, int y) {
-        return x / y;
+    static public long unchecked_dec(long x) {
+        return x - 1;
     }
 
-    static public int unchecked_int_remainder(int x, int y) {
-        return x % y;
+    static public Number unchecked_add(Object x, Object y) {
+        return ops(x).combine(ops(y)).unchecked_add((Number) x, (Number) y);
     }
 
 //static public boolean equiv(int x, int y){
@@ -1430,38 +744,6 @@ public class Numbers {
 //static public boolean isZero(int x){
 //	return x == 0;
 //}
-
-    static public Number num(long x) {
-        return Long.valueOf(x);
-    }
-
-    static public long unchecked_add(long x, long y) {
-        return x + y;
-    }
-
-    static public long unchecked_minus(long x, long y) {
-        return x - y;
-    }
-
-    static public long unchecked_multiply(long x, long y) {
-        return x * y;
-    }
-
-    static public long unchecked_minus(long x) {
-        return -x;
-    }
-
-    static public long unchecked_inc(long x) {
-        return x + 1;
-    }
-
-    static public long unchecked_dec(long x) {
-        return x - 1;
-    }
-
-    static public Number unchecked_add(Object x, Object y) {
-        return ops(x).combine(ops(y)).unchecked_add((Number) x, (Number) y);
-    }
 
     static public Number unchecked_minus(Object x, Object y) {
         Ops yops = ops(y);
@@ -1680,7 +962,6 @@ public class Numbers {
         return num(x - 1);
     }
 
-
     static public long multiply(long x, long y) {
         return Math.multiplyExact(x, y);
     }
@@ -1732,6 +1013,38 @@ public class Numbers {
 
     static public boolean isZero(long x) {
         return x == 0;
+    }
+
+    static public Number add(long x, Object y) {
+        return add((Object) x, y);
+    }
+
+    static public Number add(Object x, long y) {
+        return add(x, (Object) y);
+    }
+
+    static public Number addP(long x, Object y) {
+        return addP((Object) x, y);
+    }
+
+    static public Number addP(Object x, long y) {
+        return addP(x, (Object) y);
+    }
+
+    static public double add(double x, Object y) {
+        return add(x, ((Number) y).doubleValue());
+    }
+
+    static public double add(Object x, double y) {
+        return add(((Number) x).doubleValue(), y);
+    }
+
+    static public double add(double x, long y) {
+        return x + y;
+    }
+
+    static public double add(long x, double y) {
+        return x + y;
     }
 
 /*
@@ -3453,38 +2766,6 @@ static public class L{
 //overload resolution
 //*
 
-    static public Number add(long x, Object y) {
-        return add((Object) x, y);
-    }
-
-    static public Number add(Object x, long y) {
-        return add(x, (Object) y);
-    }
-
-    static public Number addP(long x, Object y) {
-        return addP((Object) x, y);
-    }
-
-    static public Number addP(Object x, long y) {
-        return addP(x, (Object) y);
-    }
-
-    static public double add(double x, Object y) {
-        return add(x, ((Number) y).doubleValue());
-    }
-
-    static public double add(Object x, double y) {
-        return add(((Number) x).doubleValue(), y);
-    }
-
-    static public double add(double x, long y) {
-        return x + y;
-    }
-
-    static public double add(long x, double y) {
-        return x + y;
-    }
-
     static public double addP(double x, Object y) {
         return addP(x, ((Number) y).doubleValue());
     }
@@ -3745,7 +3026,6 @@ static public class L{
         return x == y;
     }
 
-
     static boolean isNaN(Object x) {
         return (x instanceof Double) && ((Double) x).isNaN()
                 || (x instanceof Float) && ((Float) x).isNaN();
@@ -3790,11 +3070,9 @@ static public class L{
         }
     }
 
-
     static public long max(long x, long y) {
         return Math.max(x, y);
     }
-
 
     static public Object max(long x, Object y) {
         if (isNaN(y)) {
@@ -3844,7 +3122,6 @@ static public class L{
         }
     }
 
-
     static public double min(double x, double y) {
         return Math.min(x, y);
     }
@@ -3883,7 +3160,6 @@ static public class L{
             return y;
         }
     }
-
 
     static public long min(long x, long y) {
         return Math.min(x, y);
@@ -3947,6 +3223,724 @@ static public class L{
 
     static public Number abs(Object x) {
         return ops(x).abs((Number) x);
+    }
+
+
+    static public enum Category {INTEGER, FLOATING, DECIMAL, RATIO}
+
+    static interface Ops {
+        Ops combine(Ops y);
+
+        Ops opsWith(LongOps x);
+
+        Ops opsWith(DoubleOps x);
+
+        Ops opsWith(BigIntOps x);
+
+        Ops opsWith(BigDecimalOps x);
+
+        Ops opsWith(RatioOps x);
+
+        public boolean isZero(Number x);
+
+        public boolean isPos(Number x);
+
+        public boolean isNeg(Number x);
+
+        public Number add(Number x, Number y);
+
+        public Number addP(Number x, Number y);
+
+        public Number unchecked_add(Number x, Number y);
+
+        public Number multiply(Number x, Number y);
+
+        public Number multiplyP(Number x, Number y);
+
+        public Number unchecked_multiply(Number x, Number y);
+
+        public Number divide(Number x, Number y);
+
+        public Number quotient(Number x, Number y);
+
+        public Number remainder(Number x, Number y);
+
+        public boolean equiv(Number x, Number y);
+
+        public boolean lt(Number x, Number y);
+
+        public boolean lte(Number x, Number y);
+
+        public boolean gte(Number x, Number y);
+
+        public Number negate(Number x);
+
+        public Number negateP(Number x);
+
+        public Number unchecked_negate(Number x);
+
+        public Number inc(Number x);
+
+        public Number incP(Number x);
+
+        public Number unchecked_inc(Number x);
+
+        public Number dec(Number x);
+
+        public Number decP(Number x);
+
+        public Number unchecked_dec(Number x);
+
+        public Number abs(Number x);
+    }
+
+    static abstract class OpsP implements Ops {
+        public Number addP(Number x, Number y) {
+            return add(x, y);
+        }
+
+        public Number unchecked_add(Number x, Number y) {
+            return add(x, y);
+        }
+
+        public Number multiplyP(Number x, Number y) {
+            return multiply(x, y);
+        }
+
+        public Number unchecked_multiply(Number x, Number y) {
+            return multiply(x, y);
+        }
+
+        public Number negateP(Number x) {
+            return negate(x);
+        }
+
+        public Number unchecked_negate(Number x) {
+            return negate(x);
+        }
+
+        public Number incP(Number x) {
+            return inc(x);
+        }
+
+        public Number unchecked_inc(Number x) {
+            return inc(x);
+        }
+
+        public Number decP(Number x) {
+            return dec(x);
+        }
+
+        public Number unchecked_dec(Number x) {
+            return dec(x);
+        }
+
+    }
+
+    final static class LongOps implements Ops {
+        static long gcd(long u, long v) {
+            while (v != 0) {
+                long r = u % v;
+                u = v;
+                v = r;
+            }
+            return u;
+        }
+
+        public Ops combine(Ops y) {
+            return y.opsWith(this);
+        }
+
+        final public Ops opsWith(LongOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(DoubleOps x) {
+            return DOUBLE_OPS;
+        }
+
+        final public Ops opsWith(RatioOps x) {
+            return RATIO_OPS;
+        }
+
+        final public Ops opsWith(BigIntOps x) {
+            return BIGINT_OPS;
+        }
+
+        final public Ops opsWith(BigDecimalOps x) {
+            return BIGDECIMAL_OPS;
+        }
+
+        public boolean isZero(Number x) {
+            return x.longValue() == 0;
+        }
+
+        public boolean isPos(Number x) {
+            return x.longValue() > 0;
+        }
+
+        public boolean isNeg(Number x) {
+            return x.longValue() < 0;
+        }
+
+        final public Number add(Number x, Number y) {
+            return num(Numbers.add(x.longValue(), y.longValue()));
+        }
+
+        final public Number addP(Number x, Number y) {
+            long lx = x.longValue(), ly = y.longValue();
+            long ret = lx + ly;
+            if ((ret ^ lx) < 0 && (ret ^ ly) < 0)
+                return BIGINT_OPS.add(x, y);
+            return num(ret);
+        }
+
+        final public Number unchecked_add(Number x, Number y) {
+            return num(Numbers.unchecked_add(x.longValue(), y.longValue()));
+        }
+
+        final public Number multiply(Number x, Number y) {
+            return num(Numbers.multiply(x.longValue(), y.longValue()));
+        }
+
+        final public Number multiplyP(Number x, Number y) {
+            long lx = x.longValue(), ly = y.longValue();
+            if (lx == Long.MIN_VALUE && ly < 0)
+                return BIGINT_OPS.multiply(x, y);
+            long ret = lx * ly;
+            if (ly != 0 && ret / ly != lx)
+                return BIGINT_OPS.multiply(x, y);
+            return num(ret);
+        }
+
+        final public Number unchecked_multiply(Number x, Number y) {
+            return num(Numbers.unchecked_multiply(x.longValue(), y.longValue()));
+        }
+
+        public Number divide(Number x, Number y) {
+            long n = x.longValue();
+            long val = y.longValue();
+            long gcd = gcd(n, val);
+            if (gcd == 0)
+                return num(0);
+
+            n = n / gcd;
+            long d = val / gcd;
+            if (d == 1)
+                return num(n);
+            if (d < 0) {
+                n = -n;
+                d = -d;
+            }
+            return new Ratio(BigInteger.valueOf(n), BigInteger.valueOf(d));
+        }
+
+        public Number quotient(Number x, Number y) {
+            return num(x.longValue() / y.longValue());
+        }
+
+        public Number remainder(Number x, Number y) {
+            return num(x.longValue() % y.longValue());
+        }
+
+        public boolean equiv(Number x, Number y) {
+            return x.longValue() == y.longValue();
+        }
+
+        public boolean lt(Number x, Number y) {
+            return x.longValue() < y.longValue();
+        }
+
+        public boolean lte(Number x, Number y) {
+            return x.longValue() <= y.longValue();
+        }
+
+        public boolean gte(Number x, Number y) {
+            return x.longValue() >= y.longValue();
+        }
+
+        //public Number subtract(Number x, Number y);
+        final public Number negate(Number x) {
+            long val = x.longValue();
+            return num(Numbers.minus(val));
+        }
+
+        final public Number negateP(Number x) {
+            long val = x.longValue();
+            if (val > Long.MIN_VALUE)
+                return num(-val);
+            return BigInt.fromBigInteger(BigInteger.valueOf(val).negate());
+        }
+
+        final public Number unchecked_negate(Number x) {
+            long val = x.longValue();
+            return num(Numbers.unchecked_minus(val));
+        }
+
+        public Number inc(Number x) {
+            long val = x.longValue();
+            return num(Numbers.inc(val));
+        }
+
+        public Number incP(Number x) {
+            long val = x.longValue();
+            if (val < Long.MAX_VALUE)
+                return num(val + 1);
+            return BIGINT_OPS.inc(x);
+        }
+
+        public Number unchecked_inc(Number x) {
+            long val = x.longValue();
+            return num(Numbers.unchecked_inc(val));
+        }
+
+        public Number dec(Number x) {
+            long val = x.longValue();
+            return num(Numbers.dec(val));
+        }
+
+        public Number decP(Number x) {
+            long val = x.longValue();
+            if (val > Long.MIN_VALUE)
+                return num(val - 1);
+            return BIGINT_OPS.dec(x);
+        }
+
+        public Number unchecked_dec(Number x) {
+            long val = x.longValue();
+            return num(Numbers.unchecked_dec(val));
+        }
+
+        public Number abs(Number x) {
+            return num(Math.abs(x.longValue()));
+        }
+    }
+
+    final static class DoubleOps extends OpsP {
+        public Ops combine(Ops y) {
+            return y.opsWith(this);
+        }
+
+        final public Ops opsWith(LongOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(DoubleOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(RatioOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(BigIntOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(BigDecimalOps x) {
+            return this;
+        }
+
+        public boolean isZero(Number x) {
+            return x.doubleValue() == 0;
+        }
+
+        public boolean isPos(Number x) {
+            return x.doubleValue() > 0;
+        }
+
+        public boolean isNeg(Number x) {
+            return x.doubleValue() < 0;
+        }
+
+        final public Number add(Number x, Number y) {
+            return Double.valueOf(x.doubleValue() + y.doubleValue());
+        }
+
+        final public Number multiply(Number x, Number y) {
+            return Double.valueOf(x.doubleValue() * y.doubleValue());
+        }
+
+        public Number divide(Number x, Number y) {
+            return Double.valueOf(x.doubleValue() / y.doubleValue());
+        }
+
+        public Number quotient(Number x, Number y) {
+            return Numbers.quotient(x.doubleValue(), y.doubleValue());
+        }
+
+        public Number remainder(Number x, Number y) {
+            return Numbers.remainder(x.doubleValue(), y.doubleValue());
+        }
+
+        public boolean equiv(Number x, Number y) {
+            return x.doubleValue() == y.doubleValue();
+        }
+
+        public boolean lt(Number x, Number y) {
+            return x.doubleValue() < y.doubleValue();
+        }
+
+        public boolean lte(Number x, Number y) {
+            return x.doubleValue() <= y.doubleValue();
+        }
+
+        public boolean gte(Number x, Number y) {
+            return x.doubleValue() >= y.doubleValue();
+        }
+
+        //public Number subtract(Number x, Number y);
+        final public Number negate(Number x) {
+            return Double.valueOf(-x.doubleValue());
+        }
+
+        public Number inc(Number x) {
+            return Double.valueOf(x.doubleValue() + 1);
+        }
+
+        public Number dec(Number x) {
+            return Double.valueOf(x.doubleValue() - 1);
+        }
+
+        public Number abs(Number x) {
+            return num(Math.abs(x.doubleValue()));
+        }
+    }
+
+    final static class RatioOps extends OpsP {
+        static Number normalizeRet(Number ret, Number x, Number y) {
+//		if(ret instanceof BigInteger && !(x instanceof BigInteger || y instanceof BigInteger))
+//			{
+//			return reduceBigInt((BigInteger) ret);
+//			}
+            return ret;
+        }
+
+        public Ops combine(Ops y) {
+            return y.opsWith((RatioOps) this);
+//            return this;
+        }
+
+        final public Ops opsWith(LongOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(DoubleOps x) {
+            return DOUBLE_OPS;
+        }
+
+        final public Ops opsWith(RatioOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(BigIntOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(BigDecimalOps x) {
+            return BIGDECIMAL_OPS;
+        }
+
+        public boolean isZero(Number x) {
+            Ratio r = (Ratio) x;
+            return r.numerator.signum() == 0;
+        }
+
+        public boolean isPos(Number x) {
+            Ratio r = (Ratio) x;
+            return r.numerator.signum() > 0;
+        }
+
+        public boolean isNeg(Number x) {
+            Ratio r = (Ratio) x;
+            return r.numerator.signum() < 0;
+        }
+
+        final public Number add(Number x, Number y) {
+            Ratio rx = toRatio(x);
+            Ratio ry = toRatio(y);
+            Number ret = divide(ry.numerator.multiply(rx.denominator)
+                            .add(rx.numerator.multiply(ry.denominator))
+                    , ry.denominator.multiply(rx.denominator));
+            return normalizeRet(ret, x, y);
+        }
+
+        final public Number multiply(Number x, Number y) {
+            Ratio rx = toRatio(x);
+            Ratio ry = toRatio(y);
+            Number ret = Numbers.divide(ry.numerator.multiply(rx.numerator)
+                    , ry.denominator.multiply(rx.denominator));
+            return normalizeRet(ret, x, y);
+        }
+
+        public Number divide(Number x, Number y) {
+            Ratio rx = toRatio(x);
+            Ratio ry = toRatio(y);
+            Number ret = Numbers.divide(ry.denominator.multiply(rx.numerator)
+                    , ry.numerator.multiply(rx.denominator));
+            return normalizeRet(ret, x, y);
+        }
+
+        public Number quotient(Number x, Number y) {
+            Ratio rx = toRatio(x);
+            Ratio ry = toRatio(y);
+            BigInteger q = rx.numerator.multiply(ry.denominator).divide(
+                    rx.denominator.multiply(ry.numerator));
+            return normalizeRet(BigInt.fromBigInteger(q), x, y);
+        }
+
+        public Number remainder(Number x, Number y) {
+            Ratio rx = toRatio(x);
+            Ratio ry = toRatio(y);
+            BigInteger q = rx.numerator.multiply(ry.denominator).divide(
+                    rx.denominator.multiply(ry.numerator));
+            Number ret = Numbers.minus(x, Numbers.multiply(q, y));
+            return normalizeRet(ret, x, y);
+        }
+
+        public boolean equiv(Number x, Number y) {
+            Ratio rx = toRatio(x);
+            Ratio ry = toRatio(y);
+            return rx.numerator.equals(ry.numerator)
+                    && rx.denominator.equals(ry.denominator);
+        }
+
+        public boolean lt(Number x, Number y) {
+            Ratio rx = toRatio(x);
+            Ratio ry = toRatio(y);
+            return Numbers.lt(rx.numerator.multiply(ry.denominator), ry.numerator.multiply(rx.denominator));
+        }
+
+        public boolean lte(Number x, Number y) {
+            Ratio rx = toRatio(x);
+            Ratio ry = toRatio(y);
+            return Numbers.lte(rx.numerator.multiply(ry.denominator), ry.numerator.multiply(rx.denominator));
+        }
+
+        public boolean gte(Number x, Number y) {
+            Ratio rx = toRatio(x);
+            Ratio ry = toRatio(y);
+            return Numbers.gte(rx.numerator.multiply(ry.denominator), ry.numerator.multiply(rx.denominator));
+        }
+
+        //public Number subtract(Number x, Number y);
+        final public Number negate(Number x) {
+            Ratio r = (Ratio) x;
+            return new Ratio(r.numerator.negate(), r.denominator);
+        }
+
+        public Number inc(Number x) {
+            return Numbers.add(x, 1);
+        }
+
+        public Number dec(Number x) {
+            return Numbers.add(x, -1);
+        }
+
+        public Number abs(Number x) {
+            Ratio r = (Ratio) x;
+            return new Ratio(r.numerator.abs(), r.denominator);
+        }
+
+    }
+
+    final static class BigIntOps extends OpsP {
+        public Ops combine(Ops y) {
+            return y.opsWith(this);
+        }
+
+        final public Ops opsWith(LongOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(DoubleOps x) {
+            return DOUBLE_OPS;
+        }
+
+        final public Ops opsWith(RatioOps x) {
+            return RATIO_OPS;
+        }
+
+        final public Ops opsWith(BigIntOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(BigDecimalOps x) {
+            return BIGDECIMAL_OPS;
+        }
+
+        public boolean isZero(Number x) {
+            BigInt bx = toBigInt(x);
+            if (bx.bipart == null)
+                return bx.lpart == 0;
+            return bx.bipart.signum() == 0;
+        }
+
+        public boolean isPos(Number x) {
+            BigInt bx = toBigInt(x);
+            if (bx.bipart == null)
+                return bx.lpart > 0;
+            return bx.bipart.signum() > 0;
+        }
+
+        public boolean isNeg(Number x) {
+            BigInt bx = toBigInt(x);
+            if (bx.bipart == null)
+                return bx.lpart < 0;
+            return bx.bipart.signum() < 0;
+        }
+
+        final public Number add(Number x, Number y) {
+            return toBigInt(x).add(toBigInt(y));
+        }
+
+        final public Number multiply(Number x, Number y) {
+            return toBigInt(x).multiply(toBigInt(y));
+        }
+
+        public Number divide(Number x, Number y) {
+            return Numbers.divide(toBigInteger(x), toBigInteger(y));
+        }
+
+        public Number quotient(Number x, Number y) {
+            return toBigInt(x).quotient(toBigInt(y));
+        }
+
+        public Number remainder(Number x, Number y) {
+            return toBigInt(x).remainder(toBigInt(y));
+        }
+
+        public boolean equiv(Number x, Number y) {
+            return toBigInt(x).equals(toBigInt(y));
+        }
+
+        public boolean lt(Number x, Number y) {
+            return toBigInt(x).lt(toBigInt(y));
+        }
+
+        public boolean lte(Number x, Number y) {
+            return toBigInteger(x).compareTo(toBigInteger(y)) <= 0;
+        }
+
+        public boolean gte(Number x, Number y) {
+            return toBigInteger(x).compareTo(toBigInteger(y)) >= 0;
+        }
+
+        //public Number subtract(Number x, Number y);
+        final public Number negate(Number x) {
+            return BigInt.fromBigInteger(toBigInteger(x).negate());
+        }
+
+        public Number inc(Number x) {
+            BigInteger bx = toBigInteger(x);
+            return BigInt.fromBigInteger(bx.add(BigInteger.ONE));
+        }
+
+        public Number dec(Number x) {
+            BigInteger bx = toBigInteger(x);
+            return BigInt.fromBigInteger(bx.subtract(BigInteger.ONE));
+        }
+
+        public Number abs(Number x) {
+            return BigInt.fromBigInteger(toBigInteger(x).abs());
+        }
+    }
+
+    final static class BigDecimalOps extends OpsP {
+        public Ops combine(Ops y) {
+            return y.opsWith(this);
+        }
+
+        final public Ops opsWith(LongOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(DoubleOps x) {
+            return DOUBLE_OPS;
+        }
+
+        final public Ops opsWith(RatioOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(BigIntOps x) {
+            return this;
+        }
+
+        final public Ops opsWith(BigDecimalOps x) {
+            return this;
+        }
+
+        public boolean isZero(Number x) {
+            BigDecimal bx = (BigDecimal) x;
+            return bx.signum() == 0;
+        }
+
+        public boolean isPos(Number x) {
+            BigDecimal bx = (BigDecimal) x;
+            return bx.signum() > 0;
+        }
+
+        public boolean isNeg(Number x) {
+            BigDecimal bx = (BigDecimal) x;
+            return bx.signum() < 0;
+        }
+
+        final public Number add(Number x, Number y) {
+            return toBigDecimal(x).add(toBigDecimal(y));
+        }
+
+        final public Number multiply(Number x, Number y) {
+            return toBigDecimal(x).multiply(toBigDecimal(y));
+        }
+
+        public Number divide(Number x, Number y) {
+            return toBigDecimal(x).multiply(toBigDecimal(y));
+        }
+
+        public Number quotient(Number x, Number y) {
+            return toBigDecimal(x).divideToIntegralValue(toBigDecimal(y));
+        }
+
+        public Number remainder(Number x, Number y) {
+            return toBigDecimal(x).remainder(toBigDecimal(y));
+        }
+
+        public boolean equiv(Number x, Number y) {
+            return toBigDecimal(x).compareTo(toBigDecimal(y)) == 0;
+        }
+
+        public boolean lt(Number x, Number y) {
+            return toBigDecimal(x).compareTo(toBigDecimal(y)) < 0;
+        }
+
+        public boolean lte(Number x, Number y) {
+            return toBigDecimal(x).compareTo(toBigDecimal(y)) <= 0;
+        }
+
+        public boolean gte(Number x, Number y) {
+            return toBigDecimal(x).compareTo(toBigDecimal(y)) >= 0;
+        }
+
+        //public Number subtract(Number x, Number y);
+        final public Number negate(Number x) {
+            return ((BigDecimal) x).negate();
+        }
+
+        public Number inc(Number x) {
+            BigDecimal bx = (BigDecimal) x;
+            return bx.add(BigDecimal.ONE);
+        }
+
+        public Number dec(Number x) {
+            BigDecimal bx = (BigDecimal) x;
+            return bx.subtract(BigDecimal.ONE);
+        }
+
+        public Number abs(Number x) {
+            BigDecimal bx = (BigDecimal) x;
+            return ((BigDecimal) x).abs();
+        }
     }
 
 }

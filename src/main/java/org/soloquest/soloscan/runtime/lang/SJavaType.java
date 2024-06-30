@@ -12,15 +12,6 @@ public class SJavaType extends SObject<Object> {
 
     protected String name;
 
-    @Override
-    public SObjectType getSObjectType() {
-        return SObjectType.JavaType;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
     public SJavaType(final String name) {
         this(name, null);
     }
@@ -37,6 +28,14 @@ public class SJavaType extends SObject<Object> {
 
     }
 
+    @Override
+    public SObjectType getSObjectType() {
+        return SObjectType.JavaType;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 
     @Override
     public Object getValue(final Map<String, Object> env) {

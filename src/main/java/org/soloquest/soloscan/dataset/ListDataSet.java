@@ -11,9 +11,8 @@ import java.util.function.Function;
 public class ListDataSet<T extends Map> implements DataSet {
 
     private final List<T> dataSet;
-    private Iterator<T> iterator;
-
     private final Map<String, Function<Row, Object>> calcColumnMap = new HashMap<>();
+    private Iterator<T> iterator;
 
     public ListDataSet(List<T> dataSet) {
         this.dataSet = dataSet;

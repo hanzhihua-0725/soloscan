@@ -8,29 +8,29 @@ public abstract class AbstractToken<T> implements Token<T> {
     protected final int lineIndex;
 
     protected final int lineNo;
-
+    protected String lexeme;
+    private Map<String, Object> metaMap;
+    public AbstractToken(final String lexeme, final int lineNo, final int lineIdex) {
+        super();
+        this.lineNo = lineNo;
+        this.lineIndex = lineIdex;
+        this.lexeme = lexeme;
+    }
 
     @Override
     public int getLineNo() {
         return this.lineNo;
     }
 
-
-    protected String lexeme;
-    private Map<String, Object> metaMap;
-
-
     @Override
     public Map<String, Object> getMetaMap() {
         return this.metaMap;
     }
 
-
     public void setMetaMap(final Map<String, Object> metaMap) {
         assert (metaMap == null || metaMap instanceof IdentityHashMap);
         this.metaMap = metaMap;
     }
-
 
     @Override
     public Token<T> withMeta(final String name, final Object v) {
@@ -40,7 +40,6 @@ public abstract class AbstractToken<T> implements Token<T> {
         this.metaMap.put(name, v);
         return this;
     }
-
 
     @Override
     public <V> V getMeta(final String name, final V defaultVal) {
@@ -61,15 +60,6 @@ public abstract class AbstractToken<T> implements Token<T> {
         }
         return (V) this.metaMap.get(name);
     }
-
-
-    public AbstractToken(final String lexeme, final int lineNo, final int lineIdex) {
-        super();
-        this.lineNo = lineNo;
-        this.lineIndex = lineIdex;
-        this.lexeme = lexeme;
-    }
-
 
     @Override
     public String getLexeme() {

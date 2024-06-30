@@ -1,43 +1,63 @@
-/***
- * ASM: a very small and fast Java bytecode manipulation framework Copyright (c) 2000-2011 INRIA,
- * France Telecom All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification, are permitted
- * provided that the following conditions are met: 1. Redistributions of source codegen must retain the
- * above copyright notice, this list of conditions and the following disclaimer. 2. Redistributions
- * in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holders nor the names of its contributors may be used to
- * endorse or promote products derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
- * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+// ASM: a very small and fast Java bytecode manipulation framework
+// Copyright (c) 2000-2011 INRIA, France Telecom
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+// 3. Neither the name of the copyright holders nor the names of its
+//    contributors may be used to endorse or promote products derived from
+//    this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
 package org.soloquest.soloscan.compiler.asm;
 
 /**
- * Defines the JVM opcodes, access flags and array type codes. This interface does not define all
- * the JVM opcodes because some opcodes are automatically handled. For example, the xLOAD and xSTORE
- * opcodes are automatically replaced by xLOAD_n and xSTORE_n opcodes when possible. The xLOAD_n and
+ * The JVM opcodes, access flags and array type codes. This interface does not define all the JVM
+ * opcodes because some opcodes are automatically handled. For example, the xLOAD and xSTORE opcodes
+ * are automatically replaced by xLOAD_n and xSTORE_n opcodes when possible. The xLOAD_n and
  * xSTORE_n opcodes are therefore not defined in this interface. Likewise for LDC, automatically
  * replaced by LDC_W or LDC2_W when necessary, WIDE, GOTO_W and JSR_W.
  *
  * @author Eric Bruneton
  * @author Eugene Kuleshov
+ * @see <a href="https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html">JVMS 6</a>
  */
 public interface Opcodes {
 
-    // ASM API versions
+    // ASM API versions.
 
-    int ASM4 = 4 << 16 | 0 << 8 | 0;
+    int ASM4 = 4 << 16 | 0 << 8;
+    int ASM5 = 5 << 16 | 0 << 8;
+    int ASM6 = 6 << 16 | 0 << 8;
 
-    // versions
+    /**
+     * <b>Experimental, use at your own risk. This field will be renamed when it becomes stable, this
+     * will break existing code using it</b>.
+     *
+     * @deprecated This API is experimental.
+     */
+    @Deprecated
+    int ASM7_EXPERIMENTAL = 1 << 24 | 7 << 16 | 0 << 8;
+
+    // Java ClassFile versions (the minor version is stored in the 16 most
+    // significant bits, and the
+    // major version in the 16 least significant bits).
 
     int V1_1 = 3 << 16 | 45;
     int V1_2 = 0 << 16 | 46;
@@ -46,33 +66,61 @@ public interface Opcodes {
     int V1_5 = 0 << 16 | 49;
     int V1_6 = 0 << 16 | 50;
     int V1_7 = 0 << 16 | 51;
+    int V1_8 = 0 << 16 | 52;
+    int V9 = 0 << 16 | 53;
+    int V10 = 0 << 16 | 54;
+    int V11 = 0 << 16 | 55;
 
-    // access flags
+    /**
+     * Version flag indicating that the class is using 'preview' features.
+     *
+     * <p>{@code version & V_PREVIEW_EXPERIMENTAL == V_PREVIEW_EXPERIMENTAL} tests if a version is
+     * flagged with {@code V_PREVIEW_EXPERIMENTAL}.
+     *
+     * @deprecated This API is experimental.
+     */
+    @Deprecated
+    int V_PREVIEW_EXPERIMENTAL = 0xFFFF0000;
+
+    // Access flags values, defined in
+    // - https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-4.html#jvms-4.1-200-E.1
+    // - https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-4.html#jvms-4.5-200-A.1
+    // - https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-4.html#jvms-4.6-200-A.1
+    // - https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-4.html#jvms-4.7.25
 
     int ACC_PUBLIC = 0x0001; // class, field, method
     int ACC_PRIVATE = 0x0002; // class, field, method
     int ACC_PROTECTED = 0x0004; // class, field, method
     int ACC_STATIC = 0x0008; // field, method
-    int ACC_FINAL = 0x0010; // class, field, method
+    int ACC_FINAL = 0x0010; // class, field, method, parameter
     int ACC_SUPER = 0x0020; // class
     int ACC_SYNCHRONIZED = 0x0020; // method
+    int ACC_OPEN = 0x0020; // module
+    int ACC_TRANSITIVE = 0x0020; // module requires
     int ACC_VOLATILE = 0x0040; // field
     int ACC_BRIDGE = 0x0040; // method
+    int ACC_STATIC_PHASE = 0x0040; // module requires
     int ACC_VARARGS = 0x0080; // method
     int ACC_TRANSIENT = 0x0080; // field
     int ACC_NATIVE = 0x0100; // method
     int ACC_INTERFACE = 0x0200; // class
     int ACC_ABSTRACT = 0x0400; // class, method
     int ACC_STRICT = 0x0800; // method
-    int ACC_SYNTHETIC = 0x1000; // class, field, method
+    int ACC_SYNTHETIC = 0x1000; // class, field, method, parameter, module *
     int ACC_ANNOTATION = 0x2000; // class
     int ACC_ENUM = 0x4000; // class(?) field inner
+    int ACC_MANDATED = 0x8000; // parameter, module, module *
+    int ACC_MODULE = 0x8000; // class
 
-    // ASM specific pseudo access flags
+    // ASM specific access flags.
+    // WARNING: the 16 least significant bits must NOT be used, to avoid conflicts with standard
+    // access flags, and also to make sure that these flags are automatically filtered out when
+    // written in class files (because access flags are stored using 16 bits only).
 
     int ACC_DEPRECATED = 0x20000; // class, field, method
 
-    // types for NEWARRAY
+    // Possible values for the type operand of the NEWARRAY instruction.
+    // See https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-6.html#jvms-6.5.newarray.
 
     int T_BOOLEAN = 4;
     int T_CHAR = 5;
@@ -83,7 +131,8 @@ public interface Opcodes {
     int T_INT = 10;
     int T_LONG = 11;
 
-    // tags for Handle
+    // Possible values for the reference_kind field of CONSTANT_MethodHandle_info structures.
+    // See https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-4.html#jvms-4.4.8.
 
     int H_GETFIELD = 1;
     int H_GETSTATIC = 2;
@@ -95,51 +144,54 @@ public interface Opcodes {
     int H_NEWINVOKESPECIAL = 8;
     int H_INVOKEINTERFACE = 9;
 
-    // stack map frame types
+    // ASM specific stack map frame types, used in {@link ClassVisitor#visitFrame}.
 
     /**
-     * Represents an expanded frame. See {@link ClassReader#EXPAND_FRAMES}.
+     * An expanded frame. See {@link ClassReader#EXPAND_FRAMES}.
      */
     int F_NEW = -1;
 
     /**
-     * Represents a compressed frame with complete frame data.
+     * A compressed frame with complete frame data.
      */
     int F_FULL = 0;
 
     /**
-     * Represents a compressed frame where locals are the same as the locals in the previous frame,
-     * except that additional 1-3 locals are defined, and with an empty stack.
+     * A compressed frame where locals are the same as the locals in the previous frame, except that
+     * additional 1-3 locals are defined, and with an empty stack.
      */
     int F_APPEND = 1;
 
     /**
-     * Represents a compressed frame where locals are the same as the locals in the previous frame,
-     * except that the last 1-3 locals are absent and with an empty stack.
+     * A compressed frame where locals are the same as the locals in the previous frame, except that
+     * the last 1-3 locals are absent and with an empty stack.
      */
     int F_CHOP = 2;
 
     /**
-     * Represents a compressed frame with exactly the same locals as the previous frame and with an
-     * empty stack.
+     * A compressed frame with exactly the same locals as the previous frame and with an empty stack.
      */
     int F_SAME = 3;
 
     /**
-     * Represents a compressed frame with exactly the same locals as the previous frame and with a
-     * single value on the stack.
+     * A compressed frame with exactly the same locals as the previous frame and with a single value
+     * on the stack.
      */
     int F_SAME1 = 4;
 
-    Integer TOP = new Integer(0);
-    Integer INTEGER = new Integer(1);
-    Integer FLOAT = new Integer(2);
-    Integer DOUBLE = new Integer(3);
-    Integer LONG = new Integer(4);
-    Integer NULL = new Integer(5);
-    Integer UNINITIALIZED_THIS = new Integer(6);
+    // Standard stack map frame element types, used in {@link ClassVisitor#visitFrame}.
 
-    // opcodes // visit method (- = idem)
+    Integer TOP = Frame.ITEM_TOP;
+    Integer INTEGER = Frame.ITEM_INTEGER;
+    Integer FLOAT = Frame.ITEM_FLOAT;
+    Integer DOUBLE = Frame.ITEM_DOUBLE;
+    Integer LONG = Frame.ITEM_LONG;
+    Integer NULL = Frame.ITEM_NULL;
+    Integer UNINITIALIZED_THIS = Frame.ITEM_UNINITIALIZED_THIS;
+
+    // The JVM opcode values (with the MethodVisitor method name used to visit them in comment, and
+    // where '-' means 'same method name as on the previous line').
+    // See https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-6.html.
 
     int NOP = 0; // visitInsn
     int ACONST_NULL = 1; // -
@@ -160,33 +212,11 @@ public interface Opcodes {
     int BIPUSH = 16; // visitIntInsn
     int SIPUSH = 17; // -
     int LDC = 18; // visitLdcInsn
-    // int LDC_W = 19; // -
-    // int LDC2_W = 20; // -
     int ILOAD = 21; // visitVarInsn
     int LLOAD = 22; // -
     int FLOAD = 23; // -
     int DLOAD = 24; // -
     int ALOAD = 25; // -
-    // int ILOAD_0 = 26; // -
-    // int ILOAD_1 = 27; // -
-    // int ILOAD_2 = 28; // -
-    // int ILOAD_3 = 29; // -
-    // int LLOAD_0 = 30; // -
-    // int LLOAD_1 = 31; // -
-    // int LLOAD_2 = 32; // -
-    // int LLOAD_3 = 33; // -
-    // int FLOAD_0 = 34; // -
-    // int FLOAD_1 = 35; // -
-    // int FLOAD_2 = 36; // -
-    // int FLOAD_3 = 37; // -
-    // int DLOAD_0 = 38; // -
-    // int DLOAD_1 = 39; // -
-    // int DLOAD_2 = 40; // -
-    // int DLOAD_3 = 41; // -
-    // int ALOAD_0 = 42; // -
-    // int ALOAD_1 = 43; // -
-    // int ALOAD_2 = 44; // -
-    // int ALOAD_3 = 45; // -
     int IALOAD = 46; // visitInsn
     int LALOAD = 47; // -
     int FALOAD = 48; // -
@@ -200,26 +230,6 @@ public interface Opcodes {
     int FSTORE = 56; // -
     int DSTORE = 57; // -
     int ASTORE = 58; // -
-    // int ISTORE_0 = 59; // -
-    // int ISTORE_1 = 60; // -
-    // int ISTORE_2 = 61; // -
-    // int ISTORE_3 = 62; // -
-    // int LSTORE_0 = 63; // -
-    // int LSTORE_1 = 64; // -
-    // int LSTORE_2 = 65; // -
-    // int LSTORE_3 = 66; // -
-    // int FSTORE_0 = 67; // -
-    // int FSTORE_1 = 68; // -
-    // int FSTORE_2 = 69; // -
-    // int FSTORE_3 = 70; // -
-    // int DSTORE_0 = 71; // -
-    // int DSTORE_1 = 72; // -
-    // int DSTORE_2 = 73; // -
-    // int DSTORE_3 = 74; // -
-    // int ASTORE_0 = 75; // -
-    // int ASTORE_1 = 76; // -
-    // int ASTORE_2 = 77; // -
-    // int ASTORE_3 = 78; // -
     int IASTORE = 79; // visitInsn
     int LASTORE = 80; // -
     int FASTORE = 81; // -
@@ -337,10 +347,7 @@ public interface Opcodes {
     int INSTANCEOF = 193; // -
     int MONITORENTER = 194; // visitInsn
     int MONITOREXIT = 195; // -
-    // int WIDE = 196; // NOT VISITED
     int MULTIANEWARRAY = 197; // visitMultiANewArrayInsn
     int IFNULL = 198; // visitJumpInsn
     int IFNONNULL = 199; // -
-    // int GOTO_W = 200; // -
-    // int JSR_W = 201; // -
 }

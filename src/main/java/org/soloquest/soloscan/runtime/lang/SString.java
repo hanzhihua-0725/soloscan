@@ -8,6 +8,10 @@ public class SString extends SObject<String> {
 
     private final String lexeme;
 
+    public SString(final String lexeme) {
+        this.lexeme = lexeme;
+    }
+
     @Override
     public SObjectType getSObjectType() {
         return SObjectType.String;
@@ -17,11 +21,6 @@ public class SString extends SObject<String> {
     public String getValue(final Map<String, Object> env) {
         return this.lexeme;
     }
-
-    public SString(final String lexeme) {
-        this.lexeme = lexeme;
-    }
-
 
     @Override
     public SObject add(final SObject other, final Map<String, Object> env) {

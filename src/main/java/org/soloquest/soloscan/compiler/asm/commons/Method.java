@@ -1,24 +1,30 @@
-/***
- * ASM: a very small and fast Java bytecode manipulation framework Copyright (c) 2000-2011 INRIA,
- * France Telecom All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification, are permitted
- * provided that the following conditions are met: 1. Redistributions of source codegen must retain the
- * above copyright notice, this list of conditions and the following disclaimer. 2. Redistributions
- * in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holders nor the names of its contributors may be used to
- * endorse or promote products derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
- * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+// ASM: a very small and fast Java bytecode manipulation framework
+// Copyright (c) 2000-2011 INRIA, France Telecom
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+// 3. Neither the name of the copyright holders nor the names of its
+//    contributors may be used to endorse or promote products derived from
+//    this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
 package org.soloquest.soloscan.compiler.asm.commons;
 
 import org.soloquest.soloscan.compiler.asm.Type;
@@ -36,46 +42,46 @@ import java.util.Map;
 public class Method {
 
     /**
+     * The descriptors of the primitive Java types (plus void).
+     */
+    private static final Map<String, String> PRIMITIVE_TYPE_DESCRIPTORS;
+
+    static {
+        HashMap<String, String> descriptors = new HashMap<String, String>();
+        descriptors.put("void", "V");
+        descriptors.put("byte", "B");
+        descriptors.put("char", "C");
+        descriptors.put("double", "D");
+        descriptors.put("float", "F");
+        descriptors.put("int", "I");
+        descriptors.put("long", "J");
+        descriptors.put("short", "S");
+        descriptors.put("boolean", "Z");
+        PRIMITIVE_TYPE_DESCRIPTORS = descriptors;
+    }
+
+    /**
      * The method name.
      */
     private final String name;
-
     /**
      * The method descriptor.
      */
-    private final String desc;
+    private final String descriptor;
 
     /**
-     * Maps primitive Java type names to their descriptors.
-     */
-    private static final Map<String, String> DESCRIPTORS;
-
-    static {
-        DESCRIPTORS = new HashMap<String, String>();
-        DESCRIPTORS.put("void", "V");
-        DESCRIPTORS.put("byte", "B");
-        DESCRIPTORS.put("char", "C");
-        DESCRIPTORS.put("double", "D");
-        DESCRIPTORS.put("float", "F");
-        DESCRIPTORS.put("int", "I");
-        DESCRIPTORS.put("long", "J");
-        DESCRIPTORS.put("short", "S");
-        DESCRIPTORS.put("boolean", "Z");
-    }
-
-    /**
-     * Creates a new {@link Method}.
+     * Constructs a new {@link Method}.
      *
-     * @param name the method's name.
-     * @param desc the method's descriptor.
+     * @param name       the method's name.
+     * @param descriptor the method's descriptor.
      */
-    public Method(final String name, final String desc) {
+    public Method(final String name, final String descriptor) {
         this.name = name;
-        this.desc = desc;
+        this.descriptor = descriptor;
     }
 
     /**
-     * Creates a new {@link Method}.
+     * Constructs a new {@link Method}.
      *
      * @param name          the method's name.
      * @param returnType    the method's return type.
@@ -88,21 +94,21 @@ public class Method {
     /**
      * Creates a new {@link Method}.
      *
-     * @param m a java.lang.reflect method descriptor
+     * @param method a java.lang.reflect method descriptor
      * @return a {@link Method} corresponding to the given Java method declaration.
      */
-    public static Method getMethod(final java.lang.reflect.Method m) {
-        return new Method(m.getName(), Type.getMethodDescriptor(m));
+    public static Method getMethod(final java.lang.reflect.Method method) {
+        return new Method(method.getName(), Type.getMethodDescriptor(method));
     }
 
     /**
      * Creates a new {@link Method}.
      *
-     * @param c a java.lang.reflect constructor descriptor
+     * @param constructor a java.lang.reflect constructor descriptor
      * @return a {@link Method} corresponding to the given Java constructor declaration.
      */
-    public static Method getMethod(final java.lang.reflect.Constructor<?> c) {
-        return new Method("<init>", Type.getConstructorDescriptor(c));
+    public static Method getMethod(final java.lang.reflect.Constructor<?> constructor) {
+        return new Method("<init>", Type.getConstructorDescriptor(constructor));
     }
 
     /**
@@ -110,12 +116,12 @@ public class Method {
      *
      * @param method a Java method declaration, without argument names, of the form "returnType name
      *               (argumentType1, ... argumentTypeN)", where the types are in plain Java (e.g. "int",
-     *               "float", "java.util.List", ...). Classes of the java.lang package can be specified by
-     *               their unqualified name; all other classes names must be fully qualified.
+     *               "float", "java.util.List", ...). Classes of the java.lang package can be specified by their
+     *               unqualified name; all other classes names must be fully qualified.
      * @return a {@link Method} corresponding to the given Java method declaration.
-     * @throws IllegalArgumentException if <codegen>method</codegen> could not get parsed.
+     * @throws IllegalArgumentException if <code>method</code> could not get parsed.
      */
-    public static Method getMethod(final String method) throws IllegalArgumentException {
+    public static Method getMethod(final String method) {
         return getMethod(method, false);
     }
 
@@ -124,72 +130,85 @@ public class Method {
      *
      * @param method         a Java method declaration, without argument names, of the form "returnType name
      *                       (argumentType1, ... argumentTypeN)", where the types are in plain Java (e.g. "int",
-     *                       "float", "java.util.List", ...). Classes of the java.lang package may be specified by
-     *                       their unqualified name, depending on the defaultPackage argument; all other classes
-     *                       names must be fully qualified.
+     *                       "float", "java.util.List", ...). Classes of the java.lang package may be specified by their
+     *                       unqualified name, depending on the defaultPackage argument; all other classes names must be
+     *                       fully qualified.
      * @param defaultPackage true if unqualified class names belong to the default package, or false
      *                       if they correspond to java.lang classes. For instance "Object" means "Object" if this
      *                       option is true, or "java.lang.Object" otherwise.
      * @return a {@link Method} corresponding to the given Java method declaration.
-     * @throws IllegalArgumentException if <codegen>method</codegen> could not get parsed.
+     * @throws IllegalArgumentException if <code>method</code> could not get parsed.
      */
-    public static Method getMethod(final String method, final boolean defaultPackage)
-            throws IllegalArgumentException {
-        int space = method.indexOf(' ');
-        int start = method.indexOf('(', space) + 1;
-        int end = method.indexOf(')', start);
-        if (space == -1 || start == -1 || end == -1) {
+    public static Method getMethod(final String method, final boolean defaultPackage) {
+        int spaceIndex = method.indexOf(' ');
+        int currentArgumentStartIndex = method.indexOf('(', spaceIndex) + 1;
+        int endIndex = method.indexOf(')', currentArgumentStartIndex);
+        if (spaceIndex == -1 || currentArgumentStartIndex == 0 || endIndex == -1) {
             throw new IllegalArgumentException();
         }
-        String returnType = method.substring(0, space);
-        String methodName = method.substring(space + 1, start - 1).trim();
-        StringBuilder sb = new StringBuilder();
-        sb.append('(');
-        int p;
+        String returnType = method.substring(0, spaceIndex);
+        String methodName = method.substring(spaceIndex + 1, currentArgumentStartIndex - 1).trim();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append('(');
+        int currentArgumentEndIndex;
         do {
-            String s;
-            p = method.indexOf(',', start);
-            if (p == -1) {
-                s = map(method.substring(start, end).trim(), defaultPackage);
+            String argumentDescriptor;
+            currentArgumentEndIndex = method.indexOf(',', currentArgumentStartIndex);
+            if (currentArgumentEndIndex == -1) {
+                argumentDescriptor =
+                        getDescriptor(
+                                method.substring(currentArgumentStartIndex, endIndex).trim(), defaultPackage);
             } else {
-                s = map(method.substring(start, p).trim(), defaultPackage);
-                start = p + 1;
+                argumentDescriptor =
+                        getDescriptor(
+                                method.substring(currentArgumentStartIndex, currentArgumentEndIndex).trim(),
+                                defaultPackage);
+                currentArgumentStartIndex = currentArgumentEndIndex + 1;
             }
-            sb.append(s);
-        } while (p != -1);
-        sb.append(')');
-        sb.append(map(returnType, defaultPackage));
-        return new Method(methodName, sb.toString());
+            stringBuilder.append(argumentDescriptor);
+        } while (currentArgumentEndIndex != -1);
+        stringBuilder.append(')');
+        stringBuilder.append(getDescriptor(returnType, defaultPackage));
+        return new Method(methodName, stringBuilder.toString());
     }
 
-    private static String map(final String type, final boolean defaultPackage) {
+    /**
+     * Returns the descriptor corresponding to the given type name.
+     *
+     * @param type           a Java type name.
+     * @param defaultPackage true if unqualified class names belong to the default package, or false
+     *                       if they correspond to java.lang classes. For instance "Object" means "Object" if this
+     *                       option is true, or "java.lang.Object" otherwise.
+     * @return the descriptor corresponding to the given type name.
+     */
+    private static String getDescriptor(final String type, final boolean defaultPackage) {
         if ("".equals(type)) {
             return type;
         }
 
-        StringBuilder sb = new StringBuilder();
-        int index = 0;
-        while ((index = type.indexOf("[]", index) + 1) > 0) {
-            sb.append('[');
+        StringBuilder stringBuilder = new StringBuilder();
+        int arrayBracketsIndex = 0;
+        while ((arrayBracketsIndex = type.indexOf("[]", arrayBracketsIndex) + 1) > 0) {
+            stringBuilder.append('[');
         }
 
-        String t = type.substring(0, type.length() - sb.length() * 2);
-        String desc = DESCRIPTORS.get(t);
-        if (desc != null) {
-            sb.append(desc);
+        String elementType = type.substring(0, type.length() - stringBuilder.length() * 2);
+        String descriptor = PRIMITIVE_TYPE_DESCRIPTORS.get(elementType);
+        if (descriptor != null) {
+            stringBuilder.append(descriptor);
         } else {
-            sb.append('L');
-            if (t.indexOf('.') < 0) {
+            stringBuilder.append('L');
+            if (elementType.indexOf('.') < 0) {
                 if (!defaultPackage) {
-                    sb.append("java/lang/");
+                    stringBuilder.append("java/lang/");
                 }
-                sb.append(t);
+                stringBuilder.append(elementType);
             } else {
-                sb.append(t.replace('.', '/'));
+                stringBuilder.append(elementType.replace('.', '/'));
             }
-            sb.append(';');
+            stringBuilder.append(';');
         }
-        return sb.toString();
+        return stringBuilder.toString();
     }
 
     /**
@@ -198,7 +217,7 @@ public class Method {
      * @return the name of the method described by this object.
      */
     public String getName() {
-        return this.name;
+        return name;
     }
 
     /**
@@ -207,7 +226,7 @@ public class Method {
      * @return the descriptor of the method described by this object.
      */
     public String getDescriptor() {
-        return this.desc;
+        return descriptor;
     }
 
     /**
@@ -216,7 +235,7 @@ public class Method {
      * @return the return type of the method described by this object.
      */
     public Type getReturnType() {
-        return Type.getReturnType(this.desc);
+        return Type.getReturnType(descriptor);
     }
 
     /**
@@ -225,25 +244,25 @@ public class Method {
      * @return the argument types of the method described by this object.
      */
     public Type[] getArgumentTypes() {
-        return Type.getArgumentTypes(this.desc);
+        return Type.getArgumentTypes(descriptor);
     }
 
     @Override
     public String toString() {
-        return this.name + this.desc;
+        return name + descriptor;
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (!(o instanceof Method)) {
+    public boolean equals(final Object other) {
+        if (!(other instanceof Method)) {
             return false;
         }
-        Method other = (Method) o;
-        return this.name.equals(other.name) && this.desc.equals(other.desc);
+        Method otherMethod = (Method) other;
+        return name.equals(otherMethod.name) && descriptor.equals(otherMethod.descriptor);
     }
 
     @Override
     public int hashCode() {
-        return this.name.hashCode() ^ this.desc.hashCode();
+        return name.hashCode() ^ descriptor.hashCode();
     }
 }

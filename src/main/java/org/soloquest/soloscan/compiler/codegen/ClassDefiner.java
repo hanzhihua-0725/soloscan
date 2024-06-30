@@ -13,6 +13,7 @@ import static java.lang.invoke.MethodType.methodType;
 public class ClassDefiner {
     private static final Object[] EMPTY_OBJS = new Object[]{};
     private static MethodHandle DEFINE_CLASS_HANDLE;
+    private static boolean userMethodHandle = SoloscanOptions.getOption(SoloscanOptions.USE_METHODHANDLE);
 
     static {
         try {
@@ -34,8 +35,6 @@ public class ClassDefiner {
             log.warn("Failed to get methodhandle", e);
         }
     }
-
-    private static boolean userMethodHandle = SoloscanOptions.getOption(SoloscanOptions.USE_METHODHANDLE);
 
     public static final Class<?> defineClass(final String className, final Class<?> clazz,
                                              final byte[] bytes, final SoloscanClassloader classLoader) throws Throwable {

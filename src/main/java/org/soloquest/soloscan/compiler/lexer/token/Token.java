@@ -4,10 +4,6 @@ import java.util.Map;
 
 
 public interface Token<T> {
-    enum TokenType {
-        String, Variable, Number, Char, Operator, Delegate
-    }
-
     Token<T> withMeta(String name, Object v);
 
     Map<String, Object> getMetaMap();
@@ -20,11 +16,13 @@ public interface Token<T> {
 
     TokenType getType();
 
-
     String getLexeme();
-
 
     int getStartIndex();
 
     int getLineNo();
+
+    enum TokenType {
+        String, Variable, Number, Char, Operator, Delegate
+    }
 }

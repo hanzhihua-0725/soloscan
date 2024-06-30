@@ -10,10 +10,6 @@ public class SMertric extends SObject<Object> {
 
     protected String name;
 
-    public String getName() {
-        return this.name;
-    }
-
     public SMertric(final String name) {
         this(name, null);
     }
@@ -27,6 +23,10 @@ public class SMertric extends SObject<Object> {
                 this.name = name;
             }
         }
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     @Override

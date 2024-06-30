@@ -5,40 +5,17 @@ import java.util.Map;
 
 public class SBigInt extends SNumber {
 
-    private static class BigIntCache {
-        private BigIntCache() {
-        }
-
-        static final SBigInt cache[] = new SBigInt[256];
-
-        static {
-            for (long i = 0; i < cache.length; i++) {
-                cache[(int) i] = new SBigInt(BigInteger.valueOf(i - 128));
-            }
-        }
-    }
-
-
-    @Override
-    public Number getValue(Map<String, Object> env) {
-        return this.number;
-    }
-
-
     public SBigInt(Number number) {
         super(number);
     }
-
 
     public static final SBigInt valueOf(BigInteger v) {
         return new SBigInt(v);
     }
 
-
     public static final SBigInt valueOf(String v) {
         return new SBigInt(new BigInteger(v));
     }
-
 
     public static final SBigInt valueOf(long l) {
         final int offset = 128;
@@ -49,8 +26,26 @@ public class SBigInt extends SNumber {
     }
 
     @Override
+    public Number getValue(Map<String, Object> env) {
+        return this.number;
+    }
+
+    @Override
     public SObjectType getSObjectType() {
         return SObjectType.BigInt;
+    }
+
+    private static class BigIntCache {
+        static final SBigInt cache[] = new SBigInt[256];
+
+        static {
+            for (long i = 0; i < cache.length; i++) {
+                cache[(int) i] = new SBigInt(BigInteger.valueOf(i - 128));
+            }
+        }
+
+        private BigIntCache() {
+        }
     }
 
 }

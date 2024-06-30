@@ -3,7 +3,6 @@ package org.soloquest.soloscan.compiler.codegen;
 import org.soloquest.soloscan.SoloscanExecutor;
 import org.soloquest.soloscan.SoloscanOptions;
 import org.soloquest.soloscan.compiler.asm.ClassWriter;
-import org.soloquest.soloscan.compiler.asm.Opcodes;
 import org.soloquest.soloscan.compiler.asm.Type;
 import org.soloquest.soloscan.compiler.lexer.SymbolTable;
 import org.soloquest.soloscan.compiler.lexer.token.Token;
@@ -26,7 +25,7 @@ public class AggInnerRealCodeGenerator extends AbstractRealCodeGenerator<AggInne
         super(instance, classLoader, type);
         this.className = "So_AggInner_" + System.currentTimeMillis() + "_" + CLASS_COUNTER.getAndIncrement();
         this.classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-        classWriter.visit(Opcodes.V1_7, ACC_PUBLIC,
+        classWriter.visit(V1_8, ACC_PUBLIC,
                 className, null, "java/lang/Object", new String[]{FILTER_INTERFACE});
         classWriter.visitSource(className, null);
     }

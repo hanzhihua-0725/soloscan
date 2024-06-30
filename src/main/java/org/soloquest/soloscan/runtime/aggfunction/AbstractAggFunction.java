@@ -13,14 +13,13 @@ public abstract class AbstractAggFunction implements AggFunction {
         this.text = text;
     }
 
-
-    public void setFilter(AggInner aggInner) {
-        this.aggInner = aggInner;
-    }
-
     @Override
     public AggInner getFilter() {
         return this.aggInner;
+    }
+
+    public void setFilter(AggInner aggInner) {
+        this.aggInner = aggInner;
     }
 
     @Override

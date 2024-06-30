@@ -23,16 +23,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
 
+    private static AtomicInteger INIT_PLACEHOLDER = new AtomicInteger((int) ('A'));
     protected final List<AggFunctionUnit> aggFunctionUnits = new ArrayList<>();
     protected final BlockingQueue<Row> queue = new LinkedTransferQueue<>();
-
-    private static AtomicInteger INIT_PLACEHOLDER = new AtomicInteger((int) ('A'));
-    private final String placeHolder;
     protected final SymbolTable symbolTable;
-
     protected final SoloscanExecutor instance;
-
     protected final String expressionString;
+    private final String placeHolder;
 
 
     public BaseMetricUnitExpression(final SoloscanExecutor instance,

@@ -22,6 +22,15 @@ class DataProvider implements Runnable {
         Preconditions.checkNotNull(expressions);
     }
 
+    public static void work(DataSet dataSet, Expression... expressions) {
+        log.warn("dataprovider size:{}, expressions:{}", expressions.length, expressions);
+        DataProvider dataProvider = new DataProvider(dataSet, expressions);
+        Thread thread = new Thread(dataProvider, "DataProvider_thread_" + FLAG.getAndIncrement());
+        thread.setDaemon(true);
+        thread.setUncaughtExceptionHandler((t, e) -> log.error("data provider occurs error", e));
+        thread.start();
+    }
+
     @Override
     public void run() {
         long start = System.currentTimeMillis();
@@ -45,15 +54,6 @@ class DataProvider implements Runnable {
         } else if (cost > 1000) {
             log.warn("Slow feed, data provider feed {} record, cost : {} ms", rowNum, cost);
         }
-    }
-
-    public static void work(DataSet dataSet, Expression... expressions) {
-        log.warn("dataprovider size:{}, expressions:{}", expressions.length, expressions);
-        DataProvider dataProvider = new DataProvider(dataSet, expressions);
-        Thread thread = new Thread(dataProvider, "DataProvider_thread_" + FLAG.getAndIncrement());
-        thread.setDaemon(true);
-        thread.setUncaughtExceptionHandler((t, e) -> log.error("data provider occurs error", e));
-        thread.start();
     }
 
 }

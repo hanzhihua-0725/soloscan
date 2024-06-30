@@ -12,22 +12,6 @@ public class DelegateToken extends AbstractToken<Token<?>> {
     private final DelegateTokenType delegateTokenType;
 
 
-    public static enum DelegateTokenType {
-        And_Left, Join_Left,
-        Method_Name, Method_Param
-    }
-
-
-    public Token<?> getToken() {
-        return this.token;
-    }
-
-
-    public DelegateTokenType getDelegateTokenType() {
-        return this.delegateTokenType;
-    }
-
-
     public DelegateToken(final Token<?> token, final DelegateTokenType type) {
         super(token != null ? token.getLexeme() : "", token != null ? token.getLineNo() : 0,
                 token != null ? token.getStartIndex() : -1);
@@ -38,12 +22,19 @@ public class DelegateToken extends AbstractToken<Token<?>> {
         }
     }
 
+    public Token<?> getToken() {
+        return this.token;
+    }
+
+
+    public DelegateTokenType getDelegateTokenType() {
+        return this.delegateTokenType;
+    }
 
     @Override
     public TokenType getType() {
         return TokenType.Delegate;
     }
-
 
     @Override
     public Token<?> getJavaValue(final Map<String, Object> env) {
@@ -52,6 +43,11 @@ public class DelegateToken extends AbstractToken<Token<?>> {
 
     public String childInfo() {
         return "delegateTokenType:" + delegateTokenType;
+    }
+
+    public static enum DelegateTokenType {
+        And_Left, Join_Left,
+        Method_Name, Method_Param
     }
 
 }

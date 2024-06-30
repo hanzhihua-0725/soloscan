@@ -19,7 +19,6 @@ import java.util.function.Function;
 
 public class SololscanValidator implements SoloscanCompileInterface {
 
-    final MockCodeGenerator codeGenerator = new MockCodeGenerator();
     final static Expression SOLOEXPRESSION = new BaseSoloExpression(SoloscanExecutorExt.INSTANCE, null, "in validator") {
         @Override
         public Object execute0(Env env) {
@@ -32,7 +31,7 @@ public class SololscanValidator implements SoloscanCompileInterface {
             return null;
         }
     };
-
+    final MockCodeGenerator codeGenerator = new MockCodeGenerator();
 
     public ValidatorResult validate(String expressionString, List<String> columnList) {
         Preconditions.checkNotNullOrEmpty(expressionString, "Blank expression");

@@ -24,7 +24,7 @@ public class SoloExpressionRealCodeGenerator extends AbstractRealCodeGenerator<B
         super(instance, classLoader, type);
         this.className = "So_" + System.currentTimeMillis() + "_" + CLASS_COUNTER.getAndIncrement();
         this.classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-        this.classWriter.visit(Opcodes.V1_7, ACC_PUBLIC + ACC_SUPER,
+        this.classWriter.visit(Opcodes.V1_8, ACC_PUBLIC + ACC_SUPER,
                 this.className, null, SUPER_CLASSNAME, null);
     }
 

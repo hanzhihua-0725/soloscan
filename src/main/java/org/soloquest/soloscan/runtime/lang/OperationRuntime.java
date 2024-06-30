@@ -24,6 +24,8 @@ public class OperationRuntime {
         }
 
     };
+    private static final String WHITE_SPACE = " ";
+    private static final String TRACE_PREFIX = "         ";
 
     public static SObject eval(final Map<String, Object> env, final SObject[] args,
                                final OperatorType opType) {
@@ -33,7 +35,6 @@ public class OperationRuntime {
         }
         return ret;
     }
-
 
     public static SObject eval(final SObject left, final Map<String, Object> env, final SObject right,
                                final OperatorType opType) {
@@ -52,9 +53,6 @@ public class OperationRuntime {
         args[1] = right;
         return opType.eval(args, env);
     }
-
-    private static final String WHITE_SPACE = " ";
-    private static final String TRACE_PREFIX = "         ";
 
     private static String desc(final SObject arg, final Map<String, Object> env) {
         if (arg != null) {

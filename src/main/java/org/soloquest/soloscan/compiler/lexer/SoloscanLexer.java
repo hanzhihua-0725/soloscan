@@ -11,15 +11,17 @@ import java.text.StringCharacterIterator;
 import java.util.LinkedList;
 
 public class SoloscanLexer {
+    static final char[] VALID_HEX_CHAR = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'a',
+            'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f'};
+    static final char[] VALID_CHAR = {'=', '>', '<', '+', '-', '*', '/', '%', '!', '&', '|', '(', ')', '[', ']', ',', ';', '{', '}'};
     private static final long OVERFLOW_FLAG = Long.MAX_VALUE / 10;
     private static final long OVERFLOW_SINGLE = Long.MAX_VALUE % 10;
+    private final SymbolTable symbolTable;
     private char peek;
     private CharacterIterator iterator;
     private int lineNo;
-    private final SymbolTable symbolTable;
     private LinkedList<Token<?>> tokenBuffer = new LinkedList<>();
     private String expression;
-
 
     public SoloscanLexer(final String expression) {
         this.iterator = new StringCharacterIterator(expression);
@@ -27,6 +29,15 @@ public class SoloscanLexer {
         this.symbolTable = new SymbolTable();
         this.peek = this.iterator.current();
         this.lineNo = 1;
+    }
+
+    public static boolean isValidChar(final char ch) {
+        for (char tmp : VALID_CHAR) {
+            if (tmp == ch) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void appendString(String string) {
@@ -46,7 +57,6 @@ public class SoloscanLexer {
         return this.symbolTable;
     }
 
-
     public int getLineNo() {
         return this.lineNo;
     }
@@ -55,19 +65,13 @@ public class SoloscanLexer {
         this.tokenBuffer.push(token);
     }
 
-
     private void nextChar() {
         this.peek = this.iterator.next();
     }
 
-
     public void prevChar() {
         this.peek = this.iterator.previous();
     }
-
-    static final char[] VALID_HEX_CHAR = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'a',
-            'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f'};
-
 
     public boolean isValidHexChar(final char ch) {
         for (char c : VALID_HEX_CHAR) {
@@ -77,19 +81,6 @@ public class SoloscanLexer {
         }
         return false;
     }
-
-    static final char[] VALID_CHAR = {'=', '>', '<', '+', '-', '*', '/', '%', '!', '&', '|', '(', ')', '[', ']', ',', ';', '{', '}'};
-
-
-    public static boolean isValidChar(final char ch) {
-        for (char tmp : VALID_CHAR) {
-            if (tmp == ch) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public int getCurrentIndex() {
         return this.iterator.getIndex();

@@ -7,11 +7,6 @@ public class OperatorToken extends AbstractToken<OperatorType> {
 
     private final OperatorType operatorType;
 
-    public OperatorType getOperatorType() {
-        return this.operatorType;
-    }
-
-
     public OperatorToken(final Token<?> lookhead, final OperatorType operatorType) {
         super(operatorType.getToken(), lookhead != null ? lookhead.getLineNo() : 0,
                 lookhead != null ? lookhead.getStartIndex() : -1);
@@ -19,6 +14,9 @@ public class OperatorToken extends AbstractToken<OperatorType> {
         this.operatorType = operatorType;
     }
 
+    public OperatorType getOperatorType() {
+        return this.operatorType;
+    }
 
     @Override
     public TokenType getType() {

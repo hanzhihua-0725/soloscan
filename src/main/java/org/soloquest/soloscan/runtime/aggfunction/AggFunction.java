@@ -8,9 +8,9 @@ import java.util.List;
 public interface AggFunction {
     Number getValue();
 
-    void setFilter(AggInner aggInner);
-
     AggInner getFilter();
+
+    void setFilter(AggInner aggInner);
 
     void process(Env env);
 

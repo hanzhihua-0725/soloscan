@@ -10,58 +10,57 @@ import org.soloquest.soloscan.utils.MiscUtils;
 
 public class SoloscanOptions {
 
-    public static Level INIT_LEVEL;
-
     public static final ConfigOption<Boolean> CONCURRENT_PROCESSS =
             ConfigOptions.key("concurrent.process")
                     .booleanType()
                     .defaultValue(false)
                     .withDescription(
                             "use concurrent process agg");
-
     public static final ConfigOption<Boolean> COLUMN_CASE_INSENSITIVE =
             ConfigOptions.key("column.case.insensitive")
                     .booleanType()
                     .defaultValue(false)
                     .withDescription(
                             "column case insensitive,default value is false");
-
     public static final ConfigOption<Boolean> GENERATE_CLASS =
             ConfigOptions.key("generate.class")
                     .booleanType()
                     .defaultValue(false)
                     .withDescription(
                             "generate.class");
-
     public static final ConfigOption<Boolean> USE_METHODHANDLE =
             ConfigOptions.key("use.methodhandle")
                     .booleanType()
                     .defaultValue(true)
                     .withDescription(
                             "use method handle");
-
     public static final ConfigOption<Boolean> SILENCE_MODE =
             ConfigOptions.key("silence.mode")
                     .booleanType()
                     .defaultValue(true)
                     .withDescription(
                             "suppress log level to error");
-
     public static final ConfigOption<Integer> EXECUTE_TIMEOUT_MS =
             ConfigOptions.key("execute.timeout")
                     .intType()
                     .defaultValue(0)
                     .withDescription(
                             "execute timeout,the unit is ms");
-
-
     public static final ConfigOption<String> GENERATE_CLASS_ROOT_PATH =
             ConfigOptions.key("generate.class.root.path")
                     .stringType()
                     .defaultValue(System.getProperty("java.io.tmpdir"));
-
-
     private final static Configuration configuration = Configuration.fromMap(MiscUtils.forciblyCast(System.getProperties()));
+    public static Level INIT_LEVEL;
+
+    static {
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.soloquest.soloscan");
+        INIT_LEVEL = logger.getLevel();
+        if (SILENCE_MODE.defaultValue()) {
+            logger.setLevel(Level.ERROR);
+        }
+    }
 
     public static <T> T getOption(ConfigOption<T> configOption) {
         return configuration.get(configOption);
@@ -77,15 +76,6 @@ public class SoloscanOptions {
             } else {
                 logger.setLevel(INIT_LEVEL);
             }
-        }
-    }
-
-    static {
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.soloquest.soloscan");
-        INIT_LEVEL = logger.getLevel();
-        if (SILENCE_MODE.defaultValue()) {
-            logger.setLevel(Level.ERROR);
         }
     }
 }

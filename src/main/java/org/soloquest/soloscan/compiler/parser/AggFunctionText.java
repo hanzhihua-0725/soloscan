@@ -14,6 +14,11 @@ public class AggFunctionText {
 
     private String innerString;
 
+    public AggFunctionText(String name) {
+        this.name = name;
+        this.placeHolder = ("PH_AGG_" + (char) INIT_PLACEHOLDER.getAndIncrement()).toLowerCase();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -25,11 +30,6 @@ public class AggFunctionText {
     @Override
     public int hashCode() {
         return Objects.hash(name, innerString);
-    }
-
-    public AggFunctionText(String name) {
-        this.name = name;
-        this.placeHolder = ("PH_AGG_" + (char) INIT_PLACEHOLDER.getAndIncrement()).toLowerCase();
     }
 
 

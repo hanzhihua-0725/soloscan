@@ -3,24 +3,10 @@ package org.soloquest.soloscan.runtime.lang;
 public class SLong extends SNumber {
 
 
-    private static class LongCache {
-        private LongCache() {
-        }
-
-        static final SLong cache[] = new SLong[256];
-
-        static {
-            for (long i = 0; i < cache.length; i++) {
-                cache[(int) i] = new SLong(i - 128);
-            }
-        }
-    }
-
     SLong(final long l) {
         super(l);
 
     }
-
 
     public static SLong valueOf(final long l) {
         final int offset = 128;
@@ -33,6 +19,19 @@ public class SLong extends SNumber {
     @Override
     public SObjectType getSObjectType() {
         return SObjectType.Long;
+    }
+
+    private static class LongCache {
+        static final SLong cache[] = new SLong[256];
+
+        static {
+            for (long i = 0; i < cache.length; i++) {
+                cache[(int) i] = new SLong(i - 128);
+            }
+        }
+
+        private LongCache() {
+        }
     }
 
 }

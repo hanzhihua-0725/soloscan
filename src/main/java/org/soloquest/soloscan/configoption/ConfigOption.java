@@ -4,26 +4,12 @@ import org.soloquest.soloscan.utils.Preconditions;
 
 public class ConfigOption<T> {
 
-    private final String key;
-
-    private final T defaultValue;
-
-    private final String description;
-
-    private final Class<?> clazz;
-
-    private final boolean isList;
-
     static final String EMPTY_DESCRIPTION = "";
-
-    Class<?> getClazz() {
-        return clazz;
-    }
-
-    boolean isList() {
-        return isList;
-    }
-
+    private final String key;
+    private final T defaultValue;
+    private final String description;
+    private final Class<?> clazz;
+    private final boolean isList;
 
     ConfigOption(
             String key,
@@ -36,6 +22,14 @@ public class ConfigOption<T> {
         this.defaultValue = defaultValue;
         this.clazz = Preconditions.checkNotNull(clazz);
         this.isList = isList;
+    }
+
+    Class<?> getClazz() {
+        return clazz;
+    }
+
+    boolean isList() {
+        return isList;
     }
 
     public String key() {

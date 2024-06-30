@@ -9,10 +9,9 @@ import java.util.function.Function;
 
 public class JDBCDataSet implements DataSet {
     private final ResultSet rs;
+    private final Map<String, Function<Row, Object>> calcColumnMap = new HashMap<>();
     private ResultSetMetaData rsmd;
     private int columns;
-
-    private final Map<String, Function<Row, Object>> calcColumnMap = new HashMap<>();
 
     public JDBCDataSet(ResultSet rs) {
         this.rs = rs;

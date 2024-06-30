@@ -8,18 +8,18 @@ import java.util.Map;
 
 public class SymbolTable {
 
-    private final Map<String, VariableToken> table = new HashMap<>();
-
     private static final Map<String, VariableToken> RESERVED = new HashMap<>();
-
-    private static void reserveKeyword(final VariableToken v) {
-        RESERVED.put(v.getLexeme(), v);
-    }
 
     static {
         reserveKeyword(VariableToken.TRUE);
         reserveKeyword(VariableToken.FALSE);
         reserveKeyword(VariableToken.NULL);
+    }
+
+    private final Map<String, VariableToken> table = new HashMap<>();
+
+    private static void reserveKeyword(final VariableToken v) {
+        RESERVED.put(v.getLexeme(), v);
     }
 
     public static boolean isReservedKeyword(final String name) {

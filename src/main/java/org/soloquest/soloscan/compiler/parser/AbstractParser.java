@@ -20,16 +20,9 @@ public class AbstractParser implements Parser {
     protected final SoloscanExecutor instance;
     protected final SoloscanLexer lexer;
     protected final CodeGenerator codeGenerator;
-
+    private final ArrayDeque<Token<?>> prevTokens = new ArrayDeque<>();
     protected SoloscanCompileInterface compiler;
     protected Token<?> lookhead;
-
-    private final ArrayDeque<Token<?>> prevTokens = new ArrayDeque<>();
-
-    public void setGlobalFilter(String globalFilter) {
-        this.globalFilter = globalFilter;
-    }
-
     protected String globalFilter;
 
     public AbstractParser(final SoloscanCompileInterface compiler, final SoloscanExecutor instance, final SoloscanLexer lexer,
@@ -43,6 +36,10 @@ public class AbstractParser implements Parser {
         if (this.lookhead == null) {
             reportCompileError("blank script");
         }
+    }
+
+    public void setGlobalFilter(String globalFilter) {
+        this.globalFilter = globalFilter;
     }
 
     public void parseEntry() {

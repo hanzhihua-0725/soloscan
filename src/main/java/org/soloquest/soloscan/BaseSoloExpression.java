@@ -20,17 +20,16 @@ public abstract class BaseSoloExpression implements Expression {
     protected final String expressionString;
     protected final List<MetricUnitExpression> metricUnitExpressions = new CopyOnWriteArrayList<>();
 
-    public void addMetricUnit(MetricUnitExpression metricUnitExpression) {
-        metricUnitExpressions.add(metricUnitExpression);
-    }
-
-
     public BaseSoloExpression(final SoloscanExecutor instance,
                               final SymbolTable symbolTable,
                               String expressionString) {
         this.symbolTable = symbolTable;
         this.instance = instance;
         this.expressionString = expressionString;
+    }
+
+    public void addMetricUnit(MetricUnitExpression metricUnitExpression) {
+        metricUnitExpressions.add(metricUnitExpression);
     }
 
     public abstract Object execute0(Env env);

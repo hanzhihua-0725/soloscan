@@ -21,6 +21,10 @@ public class Configuration {
         return configuration;
     }
 
+    public static boolean canBePrefixMap(ConfigOption<?> configOption) {
+        return configOption.getClazz() == Map.class && !configOption.isList();
+    }
+
     public <T> T get(ConfigOption<T> option) {
         return getOptional(option).orElseGet(option::defaultValue);
     }
@@ -63,10 +67,6 @@ public class Configuration {
             return valueFromExactKey;
         }
         return Optional.empty();
-    }
-
-    public static boolean canBePrefixMap(ConfigOption<?> configOption) {
-        return configOption.getClazz() == Map.class && !configOption.isList();
     }
 
     public void set(String key, Object value) {

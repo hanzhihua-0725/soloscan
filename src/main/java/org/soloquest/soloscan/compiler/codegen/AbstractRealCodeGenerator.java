@@ -21,36 +21,32 @@ import static org.soloquest.soloscan.compiler.asm.Opcodes.*;
 public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
 
     protected static final AtomicLong CLASS_COUNTER = new AtomicLong();
+    protected static final Label START_LABEL = new Label();
+    protected static final String FIELD_PREFIX = "f";
+    protected final Map<Label, Map<String, Integer>> labelNameIndexMap = new IdentityHashMap<>();
+    protected final ArrayDeque<MetricUnitRealCodeGenerator.MethodMetaData> methodMetaDataStack = new ArrayDeque<>();
+    /**
+     * Label stack for ternary operator
+     */
+    private final Stack<Label> l0stack = new Stack<Label>();
+    private final Stack<Label> l1stack = new Stack<Label>();
     protected ClassWriter classWriter;
     protected MethodVisitor mv;
     protected int operandsCount = 0;
     protected Map<String, String> innerVars = Collections.emptyMap();
-
     protected Map<String, String> innerMetricVars = Collections.emptyMap();
     protected Map<String, String> innerMethodMap = Collections.emptyMap();
     protected Map<Token<?>, String> constantPool = Collections.emptyMap();
-
     protected Set<String> methodTokens = new HashSet<>();
-
     protected Set<String> variables = new HashSet<>();
-
     protected Set<String> metricVariables = new HashSet<>();
-
     protected Set<Token<?>> constants = new HashSet<>();
-
-    protected static final Label START_LABEL = new Label();
-    protected final Map<Label, Map<String, Integer>> labelNameIndexMap = new IdentityHashMap<>();
-
     protected Label currentLabel = START_LABEL;
     protected String className;
     protected int fieldCounter = 0;
-    protected static final String FIELD_PREFIX = "f";
-    protected final ArrayDeque<MetricUnitRealCodeGenerator.MethodMetaData> methodMetaDataStack = new ArrayDeque<>();
     protected int maxStacks = 0;
     protected int maxLocals = 2;
-
     protected List<Token<?>> tokenList;
-
     protected SoloscanClassloader classLoader;
     protected SoloscanExecutor instance;
     protected Parser parser;
@@ -59,13 +55,30 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
     protected TokenContainer merticsTokenContainer;
     protected TokenContainer groupingTokenContainer;
     protected TokenContainer filterTokenContainer;
-
     protected Class<T> type;
 
     public AbstractRealCodeGenerator(final SoloscanExecutor instance, final SoloscanClassloader classLoader, Class<T> type) {
         this.instance = instance;
         this.classLoader = classLoader;
         this.type = type;
+    }
+
+    private static String getInvokeMethodDesc(final int paramCount) {
+        StringBuilder sb = new StringBuilder("(Ljava/util/Map;");
+        if (paramCount <= 20) {
+            for (int i = 0; i < paramCount; i++) {
+                sb.append(OBJECT_DESC);
+            }
+        } else {
+            for (int i = 0; i < 20; i++) {
+                sb.append(OBJECT_DESC);
+            }
+            // variadic params as an array
+            sb.append(OBJECT_LIST_DESC);
+        }
+        sb.append(")");
+        sb.append(OBJECT_DESC);
+        return sb.toString();
     }
 
     protected void setTokens(TokenContainer merticsTokenContainer, TokenContainer groupingTokenContainer, TokenContainer filterTokenContainer) {
@@ -90,7 +103,6 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
     protected String getInnerName(final String varName) {
         return FIELD_PREFIX + this.fieldCounter++;
     }
-
 
     protected void initConstants() {
         if (constants.isEmpty()) {
@@ -255,64 +267,52 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
                 opType.name(), OT_DESC);
     }
 
-
     protected void popOperand() {
         this.operandsCount--;
     }
-
 
     private void popOperand(final int n) {
         this.operandsCount -= n;
     }
 
-
     public void onSub(final Token<?> lookhead) {
         visitBinOperator(lookhead, OperatorType.SUB, "sub");
     }
-
 
     public void onMult(final Token<?> lookhead) {
         visitBinOperator(lookhead, OperatorType.MULT, "mult");
     }
 
-
     public void onExponent(final Token<?> lookhead) {
         visitBinOperator(lookhead, OperatorType.Exponent, "exponent");
     }
-
 
     public void onDiv(final Token<?> lookhead) {
         visitBinOperator(lookhead, OperatorType.DIV, "div");
     }
 
-
     public void onMod(final Token<?> lookhead) {
         visitBinOperator(lookhead, OperatorType.MOD, "mod");
     }
-
 
     public void onAndLeft(final Token<?> lookhead) {
         loadEnv();
         visitLeftBranch(lookhead, IFEQ, OperatorType.AND);
     }
 
-
     private void visitBoolean() {
         this.mv.visitMethodInsn(INVOKEVIRTUAL, OBJECT_OWNER, "booleanValue", "(Ljava/util/Map;)Z");
     }
 
-
     private void pushLabel0(final Label l0) {
         this.l0stack.push(l0);
     }
-
 
     public void onAndRight(final Token<?> lookhead) {
         visitRightBranch(lookhead, IFEQ, OperatorType.AND);
         this.popOperand(2); // boolean object and environment
         this.pushOperand();
     }
-
 
     private void visitRightBranch(final Token<?> lookhead, final int ints,
                                   final OperatorType opType) {
@@ -324,12 +324,6 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
         this.popOperand();
 
     }
-
-    /**
-     * Label stack for ternary operator
-     */
-    private final Stack<Label> l0stack = new Stack<Label>();
-    private final Stack<Label> l1stack = new Stack<Label>();
 
     private Label makeLabel() {
         return new Label();
@@ -351,11 +345,9 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
         this.popOperand(); // pop the last result
     }
 
-
     private void pushLabel1(final Label l1) {
         this.l1stack.push(l1);
     }
-
 
     public void onTernaryLeft(final Token<?> lookhead) {
         this.mv.visitJumpInsn(GOTO, peekLabel1());
@@ -364,18 +356,15 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
         this.popOperand(); // pop one boolean
     }
 
-
     private Label peekLabel1() {
         return this.l1stack.peek();
     }
-
 
     public void onTernaryRight(final Token<?> lookhead) {
         visitLabel(popLabel1());
         visitLineNumber(lookhead);
         this.popOperand(); // pop one boolean
     }
-
 
     public void onTernaryEnd(final Token<?> lookhead) {
         visitLineNumber(lookhead);
@@ -391,7 +380,6 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
         return this.l1stack.pop();
     }
 
-
     /**
      * Do logic operation "||" right operand
      */
@@ -403,22 +391,18 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
 
     }
 
-
     private void visitLabel(final Label label) {
         this.mv.visitLabel(label);
         this.currentLabel = label;
     }
 
-
     private Label peekLabel0() {
         return this.l0stack.peek();
     }
 
-
     private Label popLabel0() {
         return this.l0stack.pop();
     }
-
 
     /**
      * Do logic operation "||" left operand
@@ -429,21 +413,17 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
         visitLeftBranch(lookhead, IFNE, OperatorType.OR);
     }
 
-
     private void visitLeftBranch(final Token<?> lookhead, final int ints, final OperatorType opType) {
         this.popOperand();
     }
-
 
     public void onEq(final Token<?> lookhead) {
         doCompareAndJump(lookhead, IFNE, OperatorType.EQ);
     }
 
-
     public void onNeq(final Token<?> lookhead) {
         doCompareAndJump(lookhead, IFEQ, OperatorType.NEQ);
     }
-
 
     private void doCompareAndJump(final Token<?> lookhead, final int ints,
                                   final OperatorType opType) {
@@ -451,7 +431,6 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
         loadEnv();
         visitCompare(ints, opType);
     }
-
 
     private boolean isEqNe(final int ints) {
         return ints == IFEQ || ints == IFNE;
@@ -466,22 +445,18 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
 
     }
 
-
     public void onGe(final Token<?> lookhead) {
         doCompareAndJump(lookhead, IFLT, OperatorType.GE);
     }
-
 
     public void onGt(final Token<?> lookhead) {
         doCompareAndJump(lookhead, IFLE, OperatorType.GT);
     }
 
-
     public void onLe(final Token<?> lookhead) {
         doCompareAndJump(lookhead, IFGT, OperatorType.LE);
 
     }
-
 
     public void onLt(final Token<?> lookhead) {
         doCompareAndJump(lookhead, IFGE, OperatorType.LT);
@@ -491,7 +466,6 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
         this.operandsCount += delta;
         setMaxStacks(this.operandsCount);
     }
-
 
     /**
      * Logic operation '!'
@@ -722,37 +696,17 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
         this.pushOperand(1);
     }
 
-    private static String getInvokeMethodDesc(final int paramCount) {
-        StringBuilder sb = new StringBuilder("(Ljava/util/Map;");
-        if (paramCount <= 20) {
-            for (int i = 0; i < paramCount; i++) {
-                sb.append(OBJECT_DESC);
-            }
-        } else {
-            for (int i = 0; i < 20; i++) {
-                sb.append(OBJECT_DESC);
-            }
-            // variadic params as an array
-            sb.append(OBJECT_LIST_DESC);
-        }
-        sb.append(")");
-        sb.append(OBJECT_DESC);
-        return sb.toString();
-    }
-
     protected void endVisitClass() {
         this.classWriter.visitEnd();
     }
 
+    public abstract T getResult();
+
     public static class MethodMetaData {
-        public int parameterCount = 0;
-
-        public int variadicListIndex = -1;
-
         public final Token<?> token;
-
         public final String methodName;
-
+        public int parameterCount = 0;
+        public int variadicListIndex = -1;
         public int funcId = -1;
 
 
@@ -762,6 +716,4 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
             this.methodName = methodName;
         }
     }
-
-    public abstract T getResult();
 }

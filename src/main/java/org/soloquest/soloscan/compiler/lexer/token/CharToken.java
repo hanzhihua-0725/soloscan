@@ -6,16 +6,14 @@ public class CharToken extends AbstractToken<Character> {
 
     private final char ch;
 
-    public char getCh() {
-        return this.ch;
-    }
-
-
     public CharToken(final char peek, final int lineNo, final int startIndex) {
         super(String.valueOf(peek), lineNo, startIndex);
         this.ch = peek;
     }
 
+    public char getCh() {
+        return this.ch;
+    }
 
     @Override
     public TokenType getType() {

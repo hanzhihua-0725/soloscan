@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class MiscUtils {
+    public final static Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
+
     static public RuntimeException sneakyThrow(final Throwable t) {
         if (t == null) {
             throw new NullPointerException();
@@ -27,7 +29,6 @@ public class MiscUtils {
     static private <T extends Throwable> void sneakyThrow0(final Throwable t) throws T {
         throw (T) t;
     }
-
 
     public static void generateClassFile(String className, byte[] bytes) {
         String tempDirPath = SoloscanOptions.getOption(SoloscanOptions.GENERATE_CLASS_ROOT_PATH);
@@ -88,8 +89,6 @@ public class MiscUtils {
             return false;
         }
     }
-
-    public final static Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
 
     public static void applyPlaceHolder(Map<String, String> expressionMap, Map<String, String> placeHolderMap) {
         if (placeHolderMap == null || placeHolderMap.size() == 0) {

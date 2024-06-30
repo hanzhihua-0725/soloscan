@@ -11,13 +11,12 @@ import java.util.Set;
 
 public class Env implements Map<String, Object> {
 
+    public static final Map EMPTY_ENV = new HashMap();
     private final Map<String, Object> envMap;
     private final SoloscanExecutor instance;
     private final Expression expression;
     private Row dataMap;
     private boolean canPutAggrValue = true;
-
-    public static final Map EMPTY_ENV = new HashMap();
 
     public Env(SoloscanExecutor instance, Expression expression, Map<String, Object> envMap) {
         this.instance = instance;

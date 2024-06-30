@@ -10,6 +10,10 @@ public class FunctionArgument {
         this.expression = name;
     }
 
+    public static FunctionArgument from(final int index, final String name) {
+        return new FunctionArgument(index, name);
+    }
+
     public int getIndex() {
         return this.index;
     }
@@ -21,9 +25,5 @@ public class FunctionArgument {
     @Override
     public String toString() {
         return "FunctionArgument [index=" + this.index + ", expression=" + this.expression + "]";
-    }
-
-    public static FunctionArgument from(final int index, final String name) {
-        return new FunctionArgument(index, name);
     }
 }

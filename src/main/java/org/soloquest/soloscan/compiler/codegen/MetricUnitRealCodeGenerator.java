@@ -31,7 +31,7 @@ public class MetricUnitRealCodeGenerator extends AbstractRealCodeGenerator<BaseM
         super(instance, classLoader, type);
         this.className = "So_Mu_" + System.currentTimeMillis() + "_" + CLASS_COUNTER.getAndIncrement();
         this.classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-        this.classWriter.visit(Opcodes.V1_7, ACC_PUBLIC + ACC_SUPER,
+        this.classWriter.visit(Opcodes.V1_8, ACC_PUBLIC + ACC_SUPER,
                 this.className, null, MU_SUPER_CLASSNAME, null);
 
 

@@ -8,6 +8,9 @@ import java.util.Map;
 
 public class ConfigOptions {
 
+    private ConfigOptions() {
+    }
+
     public static OptionBuilder key(String key) {
         Preconditions.checkNotNull(key);
         return new OptionBuilder(key);
@@ -109,8 +112,5 @@ public class ConfigOptions {
         public ConfigOption<List<E>> noDefaultValue() {
             return new ConfigOption<>(key, clazz, ConfigOption.EMPTY_DESCRIPTION, null, true);
         }
-    }
-
-    private ConfigOptions() {
     }
 }
