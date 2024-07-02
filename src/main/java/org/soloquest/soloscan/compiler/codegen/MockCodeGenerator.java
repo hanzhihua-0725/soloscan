@@ -1,6 +1,7 @@
 package org.soloquest.soloscan.compiler.codegen;
 
 import lombok.Getter;
+import org.soloquest.soloscan.compiler.lexer.SymbolTable;
 import org.soloquest.soloscan.compiler.lexer.token.Token;
 import org.soloquest.soloscan.compiler.parser.Parser;
 import org.soloquest.soloscan.utils.ParserUtils;
@@ -57,7 +58,8 @@ public class MockCodeGenerator extends AbstractCodeGenerator {
     public void onConstant(Token token) {
         if (ParserUtils.isVariableToken(token)) {
             String varName = token.getLexeme();
-            variables.add(varName);
+            if(!SymbolTable.isReservedKeyword(varName))
+                variables.add(varName);
         }
     }
 

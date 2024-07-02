@@ -286,6 +286,7 @@ public class AbstractParser implements Parser {
                         codeGenerator.onDefaultOperation(this.lookhead);
                     }
                     hasDefaultOperation = true;
+                    startIndex = this.lexer.getCurrentIndex();
                 }
             }
         }

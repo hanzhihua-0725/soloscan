@@ -616,4 +616,46 @@ public class SoloscanExecutorTest {
         Assert.assertEquals(((Map) result).get("row3"), 1l);
         Assert.assertEquals(((Map) result).get("row4"), 0l);
     }
+
+    @Test
+    public void testExecuteWithSameVariableName() {
+
+        List<Map> list = new ArrayList<>();
+        Map p = new HashMap<>();
+        p.put("a", false);
+        p.put("b", 1);
+        list.add(p);
+        p = new HashMap();
+        p.put("cOl1", 10);
+        p.put("grOupkey", "a");
+        list.add(p);
+        p = new HashMap();
+        p.put("col1", 2);
+        p.put("groupkey", "b");
+        list.add(p);
+        p = new HashMap();
+        p.put("Col1", 3);
+        p.put("groupkey", "b");
+        list.add(p);
+        DataSet dataSet = new ListDataSet<>(list);
+        SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
+        Map<String, String> expressionMap = null;
+        Object result = null;
+        expressionMap = new HashMap<>();
+        expressionMap.put("row1", "{sum(b)+sum(b)}");
+        expressionMap.put("row2", "{sum(b)}+{sum(b)}");
+        result = executorExt.execute(expressionMap, dataSet);
+        Assert.assertTrue(result instanceof Map);
+        Assert.assertEquals(((Map) result).get("row1"), ((Map) result).get("row2"));
+    }
+
+    @Test
+    public void testExecuteNotCorrect() {
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS,true);
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS_ROOT_PATH,"/Users/hanzhihua/gitgh/soloscan/tmp");
+        SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
+        String expression = "{count(QA2_8 =1)/count(QA2_8),;count(QA2_8!=null)}";
+        executorExt.execute(expression,new ListDataSet<>(new ArrayList<>()));
+
+    }
 }

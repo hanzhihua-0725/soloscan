@@ -552,23 +552,11 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
             }
         } else {
             if (this instanceof MetricUnitRealCodeGenerator) {
-//                mv.visitVarInsn(ALOAD, 0);
-//                mv.visitFieldInsn(GETFIELD, Type.getInternalName(BaseExpression.class), "instance",
-//                        EXECUTOR_DESC);
-//                this.mv.visitLdcInsn(outtterMethodName);
-////            mv.visitLdcInsn("[]");
-//                mv.visitMethodInsn(INVOKEVIRTUAL, EXECUTOR_OWNER,
-//                        "getFunction",
-//                        GET_FUNCTION_DESC);
                 this.mv.visitLdcInsn(outtterMethodName);
                 this.mv.visitMethodInsn(INVOKESTATIC, RU_OWNER, "getFunction",
                         "(Ljava/lang/String;)" + Type.getDescriptor(SFunction.class));
             }
 
-
-//            mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(ListFunction.class));
-//            mv.visitInsn(Opcodes.DUP);
-//            mv.visitMethodInsn(Opcodes.INVOKESPECIAL, Type.getInternalName(ListFunction.class), "<init>", "()V");
         }
         loadEnv();
         this.methodMetaDataStack.push(new MetricUnitRealCodeGenerator.MethodMetaData(lookhead, outtterMethodName));
@@ -638,9 +626,6 @@ public abstract class AbstractRealCodeGenerator<T> implements CodeConstants {
                         CONSTRUCTOR_METHOD_NAME, "(Ljava/lang/String;)V");
                 break;
             case Variable:
-                if (loadConstant(lookhead, isLoad)) {
-                    return;
-                }
                 VariableToken variableToken = (VariableToken) lookhead;
 
                 if (variableToken.equals(VariableToken.TRUE)) {
