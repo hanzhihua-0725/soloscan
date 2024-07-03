@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Data
 public class AggFunctionText {
 
-    private static AtomicInteger INIT_PLACEHOLDER = new AtomicInteger((int) ('A'));
+    private static AtomicInteger INIT_PLACEHOLDER = new AtomicInteger();
     private final String name;
     private final String placeHolder;
 
@@ -16,7 +16,7 @@ public class AggFunctionText {
 
     public AggFunctionText(String name) {
         this.name = name;
-        this.placeHolder = ("PH_AGG_" + (char) INIT_PLACEHOLDER.getAndIncrement()).toLowerCase();
+        this.placeHolder = ("PH_AGG_" + INIT_PLACEHOLDER.getAndIncrement()).toLowerCase();
     }
 
     @Override

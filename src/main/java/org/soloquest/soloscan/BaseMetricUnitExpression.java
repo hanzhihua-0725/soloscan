@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
 
-    private static AtomicInteger INIT_PLACEHOLDER = new AtomicInteger((int) ('A'));
+    private static AtomicInteger INIT_PLACEHOLDER = new AtomicInteger();
     protected final List<AggFunctionUnit> aggFunctionUnits = new ArrayList<>();
     protected final BlockingQueue<Row> queue = new LinkedTransferQueue<>();
     protected final SymbolTable symbolTable;
@@ -38,7 +38,7 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
         this.symbolTable = symbolTable;
         this.instance = instance;
         this.expressionString = expressionString;
-        this.placeHolder = ("PH_MU_" + (char) INIT_PLACEHOLDER.getAndIncrement()).toLowerCase();
+        this.placeHolder = ("PH_MU_" + INIT_PLACEHOLDER.getAndIncrement()).toLowerCase();
     }
 
     public String getPlaceHolder() {
