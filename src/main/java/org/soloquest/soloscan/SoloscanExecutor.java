@@ -31,7 +31,6 @@ public class SoloscanExecutor {
 
     public static final SoloscanExecutor INSTANCE = new SoloscanExecutor();
     private final Map<String, SFunction> funcMap = new HashMap<>();
-    private final SololscanValidator validator = new SololscanValidator();
     private final ConcurrentHashMap<String, Function<AggFunctionText, ? extends AggFunction>> aggFunctionMap =
             new ConcurrentHashMap<>();
     private SoloscanClassloader classLoader = new SoloscanClassloader(SoloscanExecutor.class.getClassLoader());
@@ -239,6 +238,7 @@ public class SoloscanExecutor {
 
 
     public ValidatorResult validate(final String expressionString, List<String> columnList) {
+        SololscanValidator validator = new SololscanValidator();
         return validator.validate(expressionString, columnList);
     }
 

@@ -106,7 +106,7 @@
 <dependency>
   <groupId>io.github.hanzhihua-0725</groupId>
   <artifactId>soloscan</artifactId>
-  <version>0.1.12</version>
+  <version>0.1.13</version>
 </dependency>
 ```
 * 代码使用

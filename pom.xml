@@ -11,7 +11,7 @@
 
     <groupId>io.github.hanzhihua-0725</groupId>
     <artifactId>soloscan</artifactId>
-    <version>0.1.12</version>
+    <version>0.1.13</version>
     <description>Simple metric expression</description>
     <url>https://github.com/hanzhihua-0725/soloscan</url>
     <inceptionYear>2024</inceptionYear>
