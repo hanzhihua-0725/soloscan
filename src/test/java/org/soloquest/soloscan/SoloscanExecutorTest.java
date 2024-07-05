@@ -568,6 +568,12 @@ public class SoloscanExecutorTest {
         Assert.assertTrue(rs.isValid());
         SoloscanOptions.set(SoloscanOptions.COLUMN_CASE_INSENSITIVE.key(), isCaseSensitive);
 
+        rs = instance.validate("QA2_888 =1", Arrays.asList("QA2_888"));
+        Assert.assertTrue(rs.isValid());
+
+        rs = instance.validate("QA2_888 =1", Arrays.asList("qA2_888"));
+        Assert.assertTrue(!rs.isValid());
+
     }
 
     @Test

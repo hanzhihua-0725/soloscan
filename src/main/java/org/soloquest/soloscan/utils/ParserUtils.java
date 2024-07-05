@@ -46,7 +46,7 @@ public class ParserUtils {
     public static final boolean isVariableToken(Token token) {
         if (token instanceof VariableToken) {
             String name = token.getLexeme();
-            if (!name.startsWith("ph_agg")) {
+            if (!name.startsWith("ph_agg") && !name.startsWith("ph_mu")) {
                 return true;
             }
         }

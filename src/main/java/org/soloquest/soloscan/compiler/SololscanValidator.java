@@ -60,7 +60,6 @@ public class SololscanValidator implements SoloscanCompileInterface {
     @Override
     public Expression compile(String expressionString) {
         SoloscanLexer lexer = new SoloscanLexer(expressionString);
-        MockCodeGenerator codeGenerator = new MockCodeGenerator();
         SoloExpressionParser parser = new SoloExpressionParser(this, SoloscanExecutorExt.INSTANCE, lexer, codeGenerator);
         codeGenerator.setParser(parser);
         parser.parseSoloExpression();
