@@ -12,6 +12,7 @@ import java.util.Set;
 public class Env implements Map<String, Object> {
 
     public static final Map EMPTY_ENV = new HashMap();
+    public static final String DATASET_KEY = "dateset_key";
     private final Map<String, Object> envMap;
     private final SoloscanExecutor instance;
     private final Expression expression;

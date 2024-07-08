@@ -1,9 +1,11 @@
 [(English Documents Available)](readme_en.md)
+
 # soloscan
 
 运行在JVM中的指标表达式。
 
 ## 特点
+
 * 运行在JVM中，不依赖数据引擎的计算能力。
 * 可一次计算多个指标表达式，不需要预计算。
 * 支持通用的聚合方法(Max、Min、Avg、Sum、Count)，及聚合结果的再次计算。
@@ -12,6 +14,7 @@
 * 支持自定义普通函数、聚合函数。
 
 ### 表达式一些例子
+
 * {count(SCCC),SCCC,SCCC in [5,11,9999]}
 * {count(QD2f2_1 in [4,5])/count(QA1_2=1),week,week in range(513,520,1)}
 * slide({count(QD2f2_1 in [4,5])/count(QA1_2=1),week,week in range(500,520,1)},4)
@@ -20,15 +23,18 @@
 ## 使用说明
 
 ### 表达式说明
+
 * 指标表达式：由指标单元和单元间计算组成，主要是union计算，如：指标单元 union 指标单元。
 * 指标单元：包括指标计算，分组，过滤三部分，形式：{指标计算,分组,过滤} or {指标计算,分组,过滤;指标计算,分组,过滤}
-  * "{"开始，"}"结束，中间三部分以","分隔，第一部分是指标计算必须存在，第二部分为分组(可选，如果为空只需输入一个逗号)，第三部分为过滤(可选)
-  * 例子：{SUM(销售金额1)/SUM(销售金额2),销售日期,销售日期 >= '2022-01-01' AND 销售日期 <= '2022-12-31'}
-    * 指标计算内容:SUM(销售金额1)/SUM(销售金额2)，分组内容：销售日期，过滤内容：销售日期 >= '2022-01-01' AND 销售日期 <= '2022-12-31'
+    * "{"开始，"}"结束，中间三部分以","分隔，第一部分是指标计算必须存在，第二部分为分组(可选，如果为空只需输入一个逗号)
+      ，第三部分为过滤(可选)
+    * 例子：{SUM(销售金额1)/SUM(销售金额2),销售日期,销售日期 >= '2022-01-01' AND 销售日期 <= '2022-12-31'}
+        * 指标计算内容:SUM(销售金额1)/SUM(销售金额2)，分组内容：销售日期，过滤内容：销售日期 >= '2022-01-01' AND
+          销售日期 <= '2022-12-31'
 * 指标计算：聚合函数(字段, [过滤条件])，支持计算结果再次计算。
-  * 例子：sum(SCCC) , sum(SCCC) / sum(SCCC1), sum(SCCC) / sum(SCCC1) / sum(SCCC2)
+    * 例子：sum(SCCC) , sum(SCCC) / sum(SCCC1), sum(SCCC) / sum(SCCC1) / sum(SCCC2)
 * 分组：字段（支持计算字段）。
-  * 如果包括多个字段，形式："grouping(字段1,字段2, ...)"
+    * 如果包括多个字段，形式："grouping(字段1,字段2, ...)"
 * 过滤：过滤条件,支持数组比较、逻辑联合、小括号优先级，支持普通函数。
 
 ### 计算算子
@@ -40,6 +46,7 @@
 * 算子优先级： 遵循默认的算子优先级
 
 ### 聚合函数
+
 * Count
     * 语法：count(column)
     * 说明：column不为空计数
@@ -72,10 +79,12 @@
     * 说明：相对于sum，增加了一个过滤条件
 
 ### 过滤条件
+
 * 说明：计算出是否满足过滤条件，返回true或false
 * 例子：column1 = 12 && column2>2 || ( column3 in range(2,1,10) && column4 in [1,2,3])
 
 ### 普通函数
+
 * Range
     * 语法：RANGE (开始值,结束值,步长 )
         * 左闭右开
@@ -85,51 +94,60 @@
     * 语法： column in [1,2,3]
     * 说明：返回column是否在列表中
 * Slide
-  * 语法 Slide(指标结果,windowSize)
+    * 语法 Slide(指标结果,windowSize)
 
 ### 项目例子
+
 ![demo.png](demo.png)
 本例子使用excel作为dataset，第一行为列名，后面每一行为数据，列名大小写不敏感。
+
 * 计算整个数据集的行数：{count()}。
 * 计算SCCC不为空的行数：{count(SCCC)}。
 * 计算SCCC不等于1的行数：{count(SCCC!=1)}
 * 计算SCCC不等于1及以week分组：{count(SCCC!=1),week}
 * 计算SCCC不等于1及RQ不等于1：{count(SCCC!=1),,RQ!=1}
 * 计算SCCC不等于1及RQ不等于1且以week分组：{count(SCCC),week,RQ!=1}
-  * {count(SCCC),week,RQ!=1} 与 {count(),week,SCCC!=null&&RQ!=1} 区别等同与sql中的集合函数中过滤和外部过滤的区别。
+    * {count(SCCC),week,RQ!=1} 与 {count(),week,SCCC!=null&&RQ!=1} 区别等同与sql中的集合函数中过滤和外部过滤的区别。
 * 计算SCCC不等于1及RQ不等于1且以week分组，与count做default操作：{count(SCCC),week,RQ!=1;count(),week}
 * 计算SCCC不等于1与count的占比及RQ不等于1且以week分组：{count(SCCC)/count(),week,RQ!=1}
-* 计算SCCC不等于1与count的占比及RQ不等于1且以week分组 与 计算SCCC不等于1与count的占比及RQ等于1且以week分组 union : {count(SCCC)/count(),week,RQ!=1} union {count(SCCC)/count(),week,RQ=1}
+* 计算SCCC不等于1与count的占比及RQ不等于1且以week分组 与 计算SCCC不等于1与count的占比及RQ等于1且以week分组 union :
+  {count(SCCC)/count(),week,RQ!=1} union {count(SCCC)/count(),week,RQ=1}
+
 ## 开发使用
+
 * maven依赖
+
 ```xml
+
 <dependency>
-  <groupId>io.github.hanzhihua-0725</groupId>
-  <artifactId>soloscan</artifactId>
-  <version>0.1.14</version>
+    <groupId>io.github.hanzhihua-0725</groupId>
+    <artifactId>soloscan</artifactId>
+    <version>0.1.16</version>
 </dependency>
 ```
+
 * 代码使用
+
 ```java
-DataSet dataSet = new ListDataSet<>(list);
-SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
-Map<String,String> expressions = new HashMap<>();
-expressions.put("row1","{sum(col1),,}");
-expressions.put("row2","{count(col1),,}");
-...
-expressions.put("rown","{count(col1),,}");
-System.out.println(executorExt.execute(expressions,dataSet));
+DataSet dataSet=new ListDataSet<>(list);
+        SoloscanExecutorExt executorExt=SoloscanExecutorExt.INSTANCE;
+        Map<String, String> expressions=new HashMap<>();
+        expressions.put("row1","{sum(col1),,}");
+        expressions.put("row2","{count(col1),,}");
+        ...
+        expressions.put("rown","{count(col1),,}");
+        System.out.println(executorExt.execute(expressions,dataSet));
 ```
 
 ## 系统设计
 
 ### 运行原理
+
 指标表达式采用编译执行方式，使用asm生成jvm字节码，加载并生成相关的类和实例，然后执行。
 ![run_principle.png](run_principle.png)
 
-
-
 ### 表达式文法
+
 算数运算符 ::= "+" | "-" | "*" | "/"
 
 比较运算符 ::= "=" | "!=" | "<" | ">" | "<=" | ">="
@@ -144,7 +162,7 @@ ComparisonCondition ::= 字段 比较运算符 值
 
 聚合表达式 ::= 聚合函数(字段, 过滤部分)
 
-计算部分 ::=  聚合表达式 (算数运算符 聚合表达式)*
+计算部分 ::= 聚合表达式 (算数运算符 聚合表达式)*
 
 分组部分 ::= 字段 ("," 字段)*
 
@@ -153,9 +171,11 @@ ComparisonCondition ::= 字段 比较运算符 值
 solo表达式 ::= 计算单元 (union 计算单元)*
 
 ### 编译时
+
 语法分析出来的token，转成逆波兰表达式，然后通过asm生成类和实例。
 
 ### 运行时
+
 语法分析出来的token会被转换成对应的SObject对象，然后通过SObject中的方法进行运算。
 
 | 类型   | 例子                               | 运行时           |
@@ -165,8 +185,9 @@ solo表达式 ::= 计算单元 (union 计算单元)*
 | 变量   | xyz,TRUE                         | SVariable     |
 | 操作符  | +,-,*,/,%,&&,\|\|,>,>=,=,<=,<,in | 对应SObject中的方法 |
 | 函数   | xyz()                            | SFunction     |
-| 聚合函数 | count()                | AggFunction     |
-| 计算单元 | {计算部分,分组部分,过滤部分}          | SMetric       |
+| 聚合函数 | count()                          | AggFunction   |
+| 计算单元 | {计算部分,分组部分,过滤部分}                 | SMetric       |
 
 ### 运行流程
+
 ![data_flow.png](data_flow.png)

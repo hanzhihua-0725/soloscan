@@ -10,6 +10,7 @@ public abstract class AbstractToken<T> implements Token<T> {
     protected final int lineNo;
     protected String lexeme;
     private Map<String, Object> metaMap;
+
     public AbstractToken(final String lexeme, final int lineNo, final int lineIdex) {
         super();
         this.lineNo = lineNo;

@@ -48,4 +48,12 @@ public class SoloscanExecutorExt extends SoloscanExecutor {
         env.put(FILTER_PART2_KEY, filterPart2);
         return execute(expressionMap, env, dataSet);
     }
+
+    public Map<String, Object> executeWithPlaceHoldAndGlobalFilter(final Map<String, String> expressionMap, final Map<String, String> replaceHoldMap,String filterPart1, String filterPart2, final DataSet dataSet) {
+        MiscUtils.applyPlaceHolder(expressionMap, replaceHoldMap);
+        Map<String, Object> env = new HashMap<>();
+        env.put(FILTER_PART1_KEY, filterPart1);
+        env.put(FILTER_PART2_KEY, filterPart2);
+        return execute(expressionMap, env, dataSet);
+    }
 }

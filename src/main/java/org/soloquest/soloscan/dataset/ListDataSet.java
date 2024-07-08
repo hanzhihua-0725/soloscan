@@ -51,4 +51,10 @@ public class ListDataSet<T extends Map> implements DataSet {
     public void close() {
         dataSet.clear();
     }
+
+    public DataSet newDataSet() {
+        DataSet dataSet = new ListDataSet(this.dataSet);
+        return dataSet;
+    }
+
 }

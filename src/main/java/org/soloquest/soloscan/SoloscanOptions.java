@@ -69,6 +69,7 @@ public class SoloscanOptions {
     public static void set(ConfigOption configOption, Object value) {
         set(configOption.key(), value);
     }
+
     public static void set(String key, Object value) {
         configuration.set(key, value);
         if (SILENCE_MODE.key().equals(key)) {

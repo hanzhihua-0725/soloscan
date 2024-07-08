@@ -30,7 +30,11 @@ public interface DataSet extends Cloneable {
 
     Row next();
 
-    public boolean addCalcColumn(String columnName, Function<Row, Object> function);
+    boolean addCalcColumn(String columnName, Function<Row, Object> function);
 
     void close();
+
+    default DataSet newDataSet() {
+        return null;
+    }
 }

@@ -136,9 +136,6 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
 
     public Object execute(Map<String, Object> map) {
         log.info("{} start to execute,map:{}", this, map);
-        if (map == null) {
-            map = new HashMap<>();
-        }
         Env env;
         if (map instanceof Env) {
             env = (Env) map;

@@ -58,7 +58,7 @@ public class MockCodeGenerator extends AbstractCodeGenerator {
     public void onConstant(Token token) {
         if (ParserUtils.isVariableToken(token)) {
             String varName = token.getLexeme();
-            if(!SymbolTable.isReservedKeyword(varName))
+            if (!SymbolTable.isReservedKeyword(varName))
                 variables.add(varName);
         }
     }

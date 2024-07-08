@@ -22,6 +22,15 @@ public class SoloscanBenchmark {
 
     static List<Map<String, Object>> data;
 
+    public static void main(String[] args) throws Exception {
+        Options options = new OptionsBuilder()
+                .include(SoloscanBenchmark.class.getSimpleName())
+                .build();
+
+        Collection<RunResult> results = new Runner(options).run();
+        System.out.println(results);
+    }
+
     @Setup(org.openjdk.jmh.annotations.Level.Trial)
     public synchronized void prepareData() throws IOException {
         if (data != null) {
@@ -81,15 +90,6 @@ public class SoloscanBenchmark {
         System.out.println("Total Loaded Class Count: " + totalLoadedClassCount);
         System.out.println("Currently Loaded Class Count: " + loadedClassCount);
         System.out.println("Total Unloaded Class Count: " + unloadedClassCount);
-    }
-
-    public static void main(String[] args) throws Exception {
-        Options options = new OptionsBuilder()
-                .include(SoloscanBenchmark.class.getSimpleName())
-                .build();
-
-        Collection<RunResult> results = new Runner(options).run();
-        System.out.println(results);
     }
 
 }

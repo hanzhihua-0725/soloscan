@@ -657,11 +657,81 @@ public class SoloscanExecutorTest {
 
     @Test
     public void testExecuteNotCorrect() {
-        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS,true);
-        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS_ROOT_PATH,"/Users/hanzhihua/gitgh/soloscan/tmp");
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS, true);
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS_ROOT_PATH, "/Users/hanzhihua/gitgh/soloscan/tmp");
         SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
         String expression = "{count(QA2_8 =1)/count(QA2_8),;count(QA2_8!=null)}";
-        executorExt.execute(expression,new ListDataSet<>(new ArrayList<>()));
+        executorExt.execute(expression, new ListDataSet<>(new ArrayList<>()));
 
+    }
+
+    @Test
+    public void testTopn() {
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS, true);
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS_ROOT_PATH, "/Users/hanzhihua/gitgh/soloscan/tmp");
+        SoloscanExecutorExt executorExt = SoloscanExecutorExt.INSTANCE;
+        Map<String, String> expressionMap;
+        Object result;
+        expressionMap = new HashMap<>();
+        expressionMap.put("row1", "topn('RQ',1)");
+        expressionMap.put("row2", "topn('RQ',2)");
+        expressionMap.put("row3", "topn('RQ',3)");
+        expressionMap.put("row4", "topn('RQ',4)");
+        result = executorExt.execute(expressionMap, new ListDataSet<>(data));
+        Assert.assertTrue(result instanceof Map);
+        Assert.assertEquals(((Map) result).get("row1"), Arrays.asList(4).toString());
+        Assert.assertEquals(((Map) result).get("row2"), Arrays.asList(4, 3).toString());
+        Assert.assertEquals(((Map) result).get("row3"), Arrays.asList(4, 3, 2).toString());
+        Assert.assertEquals(((Map) result).get("row4"), Arrays.asList(4, 3, 2, 1).toString());
+
+        expressionMap = new HashMap<>();
+        expressionMap.put("row1", "topn('uid',1)");
+        expressionMap.put("row2", "topn('uid',2)");
+        expressionMap.put("row3", "topn('uid',3)");
+        expressionMap.put("row4", "topn('uid',4)");
+        result = executorExt.execute(expressionMap, new ListDataSet<>(data));
+        Assert.assertTrue(result instanceof Map);
+        Assert.assertEquals(((Map) result).get("row1"), Arrays.asList(2023032080).toString());
+        Assert.assertEquals(((Map) result).get("row2"), Arrays.asList(2023032080, 2023032079).toString());
+        Assert.assertEquals(((Map) result).get("row3"), Arrays.asList(2023032080, 2023032079, 2023032078).toString());
+        Assert.assertEquals(((Map) result).get("row4"), Arrays.asList(2023032080, 2023032079, 2023032078, 2023032076).toString());
+
+        expressionMap = new HashMap<>();
+        expressionMap.put("row1", "topn('RQ',1,'QA1_2=2')");
+        expressionMap.put("row2", "topn('RQ',2,'YEAR=22')");
+        expressionMap.put("row3", "topn('RQ',3,'uid=2023031810')");
+        expressionMap.put("row4", "topn('RQ',4,'uid=2023031810 || uid=2023031700')");
+        result = executorExt.execute(expressionMap, new ListDataSet<>(data));
+        Assert.assertTrue(result instanceof Map);
+        Assert.assertEquals(((Map) result).get("row1"), Arrays.asList().toString());
+        Assert.assertEquals(((Map) result).get("row2"), Arrays.asList().toString());
+        Assert.assertEquals(((Map) result).get("row3"), Arrays.asList(4).toString());
+        Assert.assertEquals(((Map) result).get("row4"), Arrays.asList(4, 2).toString());
+    }
+
+    @Test
+    public void testExecuteWithPlaceHoldAndGlobalFilter(){
+        SoloscanExecutorExt instance = SoloscanExecutorExt.INSTANCE;
+        Map<String, String> map = new HashMap<>();
+        Map<String, Object> result1;
+        map.put("row1", "{count(SCCC),SCCC,{{key}}}");
+        Map<String, String> keyMap = new HashMap<>();
+        keyMap.put("key","S1XX=5");
+        result1 = instance.executeWithPlaceHoldAndGlobalFilter(map,keyMap,"RQ=3","",new ListDataSet<>(data));
+
+
+        Map<String, Object> result2;
+        map.put("row1", "{count(SCCC),SCCC,S1XX=5 && RQ=3}");
+        result2 = instance.execute(map,new ListDataSet<>(data));
+
+        Assert.assertEquals(result1,result2);
+
+        Map<String, Object> result3;
+        map.put("row1", "{count(SCCC),SCCC,{{key}}}");
+        keyMap = new HashMap<>();
+        keyMap.put("key","S1XX=5");
+        result3 = instance.executeWithPlaceHoldAndGlobalFilter(map,keyMap,"RQ=2","",new ListDataSet<>(data));
+
+        Assert.assertNotEquals(result1,result3);
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,7 +11,7 @@
 
     <groupId>io.github.hanzhihua-0725</groupId>
     <artifactId>soloscan</artifactId>
-    <version>0.1.14</version>
+    <version>0.1.16</version>
     <description>Simple metric expression</description>
     <url>https://github.com/hanzhihua-0725/soloscan</url>
     <inceptionYear>2024</inceptionYear>
@@ -125,10 +125,10 @@
                 <version>3.3.0</version>
                 <configuration>
                     <additionalJOptions>
-                    <additionalJOption>-J-Duser.language=en</additionalJOption>
-                    <additionalJOption>-J-Duser.country=US</additionalJOption>
-                    <additionalJOption>-Xdoclint:none</additionalJOption>
-                </additionalJOptions>
+                        <additionalJOption>-J-Duser.language=en</additionalJOption>
+                        <additionalJOption>-J-Duser.country=US</additionalJOption>
+                        <additionalJOption>-Xdoclint:none</additionalJOption>
+                    </additionalJOptions>
                 </configuration>
                 <executions>
                     <execution>
@@ -191,25 +191,25 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-checkstyle-plugin</artifactId>-->
-<!--                <version>3.1.0</version>-->
-<!--                <configuration>-->
-<!--                    <configLocation>/tools/maven/checkstyle.xml</configLocation>-->
-<!--                    <logViolationsToConsole>true</logViolationsToConsole>-->
-<!--                    <failOnViolation>true</failOnViolation>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>validate</id>-->
-<!--                        <phase>validate</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>check</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-checkstyle-plugin</artifactId>-->
+            <!--                <version>3.1.0</version>-->
+            <!--                <configuration>-->
+            <!--                    <configLocation>/tools/maven/checkstyle.xml</configLocation>-->
+            <!--                    <logViolationsToConsole>true</logViolationsToConsole>-->
+            <!--                    <failOnViolation>true</failOnViolation>-->
+            <!--                </configuration>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>validate</id>-->
+            <!--                        <phase>validate</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>check</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
 
