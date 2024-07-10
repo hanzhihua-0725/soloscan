@@ -66,7 +66,7 @@ public class SoloscanCompiler implements SoloscanCompileInterface {
         CodeGeneratorProxy codeGenerator = new CodeGeneratorProxy(realCodeGenerator);
         SoloExpressionParser parser = new SoloExpressionParser(this, instance, lexer, codeGenerator);
         BaseSoloExpression baseSoloExpression = parser.parseSoloExpression();
-        Preconditions.checkArgument(aggFunctionUnits.size() == 0, "AggFunctionUnit must be empty");
+//        Preconditions.checkArgument(aggFunctionUnits.size() == 0, "AggFunctionUnit must be empty");
         while (true) {
             MetricUnitExpression metricUnitExpression = metricUnitExpressions.pollFirst();
             if (metricUnitExpression == null) {

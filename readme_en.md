@@ -130,7 +130,7 @@ data. Column names are case insensitive.
 <dependency>
     <groupId>io.github.hanzhihua-0725</groupId>
     <artifactId>soloscan</artifactId>
-    <version>0.1.16</version>
+    <version>0.1.17</version>
 </dependency>
 ```
 

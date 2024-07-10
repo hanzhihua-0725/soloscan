@@ -89,7 +89,7 @@ public class SoloscanLexer {
 
     private void skipBlank() {
         for (; ; nextChar()) {
-            if (this.peek == ' ' || this.peek == '\t' || this.peek == '\r' || this.peek == '\n') {
+            if (this.peek == ' ' || this.peek == '\t' || this.peek == '\r' || this.peek == '\n'  || this.peek == 160) {
                 if (this.peek == '\n') {
                     this.lineNo++;
                 }

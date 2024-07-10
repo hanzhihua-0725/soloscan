@@ -380,6 +380,11 @@ public class SoloscanExecutorTest {
             Assert.fail();
         } catch (ExpressionCompileException e) {
         }
+        try {
+            instance.execute("count(SCCC)+SCCC=1;=", new ListDataSet<>(data));
+            Assert.fail();
+        } catch (ExpressionCompileException e) {
+        }
     }
 
     @Test
