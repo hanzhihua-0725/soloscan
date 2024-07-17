@@ -40,9 +40,9 @@ public class SJavaType extends SObject<Object> {
     @Override
     public Object getValue(final Map<String, Object> env) {
         Object value = env.get(name);
-        if (value == null) {
-            log.warn("env name:{} value is null", name);
-        }
+//        if (value == null) {
+//            log.warn("env name:{} value is null", name);
+//        }
         return value;
     }
 
