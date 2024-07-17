@@ -44,11 +44,11 @@ public abstract class BaseSoloExpression implements Expression {
     public Object execute(Map<String, Object> map) {
         try {
             log.info("{} start to execute,map:{}", this, map);
-            if (map == null) {
-                map = Collections.synchronizedMap(new HashMap<>());
-            } else {
-                map = Collections.synchronizedMap(map);
-            }
+//            if (map == null) {
+//                map = Collections.synchronizedMap(new HashMap<>());
+//            } else {
+//                map = Collections.synchronizedMap(map);
+//            }
             Env env = new Env(this.instance, this, map);
             metricUnitExpressions.stream().forEach(metricUnitExpression -> {
                 metricUnitExpression.execute(env);

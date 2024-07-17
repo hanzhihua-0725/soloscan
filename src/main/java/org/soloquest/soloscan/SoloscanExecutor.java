@@ -167,6 +167,7 @@ public class SoloscanExecutor {
             if (env == null) {
                 env = new HashMap<>();
             }
+            env = Collections.synchronizedMap(env);
             env.put(Env.DATASET_KEY, dataSet);
 
             log.info("expressionStringMap:{},compile expression:{},size:{}", expressionStringMap, compiledExpressionMap, compiledExpressionMap.size());
