@@ -124,7 +124,7 @@ public class Env implements Map<String, Object> {
     public String getDetail(){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("envMap:");
-        stringBuilder.append(dataMap);
+        stringBuilder.append(envMap);
         stringBuilder.append("\tdataMap:");
         stringBuilder.append(dataMap);
         return stringBuilder.toString();
