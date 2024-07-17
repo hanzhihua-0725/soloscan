@@ -37,7 +37,7 @@ public class SoloscanOptions {
     public static final ConfigOption<Boolean> SILENCE_MODE =
             ConfigOptions.key("silence.mode")
                     .booleanType()
-                    .defaultValue(true)
+                    .defaultValue(false)
                     .withDescription(
                             "suppress log level to error");
     public static final ConfigOption<Integer> EXECUTE_TIMEOUT_MS =
@@ -57,8 +57,11 @@ public class SoloscanOptions {
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         ch.qos.logback.classic.Logger logger = loggerContext.getLogger("org.soloquest.soloscan");
         INIT_LEVEL = logger.getLevel();
-        if (SILENCE_MODE.defaultValue()) {
+        if (SoloscanOptions.getOption(SILENCE_MODE)) {
+            logger.error("use silence mode");
             logger.setLevel(Level.ERROR);
+        }else{
+            logger.info("disable silence mode");
         }
     }
 

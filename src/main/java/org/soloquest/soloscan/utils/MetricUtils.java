@@ -86,13 +86,25 @@ public class MetricUtils {
             for (String key : map1.keySet()) {
                 Number value1 = map1.get(key);
                 Number value2 = map2.get(key);
-                ((HashMap) result).put(key, value1.doubleValue() / value2.doubleValue());
+                if(Numbers.equiv(value2,0)){
+                    log.warn("value2 is zero, and value1 is {}",value1);
+                    ((HashMap) result).put(key, 0.0);
+                }else{
+                    ((HashMap) result).put(key, value1.doubleValue() / value2.doubleValue());
+                }
+
             }
 
         } else if (metrics1 instanceof Number) {
             Number value1 = (Number) metrics1;
             Number value2 = (Number) metrics2;
-            result = value1.doubleValue() / value2.doubleValue();
+            if(Numbers.equiv(value2,0)){
+                log.warn("value2 is zero, and value1 is {}",value1);
+                result = 0.0;
+            }else{
+                result = value1.doubleValue() / value2.doubleValue();
+            }
+
         }
         logMetric(metrics1, metrics2, result, "/");
         return result;

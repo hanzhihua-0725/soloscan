@@ -96,12 +96,12 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
             }
         }
         if (aggFunctionMapMap.size() == 0) {
-            log.warn("all data be filter out");
+            log.error("all data be filter out");
             for (AggFunctionUnit aggFunctionUnit : aggFunctionUnits) {
                 if (hasGrouping) {
-                    env.putAggrValue(aggFunctionUnit.genAggFunction().getPlaceHolder(), new HashMap<>());
+                    env.putAggrValue(aggFunctionUnit.getAggFunctionText().getPlaceHolder(), new HashMap<>());
                 } else {
-                    env.putAggrValue(aggFunctionUnit.genAggFunction().getPlaceHolder(), Long.valueOf(0));
+                    env.putAggrValue(aggFunctionUnit.getAggFunctionText().getPlaceHolder(), Long.valueOf(0));
                 }
             }
         } else {
@@ -114,7 +114,9 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
                     Preconditions.checkArgument(map.size() == 1 &&
                                     NO_GROUPING.equalsIgnoreCase(map.keySet().iterator().next()),
                             "the data of no group is invalid");
-                    env.putAggrValue(key, map.values().iterator().next());
+                    Object v = map.values().iterator().next();
+                    env.putAggrValue(key, v);
+                    log.info("nogrouping put key:{},value:{}",key,v);
                 }
             }
         }
@@ -149,8 +151,24 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
             this.queue.clear();
             return object;
         } catch (InterruptedException e) {
-            throw new ExpressionExecuteException(e);
+            throw new ExpressionExecuteException(expressionString+" execute fail",e);
+        } catch (RuntimeException e) {
+            log.error("MetricUnit ["+expressionString+"] execute fail",e);
+            if(aggFunctionUnits.size() > 0){
+                StringBuilder stringBuilder = new StringBuilder();
+                boolean isFirst = true;
+                for(AggFunctionUnit aggFunctionUnit:aggFunctionUnits){
+                    if(!isFirst){
+                        stringBuilder.append(",");
+                    }
+                    stringBuilder.append(aggFunctionUnit.getAggFunctionText().getPlaceHolder());
+                    isFirst = false;
+                }
+                log.error("AggFunctionUnits's placeholds :{}",stringBuilder.toString());
+            }
+            throw e;
         }
+
 
     }
 }

@@ -120,4 +120,14 @@ public class Env implements Map<String, Object> {
     public Set<Entry<String, Object>> entrySet() {
         return this.envMap.entrySet();
     }
+
+    public String getDetail(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("envMap:");
+        stringBuilder.append(dataMap);
+        stringBuilder.append("\tdataMap:");
+        stringBuilder.append(dataMap);
+        return stringBuilder.toString();
+    }
+
 }

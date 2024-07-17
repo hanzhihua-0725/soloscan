@@ -1,11 +1,14 @@
 package org.soloquest.soloscan.runtime.lang;
 
+import lombok.extern.slf4j.Slf4j;
 import org.soloquest.soloscan.compiler.lexer.SymbolTable;
 import org.soloquest.soloscan.exception.ExpressionExecuteException;
+import org.soloquest.soloscan.utils.Env;
 import org.soloquest.soloscan.utils.MetricUtils;
 
 import java.util.Map;
 
+@Slf4j
 public class SMertric extends SObject<Object> {
 
     protected String name;
@@ -41,7 +44,16 @@ public class SMertric extends SObject<Object> {
 
     @Override
     public Object getValue(Map<String, Object> env) {
-        return env.get(this.name);
+        Object object =  env.get(this.name);
+        if(object == null ){
+            log.error("{} 's value is null",this.name);
+            if(env instanceof Env){
+                log.error("key:{},env:{}",this.name,((Env)env).getDetail());
+            }else{
+                log.error("key:{},env:{} not ENV",this.name,env);
+            }
+        }
+        return object;
     }
 
 

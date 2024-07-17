@@ -42,17 +42,34 @@ public abstract class BaseSoloExpression implements Expression {
     }
 
     public Object execute(Map<String, Object> map) {
-        log.info("{} start to execute,map:{}", this, map);
-        if (map == null) {
-            map = Collections.synchronizedMap(new HashMap<>());
-        } else {
-            map = Collections.synchronizedMap(map);
+        try {
+            log.info("{} start to execute,map:{}", this, map);
+            if (map == null) {
+                map = Collections.synchronizedMap(new HashMap<>());
+            } else {
+                map = Collections.synchronizedMap(map);
+            }
+            Env env = new Env(this.instance, this, map);
+            metricUnitExpressions.stream().forEach(metricUnitExpression -> {
+                metricUnitExpression.execute(env);
+            });
+            return execute0(env);
+        }catch (RuntimeException runtimeException){
+            log.error("Solo ["+expressionString+"] execute fail",runtimeException);
+            if(metricUnitExpressions.size() > 0){
+                StringBuilder stringBuilder = new StringBuilder();
+                boolean isFirst = true;
+                for(MetricUnitExpression metricUnitExpression:metricUnitExpressions){
+                    if(!isFirst){
+                        stringBuilder.append(",");
+                    }
+                    stringBuilder.append(metricUnitExpression.getPlaceHolder());
+                    isFirst = false;
+                }
+                log.error("MetricUnitExpressions's placeholds :{}",stringBuilder.toString());
+            }
+            throw  runtimeException;
         }
-        Env env = new Env(this.instance, this, map);
-        metricUnitExpressions.stream().forEach(metricUnitExpression -> {
-            metricUnitExpression.execute(env);
-        });
-        return execute0(env);
     }
 
     public boolean consumeRow(Row row) {
