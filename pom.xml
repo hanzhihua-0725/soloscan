@@ -11,7 +11,7 @@
 
     <groupId>io.github.hanzhihua-0725</groupId>
     <artifactId>soloscan</artifactId>
-    <version>0.1.27</version>
+    <version>0.1.28</version>
     <description>Simple metric expression</description>
     <url>https://github.com/hanzhihua-0725/soloscan</url>
     <inceptionYear>2024</inceptionYear>
@@ -90,7 +90,18 @@
             <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.esotericsoftware.kryo</groupId>
+            <artifactId>kryo5</artifactId>
+            <version>5.5.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
+            <version>3.11.2</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.openjdk.jmh</groupId>

@@ -77,9 +77,7 @@ public class Env implements Map<String, Object> {
 
     @Override
     public Object get(Object key) {
-        if (key == null) {
-            return null;
-        }
+        Preconditions.checkNotNull(key);
         if (dataMap != null && dataMap.containsColumn(key.toString())) {
             return dataMap.getValue(key.toString());
         }

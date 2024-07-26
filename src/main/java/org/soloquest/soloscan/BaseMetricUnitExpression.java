@@ -96,7 +96,7 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
             }
         }
         if (aggFunctionMapMap.size() == 0) {
-            log.error("all data be filter out");
+            log.warn("{},all data be filter out",expressionString);
             for (AggFunctionUnit aggFunctionUnit : aggFunctionUnits) {
                 if (hasGrouping) {
                     env.putAggrValue(aggFunctionUnit.getAggFunctionText().getPlaceHolder(), new HashMap<>());

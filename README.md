@@ -122,7 +122,7 @@
 <dependency>
     <groupId>io.github.hanzhihua-0725</groupId>
     <artifactId>soloscan</artifactId>
-    <version>0.1.20</version>
+    <version>0.1.28</version>
 </dependency>
 ```
 

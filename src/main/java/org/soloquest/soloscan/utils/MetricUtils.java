@@ -86,7 +86,10 @@ public class MetricUtils {
             for (String key : map1.keySet()) {
                 Number value1 = map1.get(key);
                 Number value2 = map2.get(key);
-                if(Numbers.equiv(value2,0)){
+                if(value1 == null || value2 == null){
+                    log.warn("value2 is null, and value1 is {}",value1);
+                    ((HashMap) result).put(key, null);
+                }else if(Numbers.equiv(value2,0)){
                     log.warn("value2 is zero, and value1 is {}",value1);
                     ((HashMap) result).put(key, 0.0);
                 }else{

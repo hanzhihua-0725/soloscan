@@ -95,6 +95,9 @@ public class SMertric extends SObject<Object> {
         switch (other.getSObjectType()) {
             case Metric:
                 Object otherValue = ((SMertric) other).getValue(env);
+                if(otherValue == null){
+                    return new SRuntimeMertic(null);
+                }
                 return new SRuntimeMertic(MetricUtils.div(value, otherValue));
             default:
                 throw new ExpressionExecuteException();
