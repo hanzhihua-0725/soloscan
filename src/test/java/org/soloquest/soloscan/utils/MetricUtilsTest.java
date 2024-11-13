@@ -32,6 +32,12 @@ public class MetricUtilsTest {
         assertEquals(140, result.get("2").intValue());
         assertEquals(130, result.get("5").intValue());
         assertEquals(90, result.get("6").intValue());
+
+        result = MetricUtils.slideAgg(data, 4,4);
+        assertEquals(3, result.size());
+        assertEquals(100, result.get("1").intValue());
+        assertEquals(130, result.get("5").intValue());
+        assertEquals(20, result.get("21").intValue());
     }
 
     @Test
@@ -40,7 +46,7 @@ public class MetricUtilsTest {
         data.put("1", 10);
         data.put("2", 20);
         Map<String, Number> result = MetricUtils.slideAgg(data, 4);
-        assertEquals(0, result.size());
+        assertEquals(1, result.size());
     }
 
     @Test

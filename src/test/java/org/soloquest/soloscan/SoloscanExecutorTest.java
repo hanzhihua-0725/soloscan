@@ -85,6 +85,8 @@ public class SoloscanExecutorTest {
     @Test
     public void testExperiment() {
         SoloscanExecutorExt instance = SoloscanExecutorExt.INSTANCE;
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS.key(), true);
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS_ROOT_PATH, "/Users/hanzhihua/gitgh/soloscan/tmp");
         List<String> list = new ArrayList<>();
         list.add("{count(SCCC)}");
         list.add("{count(SCCC),grouping(SCCC,RQ),SCCC=20}");
@@ -289,10 +291,13 @@ public class SoloscanExecutorTest {
         Map<String, String> map = new HashMap<>();
         map.put("row1", "{count(QD2f2_1 in [4,5])/count(QA1_2=1),week,week in range(500,520,1)}");
         map.put("row2", "slide({count(QD2f2_1 in [4,5])/count(QA1_2=1),week,week in range(500,520,1)},4)");
+        map.put("row3", "slide({count(QD2f2_1 in [4,5])/count(QA1_2=1),week,week in range(500,520,1)},4,3)");
         Map<String, Object> result = instance.execute(map, new ListDataSet<>(data));
-        Assert.assertEquals(result.size(), 2);
+        Assert.assertEquals(result.size(), 3);
         Assert.assertEquals(result.get("row1").getClass(), HashMap.class);
         Assert.assertEquals(result.get("row2").getClass(), HashMap.class);
+        Assert.assertEquals(result.get("row3").getClass(), HashMap.class);
+        System.out.println(result);
     }
 
     @Test

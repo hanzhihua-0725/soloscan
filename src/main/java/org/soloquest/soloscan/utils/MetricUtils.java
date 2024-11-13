@@ -184,6 +184,10 @@ public class MetricUtils {
 
 
     public static Map<String, Number> slideAgg(Map<String, Number> data, int windowSize) {
+        return slideAgg(data, windowSize,1);
+    }
+
+    public static Map<String, Number> slideAgg(Map<String, Number> data, int windowSize,int stepSize) {
         Map<String, Number> result = new HashMap<>();
         if (data == null || data.size() == 0) {
             return result;
@@ -195,7 +199,11 @@ public class MetricUtils {
         }
         Integer maxWeek = sortedData.lastKey();
 
+        int mapIndex = 0;
         for (Map.Entry<Integer, Number> entry : sortedData.entrySet()) {
+            if (mapIndex++ % stepSize != 0){
+                continue;
+            }
             Number sum = entry.getValue();
             int currentWeek = entry.getKey();
 
@@ -208,11 +216,11 @@ public class MetricUtils {
                 }
                 nextWeek++;
             }
-            if (count == windowSize) {
+            if (count == windowSize || nextWeek > maxWeek) {
                 result.put(currentWeek + "", sum);
-            } else {
-                break;
             }
+            if(nextWeek > maxWeek)
+                break;
         }
 
         return result;
