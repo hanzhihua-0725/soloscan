@@ -206,6 +206,7 @@ public class MetricUtils {
             }
             Number sum = entry.getValue();
             int currentWeek = entry.getKey();
+            int endWeek = currentWeek;
 
             int count = 1;
             int nextWeek = currentWeek + 1;
@@ -213,11 +214,12 @@ public class MetricUtils {
                 if (sortedData.containsKey(nextWeek)) {
                     sum = Numbers.add(sum, sortedData.get(nextWeek));
                     count++;
+                    endWeek = nextWeek;
                 }
                 nextWeek++;
             }
             if (count == windowSize || nextWeek > maxWeek) {
-                result.put(currentWeek + "", sum);
+                result.put(currentWeek+"_"+endWeek, sum);
             }
             if(nextWeek > maxWeek)
                 break;
