@@ -28,16 +28,16 @@ public class MetricUtilsTest {
 
         Map<String, Number> result = MetricUtils.slideAgg(data, 4);
         assertEquals(7, result.size());
-        assertEquals(100, result.get("1_4").intValue());
-        assertEquals(140, result.get("2_5").intValue());
-        assertEquals(130, result.get("5_20").intValue());
-        assertEquals(90, result.get("6_21").intValue());
+        assertEquals(100, result.get("1___4").intValue());
+        assertEquals(140, result.get("2___5").intValue());
+        assertEquals(130, result.get("5___20").intValue());
+        assertEquals(90, result.get("6___21").intValue());
 
         result = MetricUtils.slideAgg(data, 4,4);
         assertEquals(3, result.size());
-        assertEquals(100, result.get("1_4").intValue());
-        assertEquals(130, result.get("5_20").intValue());
-        assertEquals(20, result.get("21_100").intValue());
+        assertEquals(100, result.get("1___4").intValue());
+        assertEquals(130, result.get("5___20").intValue());
+        assertEquals(20, result.get("21___100").intValue());
     }
 
     @Test
@@ -71,6 +71,6 @@ public class MetricUtilsTest {
         Map<String, Number> result = MetricUtils.slideAgg(data, 3);
 
         assertEquals(1, result.size());
-        assertEquals(60, result.get("1_3").intValue());
+        assertEquals(60, result.get("1___3").intValue());
     }
 }

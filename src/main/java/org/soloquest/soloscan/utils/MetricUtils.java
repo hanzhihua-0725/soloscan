@@ -219,7 +219,7 @@ public class MetricUtils {
                 nextWeek++;
             }
             if (count == windowSize || nextWeek > maxWeek) {
-                result.put(currentWeek+"_"+endWeek, sum);
+                result.put(currentWeek+"___"+endWeek, sum);
             }
             if(nextWeek > maxWeek)
                 break;
