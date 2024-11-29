@@ -9,6 +9,8 @@ public abstract class AbstractAggFunction implements AggFunction {
 
     protected AggFunctionText text;
 
+    protected boolean hasPassed = false;
+
     public AbstractAggFunction(AggFunctionText text) {
         this.text = text;
     }
@@ -25,6 +27,7 @@ public abstract class AbstractAggFunction implements AggFunction {
     @Override
     public void process(Env env) {
         if (aggInner.check(env)) {
+            hasPassed = true;
             doProcess(env);
         }
     }
@@ -35,4 +38,15 @@ public abstract class AbstractAggFunction implements AggFunction {
     }
 
     protected abstract void doProcess(Env env);
+
+
+    @Override
+    public final Number getValue() {
+        if(!hasPassed){
+            return null;
+        }
+        return getValue0();
+    }
+
+    protected abstract Number getValue0() ;
 }

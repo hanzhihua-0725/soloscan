@@ -20,7 +20,7 @@ public class CountblankAggFunction extends AbstractAggFunction {
     }
 
     @Override
-    public Number getValue() {
+    public Number getValue0() {
         return count;
     }
 

@@ -101,7 +101,7 @@ public abstract class BaseMetricUnitExpression implements MetricUnitExpression {
                 if (hasGrouping) {
                     env.putAggrValue(aggFunctionUnit.getAggFunctionText().getPlaceHolder(), new HashMap<>());
                 } else {
-                    env.putAggrValue(aggFunctionUnit.getAggFunctionText().getPlaceHolder(), Long.valueOf(0));
+                    env.putAggrValue(aggFunctionUnit.getAggFunctionText().getPlaceHolder(), null);
                 }
             }
         } else {

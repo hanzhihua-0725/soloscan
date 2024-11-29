@@ -14,7 +14,7 @@ public class SumAggFunction extends AbstractAggFunction {
     }
 
     @Override
-    public Number getValue() {
+    public Number getValue0() {
         return value;
     }
 

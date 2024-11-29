@@ -152,7 +152,9 @@ public class SoloscanExecutorTest {
         Object object = instance.execute("{count(SCCC)}", new ListDataSet<>(data));
         Object object1 = instance.execute("{count(SCCC=xyz)}", new ListDataSet<>(data));
         Object object2 = instance.execute("{count(SCCC!=xyz)}", new ListDataSet<>(data));
-        Assert.assertEquals(((Long) object).longValue(), ((Long) object1).longValue() + ((Long) object2).longValue());
+        Assert.assertEquals(((Long) object).longValue(), ((Long) object2).longValue());
+        Assert.assertTrue(object1 == null);
+
 
         object = instance.execute("{sum(SCCC)}", new ListDataSet<>(data));
         object1 = instance.execute("{sum(SCCC)+sum(SCCC)}", new ListDataSet<>(data));
@@ -175,12 +177,14 @@ public class SoloscanExecutorTest {
         object = instance.execute("{sum(SCCC)}", new ListDataSet<>(data));
         object1 = instance.execute("{sum(SCCC=xyz)}", new ListDataSet<>(data));
         object2 = instance.execute("{sum(SCCC!=xyz)}", new ListDataSet<>(data));
-        Assert.assertEquals(((Long) object).longValue(), ((Long) object1).longValue() + ((Long) object2).longValue());
+        Assert.assertEquals(((Long) object).longValue(), ((Long) object2).longValue());
+        Assert.assertTrue(object1 == null);
 
         object = instance.execute("{sum(SCCC)}", new ListDataSet<>(data));
         object1 = instance.execute("{sumx(SCCC,SCCC=xyz)}", new ListDataSet<>(data));
         object2 = instance.execute("{sumx(SCCC,SCCC!=xyz)}", new ListDataSet<>(data));
-        Assert.assertEquals(((Long) object).longValue(), ((Long) object1).longValue() + ((Long) object2).longValue());
+        Assert.assertEquals(((Long) object).longValue(), ((Long) object2).longValue());
+        Assert.assertTrue(object1 == null);
 
 
         object = instance.execute("{sum(SCCC),SCCC,SCCC=1 || SCCC=2}", new ListDataSet<>(data));
@@ -205,9 +209,9 @@ public class SoloscanExecutorTest {
         Object object2 = instance.execute("{minx(SCCC,SCCC=xyz)}", new ListDataSet<>(data));
         Object object3 = instance.execute("{minx(SCCC,SCCC!=xyz)}", new ListDataSet<>(data));
         Assert.assertTrue(object1 instanceof Long);
-        Assert.assertTrue(object2 instanceof Long);
+        Assert.assertTrue(object2 ==null);
         Assert.assertTrue(object3 instanceof Long);
-        Assert.assertTrue(((Long) object1).longValue() == ((Long) object2).longValue() || ((Long) object1).longValue() == ((Long) object3).longValue());
+        Assert.assertTrue( ((Long) object1).longValue() == ((Long) object3).longValue());
     }
 
     @Test
@@ -230,9 +234,9 @@ public class SoloscanExecutorTest {
         Object object2 = instance.execute("{maxx(SCCC,SCCC=xyz)}", new ListDataSet<>(data));
         Object object3 = instance.execute("{maxx(SCCC,SCCC!=xyz)}", new ListDataSet<>(data));
         Assert.assertTrue(object1 instanceof Long);
-        Assert.assertTrue(object2 instanceof Long);
+        Assert.assertTrue(object2==null);
         Assert.assertTrue(object3 instanceof Long);
-        Assert.assertTrue(((Long) object1).longValue() == ((Long) object2).longValue() || ((Long) object1).longValue() == ((Long) object3).longValue());
+        Assert.assertTrue(((Long) object1).longValue() == ((Long) object3).longValue());
     }
 
 
@@ -472,7 +476,7 @@ public class SoloscanExecutorTest {
             Iterator<String> iterator = aggFilterPart.keySet().iterator();
             while (iterator.hasNext()) {
                 String key = iterator.next();
-                if (Numbers.equiv(aggFilterPart.get(key), 0)) {
+                if (aggFilterPart.get(key) == null || Numbers.equiv(aggFilterPart.get(key), 0)) {
                     iterator.remove();
                 }
             }
@@ -537,7 +541,7 @@ public class SoloscanExecutorTest {
         Assert.assertEquals(((Map) result).get("row1"), 10l);
         Assert.assertEquals(((Map) result).get("row2"), 5l);
         Assert.assertEquals(((Map) result).get("row3"), 1l);
-        Assert.assertEquals(((Map) result).get("row4"), 0l);
+        Assert.assertEquals(((Map) result).get("row4"), null);
 
     }
 
@@ -588,6 +592,9 @@ public class SoloscanExecutorTest {
 
     @Test
     public void testExecuteWithCase() {
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS.key(), true);
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS_ROOT_PATH, "/Users/hanzhihua/gitgh/soloscan/tmp");
+
         List<Map> list = new ArrayList<>();
         Map p = new HashMap<>();
         p.put("a", false);
@@ -616,10 +623,10 @@ public class SoloscanExecutorTest {
         expressionMap.put("row4", "{sum(b),,a=true}");
         result = executorExt.execute(expressionMap, dataSet);
         Assert.assertTrue(result instanceof Map);
-        Assert.assertEquals(((Map) result).get("row1"), 0l);
-        Assert.assertEquals(((Map) result).get("row2"), 0l);
-        Assert.assertEquals(((Map) result).get("row3"), 0l);
-        Assert.assertEquals(((Map) result).get("row4"), 0l);
+        Assert.assertEquals(((Map) result).get("row1"), null);
+        Assert.assertEquals(((Map) result).get("row2"), null);
+        Assert.assertEquals(((Map) result).get("row3"), null);
+        Assert.assertEquals(((Map) result).get("row4"), null);
 
 
         SoloscanOptions.set(SoloscanOptions.COLUMN_CASE_INSENSITIVE.key(), true);
@@ -630,7 +637,7 @@ public class SoloscanExecutorTest {
         Assert.assertEquals(((Map) result).get("row1"), 10l);
         Assert.assertEquals(((Map) result).get("row2"), 5l);
         Assert.assertEquals(((Map) result).get("row3"), 1l);
-        Assert.assertEquals(((Map) result).get("row4"), 0l);
+        Assert.assertEquals(((Map) result).get("row4"), null);
     }
 
     @Test

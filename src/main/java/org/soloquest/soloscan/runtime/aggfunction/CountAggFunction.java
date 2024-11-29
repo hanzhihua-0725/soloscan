@@ -13,7 +13,7 @@ public class CountAggFunction extends AbstractAggFunction {
     }
 
     @Override
-    public Number getValue() {
+    public Number getValue0() {
         return count;
     }
 

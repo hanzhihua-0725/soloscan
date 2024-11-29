@@ -27,7 +27,7 @@ public class AvgAggFunction extends AbstractAggFunction {
     }
 
     @Override
-    public Double getValue() {
+    public Double getValue0() {
         if (count == 0) {
             return 0.0;
         }

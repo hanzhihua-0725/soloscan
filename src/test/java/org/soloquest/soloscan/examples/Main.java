@@ -96,7 +96,7 @@ public class Main {
         }
 
         @Override
-        public Number getValue() {
+        public Number getValue0() {
             return value;
         }
 

@@ -15,7 +15,7 @@ public class MinAggFunction extends AbstractAggFunction {
 
 
     @Override
-    public Number getValue() {
+    public Number getValue0() {
         if (value == Integer.MAX_VALUE) {
             value = 0;
         }

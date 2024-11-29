@@ -10,6 +10,9 @@ import java.util.*;
 public class MetricUtils {
 
     public static Object add(Object metrics1, Object metrics2) throws IllegalArgumentException {
+        if (metrics1 == null || metrics2 == null) {
+            return null;
+        }
         checkMetrics(metrics1, metrics2);
         Object result = null;
         if (metrics1 instanceof HashMap) {
@@ -32,6 +35,9 @@ public class MetricUtils {
     }
 
     public static Object sub(Object metrics1, Object metrics2) throws IllegalArgumentException {
+        if (metrics1 == null || metrics2 == null) {
+            return null;
+        }
         checkMetrics(metrics1, metrics2);
         Object result = null;
         if (metrics1 instanceof HashMap) {
@@ -55,6 +61,9 @@ public class MetricUtils {
     }
 
     public static Object mult(Object metrics1, Object metrics2) throws IllegalArgumentException {
+        if (metrics1 == null || metrics2 == null) {
+            return null;
+        }
         checkMetrics(metrics1, metrics2);
         Object result = null;
         if (metrics1 instanceof HashMap) {
@@ -77,6 +86,9 @@ public class MetricUtils {
     }
 
     public static Object div(Object metrics1, Object metrics2) throws IllegalArgumentException {
+        if (metrics1 == null || metrics2 == null) {
+            return null;
+        }
         checkMetrics(metrics1, metrics2);
         Object result = null;
         if (metrics1 instanceof HashMap) {
@@ -128,6 +140,9 @@ public class MetricUtils {
 
 
     public static Object defaultOperation(Object value1, Object value2) throws IllegalArgumentException {
+        if (value1 == null || value2 == null) {
+            return null;
+        }
         if (value1 instanceof HashMap && value2 instanceof HashMap) {
             HashMap<String, Number> map1 = (HashMap) value1;
             HashMap<String, Number> map2 = (HashMap) value2;
