@@ -2,7 +2,7 @@
 
 # soloscan
 
-运行在JVM中的指标表达式。
+运行在JVM中的指标表达式，比写Sql简单，支持一个卡片多个指标同时计算。
 
 ## 特点
 
@@ -94,7 +94,7 @@
     * 语法： column in [1,2,3]
     * 说明：返回column是否在列表中
 * Slide
-    * 语法 Slide(指标结果,windowSize)
+    * 语法 Slide(指标结果,windowSize,stepSize)
 
 ### 项目例子
 
@@ -122,7 +122,7 @@
 <dependency>
     <groupId>io.github.hanzhihua-0725</groupId>
     <artifactId>soloscan</artifactId>
-    <version>0.1.28</version>
+    <version>0.1.30</version>
 </dependency>
 ```
 
@@ -130,13 +130,13 @@
 
 ```java
 DataSet dataSet=new ListDataSet<>(list);
-        SoloscanExecutorExt executorExt=SoloscanExecutorExt.INSTANCE;
-        Map<String, String> expressions=new HashMap<>();
-        expressions.put("row1","{sum(col1),,}");
-        expressions.put("row2","{count(col1),,}");
-        ...
-        expressions.put("rown","{count(col1),,}");
-        System.out.println(executorExt.execute(expressions,dataSet));
+SoloscanExecutorExt executorExt=SoloscanExecutorExt.INSTANCE;
+Map<String, String> expressions=new HashMap<>();
+expressions.put("metric1","{sum(col1),,}");
+expressions.put("metric2","{count(col1),,}");
+...
+expressions.put("metricn","{count(col1),,}");
+System.out.println(executorExt.execute(expressions,dataSet));
 ```
 
 ## 系统设计
