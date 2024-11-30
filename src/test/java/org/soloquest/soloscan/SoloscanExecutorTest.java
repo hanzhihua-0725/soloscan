@@ -81,6 +81,20 @@ public class SoloscanExecutorTest {
         SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS.key(), true);
     }
 
+    @Test
+    public void testInFunction() {
+        SoloscanExecutorExt instance = SoloscanExecutorExt.INSTANCE;
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS.key(), true);
+        SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS_ROOT_PATH, "/Users/hanzhihua/gitgh/soloscan/tmp");
+
+        Map<String, String> map = new HashMap<>();
+        map.put("row1", "{count(),,week in range(509,510,1) } ");
+        map.put("row2", "{count(),,week in range(509,510,1) || week in range(510,511,1)}");
+        Map<String, Object> result = instance.execute(map, new ListDataSet<>(data));
+        Assert.assertEquals(result.size(), 2);
+        Assert.assertEquals(result.get("row1"), 240l);
+        Assert.assertEquals(result.get("row2"), 492l);
+    }
 
     @Test
     public void testExperiment() {
@@ -88,11 +102,12 @@ public class SoloscanExecutorTest {
         SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS.key(), true);
         SoloscanOptions.set(SoloscanOptions.GENERATE_CLASS_ROOT_PATH, "/Users/hanzhihua/gitgh/soloscan/tmp");
         List<String> list = new ArrayList<>();
-        list.add("{count(SCCC)}");
-        list.add("{count(SCCC),grouping(SCCC,RQ),SCCC=20}");
-        list.add("{count(SCCC),grouping(SCCC),SCCC=20}");
-        list.add("{count(SCCC!=20)/count()}");
-        list.add("{count(SCCC),SCCC,SCCC=5||SCCC=11||SCCC=20}");
+//        list.add("{count(SCCC)}");
+//        list.add("{count(SCCC),grouping(SCCC,RQ),SCCC=20}");
+//        list.add("{count(SCCC),grouping(SCCC),SCCC=20}");
+//        list.add("{count(SCCC!=20)/count()}");
+//        list.add("{count(SCCC),SCCC,SCCC=5||SCCC=11||SCCC=20}");
+        list.add("{count(RQ=2)/count(),,week in range(6-99,600+1,1)}");
         log.warn("result:{}", instance.executeList(list, new ListDataSet<>(data)));
 
     }

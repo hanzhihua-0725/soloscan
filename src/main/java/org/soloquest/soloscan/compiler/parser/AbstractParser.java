@@ -179,6 +179,10 @@ public class AbstractParser implements Parser {
                 } else {
                     reportCompileError("expect '='");
                 }
+            } else if (expectString("in")) {
+                move(true);
+                parseAdditionSubtraction();
+                codeGenerator.onIn(opToken);
             } else {
                 break;
             }
@@ -308,21 +312,29 @@ public class AbstractParser implements Parser {
             Token<?> prev = getPrevToken();
             if (prev.getType() == Token.TokenType.Variable && expectChar('(')) {
                 method(prev);
-            } else if (prev.getType() == Token.TokenType.Variable && this.lookhead != null && "in".equalsIgnoreCase(this.lookhead.getLexeme())) {
-                move(true);
-                if (expectChar('[')) {
-                    codeGenerator.onConstant(prev);
-                    newList();
-                    codeGenerator.onIn(this.lookhead);
-                } else {
-                    codeGenerator.onConstant(prev);
-                    parseEntry();
-                    codeGenerator.onIn(this.lookhead);
-                }
-            } else {
+            }else if (expectChar('[')) {
+                codeGenerator.onConstant(prev);
+                newList();
+                codeGenerator.onIn(this.lookhead);
+            }
+//            else if (prev.getType() == Token.TokenType.Variable && this.lookhead != null && "in".equalsIgnoreCase(this.lookhead.getLexeme())) {
+//                move(true);
+//                if (expectChar('[')) {
+//                    codeGenerator.onConstant(prev);
+//                    newList();
+//                    codeGenerator.onIn(this.lookhead);
+//                } else {
+//                    codeGenerator.onConstant(prev);
+//                    parseEntry();
+//                    codeGenerator.onIn(this.lookhead);
+//                }
+//            }
+            else {
                 codeGenerator.onConstant(prev);
             }
-        } else {
+        } else if (expectChar('[')) {
+            newList();
+        }else {
             reportCompileError("invalid token");
         }
     }
