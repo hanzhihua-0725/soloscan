@@ -227,7 +227,16 @@ public class MetricUtils {
             int nextWeek = currentWeek + 1;
             while (count < windowSize && nextWeek <= maxWeek) {
                 if (sortedData.containsKey(nextWeek)) {
-                    sum = Numbers.add(sum, sortedData.get(nextWeek));
+                    Object theValue = sortedData.get(nextWeek);
+                    if (sum == null && theValue == null) {
+                        sum = 0l;
+                    }else if(sum == null){
+                        sum = (Number)theValue;
+                    }else if(theValue == null){
+//                        sum = (Number)theValue;
+                    }else{
+                        sum = Numbers.add(sum, theValue);
+                    }
                     count++;
                     endWeek = nextWeek;
                 }
