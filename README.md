@@ -152,6 +152,7 @@ expressions.put("metricn","{count(col1),,}");
 System.out.println(executorExt.execute(expressions,dataSet));
 ```
 * DataSet使用
+
 DataSet是一个接口，是传入表数据集的抽象，默认有ListDataSet，JDBCDataSet实现。
 
 ListDataSet是一个Map<String,Object>的列表，里面的key是数据列名，value是数据列的值，这样很容易造成内存使用的放大
