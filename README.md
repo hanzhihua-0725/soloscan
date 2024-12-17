@@ -151,6 +151,16 @@ expressions.put("metric2","{count(col1),,}");
 expressions.put("metricn","{count(col1),,}");
 System.out.println(executorExt.execute(expressions,dataSet));
 ```
+* DataSet使用
+DataSet是一个接口，是传入表数据集的抽象，默认有ListDataSet，JDBCDataSet实现。
+
+ListDataSet是一个Map<String,Object>的列表，里面的key是数据列名，value是数据列的值，这样很容易造成内存使用的放大
+
+优化点：
+1. key使用key.intern()，统一放入常量池中。
+2. Map使用readonly map，减少map的扩容，推荐使用Guava的ImmutableMap。
+
+
 
 ## 系统设计
 
