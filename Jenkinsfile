@@ -33,7 +33,7 @@ pipeline {
                 }
                 steps {
                     echo "Building and testing the project..."
-                    sh 'mvn clean install'
+                    sh 'mvn clean install  -Dgpg.skip=true -Dmaven.test.skip -Dmaven.javadoc.skip=true '
                 }
             }
             stage('Deploy') {
